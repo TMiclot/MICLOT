@@ -1,2 +1,2 @@
 # APITools
-APITools: Amino acids Pairs Interaction analysis Tools
+APITools: Amino acids Pairs in Interactions analysis Tools
