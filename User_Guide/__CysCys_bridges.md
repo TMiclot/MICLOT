@@ -8,15 +8,15 @@ Sulfide and selenium bridge are covalent bonds, but they are not explicitly give
 
 | Structure                                                    | Name                 | Synonyms                                                        | Atoms forming the bridge | Description |
 | ------------------------------------------------------------ | -------------------- | --------------------------------------------------------------- |------------------------- | ----------- |
-| <img src="User_Guide/pictures/disulfide.png" width="450">    | Disulfide bridge     | SS-bond, disulfide linkages, crosslink, cross-strand disulfides | S-S                      | Covalent bond between sulfure atoms in thiol groups of tow CYS. CYS-S-S-CYS is also named a cystine.|
-| <img src="User_Guide/pictures/diselenide.png" width="450">   | Diselenide bridge    |                                                                 | Se-Se                    | Covalent bond between selenium atoms in selenol groups of tow SEC. |
-| <img src="User_Guide/pictures/selnosulfide.png" width="450"> | Selenosulfide bridge |                                                                 | S-Se                     | Covalent bond between sulfure atom in thiol groups of a CYS and the selenium atom in selenol groups of a SEC. |
+| <img src="pictures/disulfide.png" width="450">    | Disulfide bridge     | SS-bond, disulfide linkages, crosslink, cross-strand disulfides | S-S                      | Covalent bond between sulfure atoms in thiol groups of tow CYS. CYS-S-S-CYS is also named a cystine.|
+| <img src="pictures/diselenide.png" width="450">   | Diselenide bridge    |                                                                 | Se-Se                    | Covalent bond between selenium atoms in selenol groups of tow SEC. |
+| <img src="pictures/selnosulfide.png" width="450"> | Selenosulfide bridge |                                                                 | S-Se                     | Covalent bond between sulfure atom in thiol groups of a CYS and the selenium atom in selenol groups of a SEC. |
 
 
 
 * * *
 ## 2. Disulfure bridge
-<img src="User_Guide/pictures/disulfide_bond.png" width="450">
+<img src="pictures/disulfide_bond.png" width="450">
 
 $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 
@@ -98,7 +98,7 @@ $$
 *The literature is less extensive when it comes to structural and energetic parameters for detecting diselenide and selenosulfide bridges. This section give therefore not exhaustive informations regarding this bridges. This is to explain the choices made regarding the method of detection.*
 
 The figure below illustrates the superposition of cystine and seleno-cystine from the crystalline structures of insulin ([PDB ID: 2BN3](https://www.rcsb.org/structure/2BN3)) and seleno-insulin ([PDB ID: 5AZZ](https://www.rcsb.org/structure/5AZZ)). Their superposition is relatively good, indicating small structural differences. 
-<img src="User_Guide/pictures/supperposition_SS_SeSe_bridges_from_PDB.png" width="700">
+<img src="pictures/supperposition_SS_SeSe_bridges_from_PDB.png" width="700">
 
 When comparing distance and angle values, we observe that they are globally consistent with each other. Even though the Se-Se distance found in the [PDB ID: 5AZZ](https://www.rcsb.org/structure/5AZZ) structure is somewhat weaker than the other values found in the [cystal structure of seleno-cystine](https://doi.org/10.1107/S205698901501021X) and in the [CRC Handbook (2016)](https://doi.org/10.1201/9781315380476). This reinforces the ided of a strong structural similarity between cystine and seleno-cysyine.
 
