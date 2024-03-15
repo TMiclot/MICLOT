@@ -1,9 +1,16 @@
 # MICLOT - Molecular InteraCtion anaLysis tOolkiT
 MICLOT is a collection of tools for the analysis of protein-protein interactions.
 
-It was designed as a module written in [Python](https://www.python.org/), to be used in scripts. It has been designed to provide a simple and flexible user experience.
+It was designed as a module, written in [Python](https://www.python.org/), to be used in your scripts. It goal is to provide a simple and flexible user experience with efficient tools. 
+MICLOT contains many tools. They are independent of each other, and each has its own specificity.
 
- 
+- A **database** contining the physical and chemical proterties of the 20 amino acids. It also contain physical properties of elements (atoms) found in amino acids.
+- Protocols for **energy calculation**. One to calculate the Coulomb and Lennard-Jonnes energies of a pair of residues. And another to compute the binding energy between of a protein complex.
+- Identification of the **canonical and non-canonical interactions** formed by a pair of residues.
+- A tool to detect **Cys-Cys bridges** in a structure. It's contain tow protocol to detect disulfid bridges. But it is also able to identify non-canonical bridges involving: diselenium bond (Se-Se) and selenosulfide bond (Se-S).
+- The ability to return the **physico-chemical properties of an interface**, in a protein-protein complex.
+
+(- Statistical and AI based tool to cacacterise the binding between two protein.)
 
 
 ***
@@ -20,7 +27,7 @@ mindmap
                 Lennard-Jones
         **Cys-Cys bridge**
             Disulfide bridge
-            Diselenium bridbe
+            Diselenium bridge
             Selenosulfide bridge
         **Interaction types**
             Cannonicals
