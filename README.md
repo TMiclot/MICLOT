@@ -29,13 +29,9 @@ mindmap
 ```
 
 ***
-## Installation
-### Download the repository - Method 1
+## Quick installation
+### Download the repository
 Clone the repository with this command line: `git repo clone TMiclot/xxxxx`
-
-### Download the repository - Method 2
-1. Clic on the green button `<> Code` then at the bottom of the small window that appears, click on `Download ZIP`
-2. Extract the *.zip* file with to the directory you want. 
 
 ### Create conda environment
 We recommend using a Python environment with [Conda](https://docs.conda.io/projects/conda/en/stable/index.html). You can install it with [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) or [Anaconda](https://www.anaconda.com/download/).
@@ -49,8 +45,8 @@ For the easy installation, we provide a file containing all the information conc
 
 ***
 ## Usage & Documentations
-- See the [User guide](User_Guide/Manual.md).
-- Train with the [Tutorial](Tutorial/Tutorial.md).
+- For more details about the technical features and theory behind the software, see the [User guide](User_Guide/Manual.md).
+- To start exploring the software, you can begin with the [Tutorials](Tutorial/Tutorial.md).
 
 
 ***
