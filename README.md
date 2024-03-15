@@ -49,8 +49,8 @@ For the easy installation, we provide a file containing all the information conc
 
 ***
 ## Usage & Documentations
-- See the [User guide]().
-- Train with the [Tutorial]().
+- See the [User guide](User_Guide/Manual.md).
+- Train with the [Tutorial](Tutorial/Tutorial.md).
 
 
 ***
