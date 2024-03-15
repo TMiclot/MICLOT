@@ -1,2 +1,1 @@
-# APITools
-APITools: Amino acids Pairs in Interactions analysis Tools
+# MICLOT - Molecular InteraCtion anaLysis tOolkiT
