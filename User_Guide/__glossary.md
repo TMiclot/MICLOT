@@ -11,7 +11,7 @@ pairs, their corresponding secondary structures, and the non-covalent interactio
 
 * * *
 ## Residues pairs types
-No [interaction network]() is unchangeable, since variations are visible in the dynamics of any system. This is why we classified the residue pairs into five categories based on their presence in the initial and modified networks.
+No [interaction network](#interaction-network) is unchangeable, since variations are visible in the dynamics of any system. This is why we classified the residue pairs into five categories based on their presence in the initial and modified networks.
 
 - **Conserved.** Pairs of residues that are present in both networks.
 - **Exchanged.** The two residues forming the pair are already present in the initial network, but only interact in the modified network.
