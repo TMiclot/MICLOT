@@ -56,7 +56,7 @@ For the easy installation, we provide a file containing all the information conc
 * * *
 # Usage & Documentations
 - For more details about the technical features and theory behind the software, read the [User guide](User_Guide/Manual.md).
-- To start exploring the software, you can begin with the software, take look at the [Tutorials](Tutorial/Tutorials.md).
+- To start exploring the software, you can take look at the [Tutorials](Tutorial/Tutorials.md).
 
 
 * * *
