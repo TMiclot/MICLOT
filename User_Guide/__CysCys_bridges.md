@@ -1,27 +1,22 @@
 [User Guide home](Manual.md)
 # Sulfur and Selenium bridges in (seleno)cystein
-
-Sulfide and selenium bridge are covalent bonds, but they are not explicitly given in the PDB files. 
-
-
-
-## 1. Sulfide and Selenium bridge in cystein and selenocystein
+Two cysteines can form a covalent bond between their chalcogen atoms. But in some cases, this information is not explicitly given in PDB files. 
 
 | Structure                                                    | Name                 | Synonyms                                                        | Atoms forming the bridge | Description |
 | ------------------------------------------------------------ | -------------------- | --------------------------------------------------------------- |------------------------- | ----------- |
-| <img src="pictures/disulfide.png" width="450">    | Disulfide bridge     | SS-bond, disulfide linkages, crosslink, cross-strand disulfides | S-S                      | Covalent bond between sulfure atoms in thiol groups of tow CYS. CYS-S-S-CYS is also named a cystine.|
+| <img src="pictures/disulfide.png" width="450">    | Disulfide bridge     | SS-bond, disulfide linkages, crosslink, cross-strand disulfides | S-S                      | Covalent bond between sulfure atoms in thiol groups of tow CYS. |
 | <img src="pictures/diselenide.png" width="450">   | Diselenide bridge    |                                                                 | Se-Se                    | Covalent bond between selenium atoms in selenol groups of tow SEC. |
 | <img src="pictures/selnosulfide.png" width="450"> | Selenosulfide bridge |                                                                 | S-Se                     | Covalent bond between sulfure atom in thiol groups of a CYS and the selenium atom in selenol groups of a SEC. |
 
 
 
 
-## 2. Disulfure bridge
+## 1. Disulfure bridge
 <img src="pictures/disulfide_bond.png" width="450">
 
 $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 
-### 2.1. Distance parameters
+### 1.1. Distance parameters
 | Distance            | Reference value (Å) | Range values (Å)    | Comments |
 | ------------------- | ----------------------- | ----------------------- | --- |
 | S-S                 | 2.04                    | d $\leq$ 2.1            | The reference value is the rounded value of 2.038 Å for C-**S-S**-C with $\tau(SS)$ = 75-105˚  in [CRC Handbook (2016)](https://doi.org/10.1201/9781315380476), and it corellate with the value of 2.04 used by [Dombkowski *et al.* (2003)](https://doi.org/10.1093/bioinformatics/btg231). The maximum in the range value is the rouned value of 2.077 Å for C-**S-S**-C [(CRC Handbook, 2016)](https://doi.org/10.1201/9781315380476). So the range value is round to 2.1 Å.|
@@ -29,7 +24,7 @@ $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 | $C_\alpha-C_\alpha$ |                         | 3.0 $\leq$ d $\leq$ 7.5 | Same range used by [Gao *et al.*, 2020](https://doi.org/10.1038/s41598-020-67230-z).    |
 | $C_\beta-C_\beta$   |                         | $\leq$ 5.5              |     |
 
-### 2.2. Angle parameters
+### 1.2. Angle parameters
 | Symbol     | Angle                  | Reference value (degree) |
 | ---------- | ---------------------- | ------------------------ |
 | $\theta$   | $C_\alpha-C_\beta-S$   | ($\theta_0$) 114.6       |
@@ -39,7 +34,7 @@ $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 | $\chi_{3}$ | $C_\beta-S-S-C_\beta$  | +97 or -87              |
 
 
-### 2.3. Energy computation: *Disulfide by Design 2* method
+### 1.3. Energy computation: *Disulfide by Design 2* method
 The disulfide bridge energy value (in kcal/mol) is calulated using the following equation from [Dombkowski *et al.* (2003)](https://doi.org/10.1093/bioinformatics/btg231) and [Craig *et al.* (2013)](https://doi.org/10.1186/1471-2105-14-346) where i and j are residue indices:
 
 $$
@@ -59,13 +54,15 @@ $$
 $$
 
 
-> [!IMPORTANT]
+> [!NOTE]
 > - Remember that the reference angular parameter $\theta_0$ is set to 114.6°.
 > - *The mean value is 1.0 kcal/mol, and the 90th percentile is 2.2 kcal/mol*. [(Craig *et al.*, 2013)](https://doi.org/10.1186/1471-2105-14-346).
-> - Compare to the original equation, we modify the term $E_{\theta}$ by multiplying it by the factor $\frac{1}{4184}$ to reproduce the results of the [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/) The use of this factor is not written in the server documentation, nor in their publications.
+
+> [!WARNING]
+> - Compare to the original equation, we modify the term $E_{\theta}$ by multiplying it by the factor $\frac{1}{4184}$ to be able to reproduce the results of [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/). The use of this factor is not written in the server documentation, nor in their publications.
 
 
-### 2.4. Energy computation: *Dihedral strain energy* method
+### 1.4. Energy computation: *Dihedral strain energy* method
 The dihedral strain energy (in kJ/mol) is calculated using the following from [Schmidt *et al.* (2006)](https://doi.org/10.1021/bi0603064), and base on empirical studies ([Weiner *et al.*, 1984](https://doi.org/10.1021/ja00315a051) and [Katz and Kossiakoff, 1986](https://doi.org/10.1016/S0021-9258(18)66737-7)):
 
 $$
@@ -82,7 +79,7 @@ $$
 \end{align}
 $$
 
-### 2.5. References
+### 1.5. References
 - Bond lengths in crystalline organic compounds. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–1 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Gao, X., Dong, X., Li, X., Liu, Z. & Liu, H. Prediction of disulfide bond engineering sites using a machine learning method. *Sci Rep* 10, 10330 (2020). [https://doi.org/10.1038/s41598-020-67230-z](https://doi.org/10.1038/s41598-020-67230-z)
@@ -97,7 +94,7 @@ $$
 
 
 
-## 3. Diselenide bridge and Selenosulfide bridge
+## 2. Diselenide bridge and Selenosulfide bridge
 *The literature is less extensive when it comes to structural and energetic parameters for detecting diselenide and selenosulfide bridges. This section give therefore not exhaustive informations regarding this bridges. This is to explain the choices made regarding the method of detection.*
 
 The figure below illustrates the superposition of cystine and seleno-cystine from the crystalline structures of insulin ([PDB ID: 2BN3](https://www.rcsb.org/structure/2BN3)) and seleno-insulin ([PDB ID: 5AZZ](https://www.rcsb.org/structure/5AZZ)). Their superposition is relatively good, indicating small structural differences. 
@@ -122,7 +119,7 @@ When comparing distance and angle values, we observe that they are globally cons
 
 The recent work by [Reddy et al (2020)](https://doi.org/10.1016/j.compbiolchem.2022.107635) compares disulfide, diselenide and selenosulfide bridges using quantum calculations. It shows a good match with the present information. However, some values show rather significant differences. For example, the Se-Se distance is close to 2.51 Å. The differences can be explained by their use of a Cys-Cys, or Cys-Sec, or Sec-Sec dipeptide. It is possible that the formation of the peptide bond between the two amino acids induces stresses, causing changes in the structural parameters encountered when the amino acids are not directly linked together by a peptide bond.
 
-### 3.2. Parameters used
+### 2.2. Parameters used
 The structural parameters used to detect disulfide bridges are general enough to be applied to diselenine and selenosulfide bridges. And the Se-S and Se-Se distances used correspond to the covalent radii of these atoms (Se-Se: 2.36, S-Se: 2.22) +0.05 .
 
 But the S-S bond energy calculation method cannot be applied to S-Se and Se-Se bonds, because it is not calibrated for them.
@@ -135,7 +132,7 @@ So only structural parameters will be used to detect bridging diselenides and se
 | S-Se     | d $\leq$ 2.27        |
 
 
-### 3.3. References
+### 2.3. References
 - Görbitz, C. H., Levchenko, V., Semjonovs, J. & Sharif, M. Y. Crystal structure of seleno-l-cystine dihydrochloride. Acta Cryst E 71, 726–729 (2015). [https://doi.org/10.1107/S205698901501021X](https://doi.org/10.1107/S205698901501021X)
 - Reddy, K. K. A., Sahoo, D. K., Moi, S. & Gowd, K. H. Conformational change due to replacement of disulfide with selenosulfide and diselenide in dipeptide vicinal cysteine loop. Computational Biology and Chemistry 97, 107635 (2022). [https://doi.org/10.1016/j.compbiolchem.2022.107635](https://doi.org/10.1016/j.compbiolchem.2022.107635)
 - Bond lengths in crystalline organic compounds. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–1 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
