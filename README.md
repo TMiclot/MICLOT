@@ -1,4 +1,5 @@
-# MICLOT - Molecular InteraCtion anaLysis tOolkiTs
+<img src="__banner.svg" alt="banner" class="center">
+
 MICLOT is a collection of tools for the analysis of protein-protein interactions.
 
 It was designed as a module, written in [Python](https://www.python.org/), to be used in your scripts. It goal is to provide a simple and flexible user experience with efficient tools. 
