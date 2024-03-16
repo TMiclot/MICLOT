@@ -1,4 +1,4 @@
-# Properties of atomic elements found in amino acids
+# Properties of elements found in amino acids
 
 | Element  | Symbol | Atomic weight | van der Waals radii | Covalent radii | Spin | Mag. moment | I Ground state ionization energy | II Ground state ionization energy |
 | -------- | ------ | ------------- | ------------------- | -------------- | ---- | ----------- | -------------------------------- | --------------------------------- |
