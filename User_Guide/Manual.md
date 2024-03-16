@@ -10,7 +10,7 @@ This part
 - [Element properties](__element_properties.md)
 - [Amino acids properties](__amino_acids_properties.md)
 - [Cysteine bridges: Cys-Cys](__CysCys_bridges.md)
-- [Canonical and non-canonical non-bonded interactions](__nonbonded_interactions.md)
+- [Canonical and non-canonical non-bonding interactions](__nonbonding_interactions.md)
 - [Free energy of residue pairs & Complex binding energy](__free_energy.md)
 - [Glossary](__glossary.md)
 
