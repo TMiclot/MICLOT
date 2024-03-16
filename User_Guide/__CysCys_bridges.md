@@ -4,7 +4,7 @@
 Sulfide and selenium bridge are covalent bonds, but they are not explicitly given in the PDB files. 
 
 
-* * *
+
 ## 1. Sulfide and Selenium bridge in cystein and selenocystein
 
 | Structure                                                    | Name                 | Synonyms                                                        | Atoms forming the bridge | Description |
@@ -15,7 +15,7 @@ Sulfide and selenium bridge are covalent bonds, but they are not explicitly give
 
 
 
-* * *
+
 ## 2. Disulfure bridge
 <img src="pictures/disulfide_bond.png" width="450">
 
@@ -40,8 +40,6 @@ $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 
 
 ### 2.3. Energy computation: *Disulfide by Design 2* method
-> The mean value is 1.0 kcal/mol, and the 90th percentile is 2.2 kcal/mol [(Craig *et al.*, 2013)](https://doi.org/10.1186/1471-2105-14-346).
-
 The disulfide bridge energy value (in kcal/mol) is calulated using the following equation from [Dombkowski *et al.* (2003)](https://doi.org/10.1093/bioinformatics/btg231) and [Craig *et al.* (2013)](https://doi.org/10.1186/1471-2105-14-346) where i and j are residue indices:
 
 $$
@@ -56,11 +54,15 @@ $$
 \begin{align}
 	E_{\chi_{1}} & =  1.4 \left( 1 + \cos \left(3 \chi_{1} \right)  \right)  \\
 	E_{\chi_{3}} & = 4.0 \left( 1 - \cos \left(1.957  \left( \chi_{3} + 87.0 \right) \right)  \right) \\
-	E_{\theta} & = 55.0 \left( \theta - \theta_0 \right) ^2
+	E_{\theta} & = 55.0 \left( \theta - \theta_0 \right) ^2  \times \frac{1}{4184}
 \end{align}
 $$
 
-Remember that the reference angular parameter $\theta_0$ is set to 114.6°.
+
+> [!IMPORTANT]
+> - Remember that the reference angular parameter $\theta_0$ is set to 114.6°.
+> - *The mean value is 1.0 kcal/mol, and the 90th percentile is 2.2 kcal/mol*. [(Craig *et al.*, 2013)](https://doi.org/10.1186/1471-2105-14-346).
+> - Compare to the original equation, we modify the term $E_{\theta}$ by multiplying it by the factor $\frac{1}{4184}$ to reproduce the results of the [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/) The use of this factor is not written in the server documentation, nor in their publications.
 
 
 ### 2.4. Energy computation: *Dihedral strain energy* method
@@ -94,7 +96,7 @@ $$
 
 
 
-* * *
+
 ## 3. Diselenide bridge and Selenosulfide bridge
 *The literature is less extensive when it comes to structural and energetic parameters for detecting diselenide and selenosulfide bridges. This section give therefore not exhaustive informations regarding this bridges. This is to explain the choices made regarding the method of detection.*
 
