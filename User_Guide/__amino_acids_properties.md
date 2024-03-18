@@ -6,7 +6,8 @@
 
 
 ## 1. Standard atom names use in PDB and Force field
-For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
+> [!NOTE] 
+> For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
 
 ### 1.1. Backbone
 <img src="pictures/backbone.png" width="200"> OR <img src="pictures/backbone-1.png" width="200">
