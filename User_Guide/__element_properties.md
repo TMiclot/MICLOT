@@ -10,7 +10,8 @@
 | Selenium | Se     | 78.971        | 1.90                | 1.18           | 0    | None        | 9.75239                          | 21.19    |
 | Sulfure  | S      | 32.076        | 1.80                | 1.04           | 0    | None        | 10.36001                         | 23.33788 |
 
-**Ground state ionization energy in eV*
+> [!NOTE]
+> Ground state ionization energy in eV
 
 ### References
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
