@@ -1,17 +1,20 @@
 [User Guide home](Manual.md)
 # Amino acids properties
-For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
+
 
 
 
 
 ## 1. Standard atom names use in PDB and Force field
+For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
+
+### 1.1. Backbone
 <img src="pictures/backbone.png" width="200"> OR <img src="pictures/backbone-1.png" width="200">
 
-### Side chaine (*without CYS and MET*)
+### 1.2. Side chaine *without CYS and MET*
 <img src="pictures/side_chain.png" width="900">
 
-### Cystein, Methionine, Selenocystein, Selenomethionine
+### 1.3. Cystein, Methionine, Selenocystein and Selenomethionine
 <img src="pictures/cysteine_methionine.png" width="300">
 
 
@@ -47,10 +50,11 @@ The table below refers to the standard items found in the PDB files. It use stan
 | ASP or ASN    | ASX           |         |          |            |              |            |     |
 | Unknown       | UNK           |         |          |            |              |            |     |
 
-**HID: Neutral HIS, proton HD1 present.*
-**HIE: Neutral HIS, proton HE2 present.* 
-**CYX: SS-bonded CYS, also named Cystine. *
-**C-terminal residue contain an C a the begining (ex.: CPHE) & N-ternimal residues contain an N at the begining (ex.: NPHE).*
+> [!NOTE]  
+> - HID: Neutral HIS, proton HD1 present.
+> - HIE: Neutral HIS, proton HE2 present.
+> - CYX: SS-bonded CYS, also named Cystine.
+> - C-terminal residue contain an C a the begining (ex.: CPHE) & N-ternimal residues contain an N at the begining (ex.: NPHE).
 
 ### References
 - Lee, J. et al. CHARMM-GUI supports the Amber force fields. *The Journal of Chemical Physics* 153, 035103 (2020). [https://doi.org/10.1063/5.0012280](https://doi.org/10.1063/5.0012280)
@@ -120,16 +124,46 @@ The table below give the maximum possible solvent accessible surface area (ASA) 
 | Tyr     | 181.19           | 193.6  | 343                | 2.24 |  9.04 | 10.10 |  5.66 | 0.46                        |                      | -1.3       | neutral            | aromatic         | Y                        | neutral             | polar    | donor and acceptor        |
 | Val     | 117.15           | 140.0  | 315                | 2.27 |  9.52 |       |  5.96 | 88                          | 90.75                |  4.2       | hydrophobic        | aliphatic        | aliphatic                | neutral             | nonpolar | none                      |
 
-**pI is the pH at the isoelectric point.*
-**Solubility is given for water in units of grams of compound per kilogram of water; a temperature of 25°C.*
-**$V_0^2$ is the partial molar volume in aqueous solution at infinite dilution (at 25°C).*
+> [!NOTE]  
+> - pI is the pH at the isoelectric point.
+> - Solubility is given for water in units of grams of compound per kilogram of water; a temperature of 25°C.
+> - $V_0^2$ is the partial molar volume in aqueous solution at infinite dilution (at 25°C).
 
-### References
+### 4.1. Relative hydrophathy of amino acids in each scale
+| AA  | Hessa | PM1D  | UHS   | PM3D  | Kyte  | Eisenberg | GES   | Janin | Guy   | Hopp  | Wimley | Moon  | Average | Standard deviation |
+| --- | ----- | ----- | ----- | ----- | ----- | --------- | ----- | ----- | ----- | ----- | ------ | ----- | ------- | ---- |
+| A   | -0.75 | -0.75 | -0.73 | -0.66 | -0.79 | -0.64     | -0.62 | -0.60 |  0.18 | -0.15 | -0.01  | -0.46 | -0.50   | 0.32 |
+| C   | -0.94 | -0.26 | -0.31 | -0.66 | -1.03 | -0.30     | -0.71 | -1.48 | -1.25 | -0.42 | -0.33  | -0.24 | -0.66   | 0.43 |
+| D   |  1.90 |  1.66 |  1.47 |  1.83 |  1.03 |  0.92     |  1.64 |  0.71 |  0.82 |  1.71 |  1.94  |  0.85 |  1.37   | 0.47 |
+| E   |  1.26 |  0.68 |  1.40 |  1.34 |  1.03 |  0.76     |  1.43 |  0.85 |  0.87 |  1.71 |  1.93  |  0.27 |  1.13   | 0.47 |
+| F   | -1.09 | -1.82 | -1.47 | -0.97 | -1.13 | -1.22     | -1.06 | -0.90 | -1.91 | -1.22 | -1.38  | -1.43 | -1.30   | 0.32 |
+| G   | -0.26 |  0.05 | -0.82 |  0.36 | -0.03 | -0.49     | -0.50 | -0.60 |  0.40 |  0.11 |  0.39  |  0.30 | -0.09   | 0.43 |
+| H   |  0.78 | -0.08 |  0.61 |  0.27 |  0.93 |  0.41     |  0.34 | -0.02 | -0.38 | -0.15 |  1.12  |  1.65 |  0.46   | 0.59 |
+| I   | -1.31 | -1.24 | -1.29 | -1.28 | -1.71 | -1.42     | -0.94 | -1.19 | -0.98 | -0.84 | -1.01  | -1.15 | -1.20   | 0.24 |
+| K   |  1.29 |  1.44 |  1.89 |  1.07 |  1.17 |  1.54     |  1.56 |  2.45 |  1.40 |  1.71 |  1.42  |  1.93 |  1.57   | 0.38 |
+| L   | -1.27 | -1.24 | -1.07 | -1.60 | -1.47 | -1.09     | -0.87 | -0.90 | -1.02 | -0.84 | -1.09  | -1.26 | -1.14   | 0.23 |
+| M   | -0.91 | -1.15 | -0.82 | -0.84 | -0.82 | -0.66     | -1.00 | -0.75 | -1.41 | -0.58 | -0.73  | -0.79 | -0.87   | 0.23 |
+| N   |  0.77 |  0.81 |  0.91 |  0.98 |  1.03 |  0.80     |  0.72 |  0.56 |  0.54 |  0.22 |  0.21  |  1.08 |  0.72   | 0.29 |
+| P   |  0.91 |  0.59 |  0.91 |  0.67 |  0.38 | -0.12     | -0.25 |  0.27 |  0.77 |  0.11 | -0.23  | -1.13 |  0.24   | 0.60 |
+| Q   |  1.01 |  1.17 |  0.81 |  0.14 |  1.03 |  0.87     |  0.57 |  0.85 |  0.98 |  0.22 |  0.16  |  0.88 |  0.72   | 0.36 |
+| R   |  1.19 |  1.66 |  1.03 |  1.43 |  1.38 |  2.60     |  2.29 |  1.87 |  1.88 |  1.71 |  0.80  |  1.19 |  1.59   | 0.52 |
+| S   | -0.18 |  0.23 | -0.18 |  0.72 |  0.11 |  0.18     | -0.41 | -0.02 |  0.57 |  0.27 | -0.03  |  0.35 |  0.13   | 0.32 |
+| T   | -0.43 |  0.10 | -0.35 | -0.35 |  0.07 |  0.05     | -0.54 |  0.12 |  0.15 | -0.10 | -0.16  |  0.33 | -0.09   | 0.27 |
+| V   | -1.08 | -0.75 | -0.95 | -1.06 | -1.61 | -1.11     | -0.83 | -1.04 | -1.11 | -0.68 | -0.60  | -0.80 | -0.97   | 0.27 |
+| W   | -0.60 | -0.66 | -0.40 | -1.24 |  0.14 | -0.83     | -0.69 | -0.60 | -0.39 | -1.70 | -1.61  | -0.63 | -0.77   | 0.52 |
+| Y   | -0.30 | -0.40 | -0.63 | -0.13 |  0.28 | -0.27     | -0.14 |  0.42 | -0.11 | -1.11 | -0.76  | -0.94 | -0.34   | 0.46 |
+
+> For comparison all scales were adjusted using standard scores and an average hydrophobicity value of zero. The two last columns show the average hydrophobicity value for each amino acid and the corresponding standard deviation.
+
+Reproduced from [Peters et *al.* (2014)](https://doi.org/10.1002/prot.24582).
+
+### 4.2. References
 - McDonald, I. K. & Thornton, J. M. Satisfying Hydrogen Bonding Potential in Proteins. Journal of Molecular Biology 238, 777–793 (1994). [https://doi.org/10.1006/jmbi.1994.1334](https://doi.org/10.1006/jmbi.1994.1334)
 - McDonald, I. & Thornton, J. M. Atlas of Side-Chain and Main-Chain Hydrogen Bonding. [https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/](https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/) (1994).
 - Kyte, J. & Doolittle, R. F. A simple method for displaying the hydropathic character of a protein. Journal of Molecular Biology 157, 105–132 (1982). [https://doi.org/10.1016/0022-2836(82)90515-0](https://doi.org/10.1016/0022-2836(82)90515-0)
 - Pommié, C., Levadoux, S., Sabatier, R., Lefranc, G. & Lefranc, M.-P. IMGT standardized criteria for statistical analysis of immunoglobulin V-REGION amino acid properties. J Mol Recognit 17, 17–32 (2004). [https://doi.org/10.1002/jmr.647](https://doi.org/10.1002/jmr.647)
 - Zamyatnin, A. A. Protein volume in solution. Progress in Biophysics and Molecular Biology 24, 107–123 (1972). [https://doi.org/10.1016/0079-6107(72)90005-3](https://doi.org/10.1016/0079-6107(72)90005-3)
+- Peters C., Elofsson A. Why is the biological hydrophobicity scale more accurate than earlier experimental hydrophobicity scales?: Comparison of Accuracy of Hydrophobicity Scales. *Proteins.* 2014;82(9):2190-2198. [https://doi.org/10.1002/prot.24582](https://doi.org/10.1002/prot.24582)
 - Handbook of biochemistry and molecular biology. (CRC Press, Taylor & Francis Group, 2018). [https://doi.org/10.1201/b21846](https://doi.org/10.1201/b21846)
 
 
@@ -172,10 +206,9 @@ As mentioned above, you don't need to have the executable files. The current ver
 
 
 ## 6. Structural regions in protein
-### 6.1. Schematic diagram of protein regions
 <img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
 
-### 6.2. Properties of each regions
+### 6.1. Properties of each regions
 |                    | Relative ASA in monomer | Relative ASA in complex    | $\Delta$rASA |
 | ------------------ | ----------------------- | -------------------------- | ------------ |
 | Surface & Hydrated |                         | > 40%                      | = 0          |
@@ -185,8 +218,7 @@ As mentioned above, you don't need to have the executable files. The current ver
 | Rim                |                         | $\geq$ 25%                 | > 0          |
 | Core               | $\geq$ 25%              | $\leq$ 25%                 | > 0          | 
 
-### 6.3. Equations used to calculate the rASA and the $\Delta$rASA
-
+### 6.2. Equations used to calculate the rASA and the $\Delta$rASA
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
@@ -194,6 +226,6 @@ $$
 \end{align}
 $$
 
-### 6.4. References
+### 6.3. References
 - Levy, E. D. A Simple Definition of Structural Regions in Proteins and Its Use in Analyzing Interface Evolution. *Journal of Molecular Biology* 403, 660–670 (2010). [https://doi.org/10.1016/j.jmb.2010.09.028](https://doi.org/10.1016/j.jmb.2010.09.028)
 - Wang, S., Li, W., Liu, S. & Xu, J. RaptorX-Property: a web server for protein structure property prediction. *Nucleic Acids Res* 44, W430–W435 (2016). [https://doi.org/10.1093/nar/gkw306](https://doi.org/10.1093/nar/gkw306)
