@@ -183,7 +183,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | T    | Hydrogen bonded turn                         |
 | S    | Bend                                         |
 | C    | Loops and irregular elements                 |
-| NA   | 'residue' in the topology which isn’t actually a protein residue. |
+| NA   | "residue" in the topology which isn't actually a protein residue. |
 
 ### 5.2. Simplified assignment code
 | Code | Description | Corresponding complete code |
@@ -191,7 +191,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | H    | Helix       | H, G, I                     |
 | E    | Strand      | E, B                        |
 | C    | Coil        | C, T, S                     |
-| NA   | 'residue' in the topology which isn’t actually a protein residue. | NA |
+| NA   | "residue" in the topology which isn't actually a protein residue. | NA |
 
 ### 5.3. Remark
 As mentioned above, you don't need to have the executable files. The current version does NOT include the following type of regulation:
@@ -223,7 +223,7 @@ As mentioned above, you don't need to have the executable files. The current ver
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
-	\Delta ASA  = & rASA_{in \;monomer} - rASA_{in \;complex}
+	\Delta ASA  = & rASA_{in \space monomer} - rASA_{in \space complex}
 \end{align}
 $$
 
