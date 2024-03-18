@@ -1,4 +1,4 @@
-<img src="__banner.svg" alt="banner" class="center">
+<img src="__banner.pdf" alt="banner" class="center">
 
 MICLOT is a collection of tools for the analysis of protein-protein interactions.
 
