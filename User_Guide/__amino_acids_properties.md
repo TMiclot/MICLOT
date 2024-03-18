@@ -172,6 +172,11 @@ Reproduced from [Peters et *al.* (2014)](https://doi.org/10.1002/prot.24582).
 ## 5. Secondary structure
 Secondary structure of each residue is assigned using the DSSP 2.2.0 written by Maarten L. Hekkelman and implemented in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This implementation eliminates the need for the user to install, or compile, third-party software. This increases the module's ease of installation and portability between OS. It also avoids the need to read/write numerous output files.
 
+> [!IMPORTANT] 
+> As mentioned above, you don't need to have the executable files. The current version does NOT include the following type of regulation:
+> - DSSP [version 4 and latter](https://github.com/PDB-REDO/dssp), or the [version 2.0](https://github.com/MDAnalysis/dssp), with the wraper [PDB.DSSP](https://biopython.org/docs/1.75/api/Bio.PDB.DSSP.html) implemented in [Biopython](https://biopython.org).
+> - STRIDE, source aviable [here](https://github.com/MDAnalysis/stride),  with the wraper [pySTRIDE](https://github.com/MDAnalysis/pystride) created by [MDAnalysis](https://docs.mdanalysis.org/stable/index.html) team.
+
 ### 5.1. Complete assignment code
 | Code | Description                                  |
 | ---- | -------------------------------------------- |
@@ -193,13 +198,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | C    | Coil        | C, T, S                     |
 | NA   | "residue" in the topology which isn't actually a protein residue. | NA |
 
-### 5.3. Remark
-As mentioned above, you don't need to have the executable files. The current version does NOT include the following type of regulation:
-
-- DSSP [version 4 and latter](https://github.com/PDB-REDO/dssp), or the [version 2.0](https://github.com/MDAnalysis/dssp), with the wraper [PDB.DSSP](https://biopython.org/docs/1.75/api/Bio.PDB.DSSP.html) implemented in [Biopython](https://biopython.org).
-- STRIDE, source aviable [here](https://github.com/MDAnalysis/stride),  with the wraper [pySTRIDE](https://github.com/MDAnalysis/pystride) created by [MDAnalysis](https://docs.mdanalysis.org/stable/index.html) team.
-
-### 5.4. References
+### 5.3. References
 - Kabsch, W. & Sander, C. Dictionary of protein secondary structure: Pattern recognition of hydrogen‐bonded and geometrical features. *Biopolymers* 22, 2577–2637 (1983). [https://doi.org/10.1002/bip.360221211](https://doi.org/10.1002/bip.360221211)
 - Frishman, D. & Argos, P. Knowledge‐based protein secondary structure assignment. *Proteins* 23, 566–579 (1995). [https://doi.org/10.1002/prot.340230412](https://doi.org/10.1002/prot.340230412)
 
@@ -210,7 +209,7 @@ As mentioned above, you don't need to have the executable files. The current ver
 <img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
 
 ### 6.1. Properties of each regions
-|                    | Relative ASA in monomer | Relative ASA in complex    | $\Delta$rASA |
+|                    | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
 | ------------------ | ----------------------- | -------------------------- | ------------ |
 | Surface & Hydrated |                         | > 40%                      | = 0          |
 | Surface            |                         | 25% $\leq$ rASA $\leq$ 40% | = 0          |
@@ -219,7 +218,7 @@ As mentioned above, you don't need to have the executable files. The current ver
 | Rim                |                         | $\geq$ 25%                 | > 0          |
 | Core               | $\geq$ 25%              | $\leq$ 25%                 | > 0          | 
 
-### 6.2. Equations used to calculate the rASA and the $\Delta$rASA
+### 6.2. Equations used to calculate the rASA and the $\Delta$ rASA
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
