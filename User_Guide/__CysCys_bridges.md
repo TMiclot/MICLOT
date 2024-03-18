@@ -14,7 +14,8 @@ Two cysteines can form a covalent bond between their chalcogen atoms. But in som
 ## 1. Disulfure bridge
 <img src="pictures/disulfide_bond.png" width="450">
 
-$\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
+> [!NOTE]
+> $\chi_{SS}$ is also named $\chi_{3}$ or $\tau(SS)$
 
 ### 1.1. Distance parameters
 | Distance            | Reference value (Å) | Range values (Å)    | Comments |
