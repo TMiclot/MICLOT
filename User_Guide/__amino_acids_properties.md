@@ -1,10 +1,6 @@
 [User Guide home](Manual.md)
 # Amino acids properties
 
-
-
-
-
 ## 1. Standard atom names use in PDB and Force field
 > [!NOTE] 
 > For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
@@ -65,8 +61,8 @@ The table below refers to the standard items found in the PDB files. It use stan
 
 
 
-## 3. Maximum ASA in proteins
-The table below give the maximum possible solvent accessible surface area (ASA) for the residue, according to various sources.
+## 3 Maximum ASA in proteins
+The table below give the maximum possible solvent accessible surface area (ASA), in $Å^2$, for the residue, according to various sources.
 
 | Residue | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Theoretical | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Empirical | [Miller *et al.* (1987)](https://doi.org/10.1016/0022-2836%2887%2990038-6 "https://doi.org/10.1016/0022-2836(87)90038-6") | [Rose *et al.* (1985)](https://doi.org/10.1126/science.4023714) | [Lins *et al.* (2003)](https://doi.org/10.1110/ps.0304803) | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Gly-x-Gly | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Ala-X-Ala |
 | --- | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -206,6 +202,8 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 
 ## 6. Structural regions in protein
+Amino acids can be located in different regions of a protein complex, as shown in the image below.
+
 <img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
 
 ### 6.1. Properties of each regions
@@ -222,9 +220,14 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
-	\Delta ASA  = & rASA_{in \space monomer} - rASA_{in \space complex}
+	\Delta rASA  = & rASA_{in \space monomer} - rASA_{in \space complex}
 \end{align}
 $$
+
+| Term | Signification | Unit |
+| ---- | ------------- | ---- |
+| ASA    | Accessible surface area (ASA), also namedsolvent-accessible surface area (SASA) | $nm^2$ or Å$^2$ |
+| MaxASA | See [Maximum ASA in proteins](#3-maximum-asa-in-proteins). | $nm^2$ or $Å^2$ |
 
 ### 6.3. References
 - Levy, E. D. A Simple Definition of Structural Regions in Proteins and Its Use in Analyzing Interface Evolution. *Journal of Molecular Biology* 403, 660–670 (2010). [https://doi.org/10.1016/j.jmb.2010.09.028](https://doi.org/10.1016/j.jmb.2010.09.028)
