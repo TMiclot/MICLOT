@@ -64,6 +64,9 @@ The table below refers to the standard items found in the PDB files. It use stan
 ## 3. Maximum ASA in proteins
 The table below give the maximum possible solvent accessible surface area (ASA), in $Å^2$, for the residue, according to various sources.
 
+> [!NOTE]
+> ASA is also named solvent accessible surface area (SASA).
+
 | Residue | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Theoretical | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Empirical | [Miller *et al.* (1987)](https://doi.org/10.1016/0022-2836%2887%2990038-6 "https://doi.org/10.1016/0022-2836(87)90038-6") | [Rose *et al.* (1985)](https://doi.org/10.1126/science.4023714) | [Lins *et al.* (2003)](https://doi.org/10.1110/ps.0304803) | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Gly-x-Gly | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Ala-X-Ala |
 | --- | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 | ALA | 129.00 | 121.00 | 113.00 | 118.10 | 111.00 | 116.40 |  55.40 |
@@ -226,7 +229,7 @@ $$
 
 | Term | Signification | Unit |
 | ---- | ------------- | ---- |
-| ASA    | Accessible surface area (ASA), also namedsolvent-accessible surface area (SASA) | $nm^2$ or Å$^2$ |
+| ASA    | Measured ASA of a residue | $nm^2$ or Å$^2$ |
 | MaxASA | See [Maximum ASA in proteins](#3-maximum-asa-in-proteins). | $nm^2$ or $Å^2$ |
 
 ### 6.3. References
