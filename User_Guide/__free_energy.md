@@ -54,7 +54,16 @@ In this case, it is necessary to apply a cutoff. This means that all pairs of at
 If $d_{ij} \leq$ cutoff, then $E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r d_{ij} }$.
 But, if $d_{ij} >$ cutoff, then $E_{ij} = 0$
 
-#### 1.1.2. Coulomb with reaction field
+#### 1.1.2. Coulomb with cutoff, using reaction field
+Another possibility for using a cutoff is to use the reaction field approximation ([Tironi *et al.*, 1995](https://doi.org/10.1063/1.469273)). 
+This method considers thant everything above the cutoff is a constant dielectric environment.
+
+The components of the equation are calculated according to the following:
+
+$$
+\begin{align}
+\end{align}
+$$
 
 
 ### 1.2. Lennard-Jones energy
@@ -64,6 +73,7 @@ But, if $d_{ij} >$ cutoff, then $E_{ij} = 0$
 - Maier, J. A. et al. ff14sb: improving the accuracy of protein side chain and backbone parameters from ff99sb. *J. Chem. Theory Comput.* 11, 3696–3713 (2015). [https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)
 - Huang, J. & MacKerell, A. D. CHARMM36 all-atom additive protein force field: Validation based on comparison to NMR data. *J. Comput. Chem.* 34, 2135–2145 (2013). [https://doi.org/10.1021/acs.jctc.5b00255](https://doi.org/10.1021/acs.jctc.5b00255)
 - Tironi, I. G., Sperb, R., Smith, P. E. & Van Gunsteren, W. F. A generalized reaction field method for molecular dynamics simulations. *The Journal of Chemical Physics* 102, 5451–5459 (1995). [https://doi.org/10.1063/1.469273](https://doi.org/10.1063/1.469273)
+
 
 
 
