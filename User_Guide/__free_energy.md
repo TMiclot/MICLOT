@@ -89,7 +89,7 @@ The Lennard-Jones interaction between two atoms is given by the equation:
 
 $$
 \begin{equation}
-E_{ij} = 4 \varepsilon \left( \left( \frac{\sigma_{ij}}{r_{ij}} \right)^{12} - \left( \frac{\sigma_{ij}}{r_{ij}} \right)^6 \right)
+E_{ij} = 4 \varepsilon_{ij} \left( \left( \frac{\sigma_{ij}}{r_{ij}} \right)^{12} - \left( \frac{\sigma_{ij}}{r_{ij}} \right)^6 \right)
 \end{equation}
 $$
 
@@ -97,6 +97,8 @@ The components of the equation are calculated according to the following:
 
 $$
 \begin{align}
+\sigma_{ij} & = \frac{\sigma_j + \sigma_j}{2} \\
+\varepsilon_{ij} & = \sqrt{ \varepsilon_{i} \varepsilon_{j} }
 \end{align}
 $$
 
