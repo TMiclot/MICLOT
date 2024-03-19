@@ -1,7 +1,7 @@
 [User Guide home](Manual.md)
 # Properties of elements found in amino acids
 
-| Element  | Symbol | Atomic weight | van der Waals radii | Covalent radii | Spin | Mag. moment | I Ground state ionization energy | II Ground state ionization energy |
+| Element  | Symbol | Atomic weight | van der Waals radii (Å) | Covalent radii (Å) | Spin | Mag. moment | I Ground state ionization energy | II Ground state ionization energy |
 | -------- | ------ | ------------- | ------------------- | -------------- | ---- | ----------- | -------------------------------- | --------------------------------- |
 | Carbon   | C      | 12.011        | 1.70                | 0.75           | 0    | None        | 11.26030                         | 24.3833  |
 | Hydrogen | H      | 1.008         | 1.10                | 0.32           | 1/2  | +2.79284    | 13.598433                        |   None   |
