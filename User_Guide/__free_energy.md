@@ -36,7 +36,7 @@ $$
 
 > [!NOTE]  
 > - The electric conversion factor is set as 138.935458 $kJ.mol^{-1}.nm.e^{-2}$. For more information, please refere to [GROMACS](https://www.gromacs.org/) documentation on [molecular quantities](https://manual.gromacs.org/current/reference-manual/definitions.html#md-units).
-> - The solute dielectric constant is generaly set to 1.
+> - By default, the solute dielectric constant is generaly set to 1.
 
 The Coulomb energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
 
@@ -72,6 +72,15 @@ k_{fr} & = \frac{1}{r_{cutoff}^3} \times \frac{\varepsilon_{solvent} - \varepsil
 c_{rf} & = \frac{1}{r_{cutoff}} \times \frac{3 \varepsilon_{solvent} }{2\varepsilon_{solvent} + \varepsilon_r}
 \end{align}
 $$
+
+| Term | Signification | Unit |
+| ---- | ------------- | ---- |
+| $\varepsilon_{solvent}$ | Solvent dielectric constant. | |
+| $r_{cutoff}$ | Cutoff distance. | nm |
+
+> [!NOTE]  
+> - By default, the solvent dielectric constant is generaly set to 78.5.
+> - By default, the solute dielectric constant is generaly set to 1.
 
 
 ### 1.2. Lennard-Jones energy
