@@ -49,6 +49,9 @@ $$
 When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
 In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Coulomb energy.
 
+If $d_{ij} \leq$ cutoff, then $E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r d_{ij} }$.
+But, if $d_{ij} >$ cutoff, then $E_{ij} = 0$
+
 #### 1.1.2. Coulomb with reaction field
 
 
