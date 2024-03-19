@@ -23,7 +23,7 @@ The Coulomb interaction between two atoms is given by the equation:
 
 $$
 \begin{equation}
-E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r d_{ij} }
+E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r r_{ij} }
 \end{equation}
 $$
 
@@ -31,7 +31,7 @@ $$
 | ---- | ------------- | ---- |
 | $\frac{ 1 }{ 4 \pi \varepsilon_0 }$ | Electric conversion factor. | $kJ.mol^{-1}.nm.e^{-2}$ |
 | $q_i$ and $q_j$                     | Charges of atom *i* and *j*. They come from the chosen force field in the *<Atom charge="xxxx"* lines, where *xxxx* is the charge value. | |
-| $d_{ij}$                            | Distance between atom *i* and *j*. | nm |
+| $r_{ij}$                            | Distance between atom *i* and *j*. | nm |
 | $\varepsilon_r$                     | Solute dielectric constant. | |
 
 > [!NOTE]  
@@ -51,17 +51,25 @@ $$
 When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
 In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Coulomb energy.
 
-If $d_{ij} \leq$ cutoff, then $E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r d_{ij} }$.
-But, if $d_{ij} >$ cutoff, then $E_{ij} = 0$
+If $r_{ij} \leq$ cutoff, then $E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r r_{ij} }$.
+But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$
 
 #### 1.1.2. Coulomb with cutoff, using reaction field
 Another possibility for using a cutoff is to use the reaction field approximation ([Tironi *et al.*, 1995](https://doi.org/10.1063/1.469273)). 
-This method considers thant everything above the cutoff is a constant dielectric environment.
+This method considers thant everything above the cutoff is a constant dielectric environment. Coulomb's equation is rewritten as follows:
+
+$$
+\begin{equation}
+E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{q_i q_j}{\varepsilon_r} \left( \frac{1}{r_{ij}} + k_{fr} \space r_{ij}^2 - c_{rf} \right)
+\end{equation}
+$$
 
 The components of the equation are calculated according to the following:
 
 $$
 \begin{align}
+k_{fr} & = \frac{1}{r_{cutoff}^3} \times \frac{\varepsilon_{solvent} - \varepsilon_r}{2\varepsilon_{solvent} + \varepsilon_r} \\
+c_{rf} & = \frac{1}{r_{cutoff}} \times \frac{3 \varepsilon_{solvent} }{2\varepsilon_{solvent} + \varepsilon_r}
 \end{align}
 $$
 
