@@ -38,7 +38,7 @@ $$
 > - The electric conversion factor is set as 138.935458 $kJ.mol^{-1}.nm.e^{-2}$. For more information, please refere to [GROMACS](https://www.gromacs.org/) documentation on [molecular quantities](https://manual.gromacs.org/current/reference-manual/definitions.html#md-units).
 > - By default, the solute dielectric constant is generaly set to 1.
 
-The Coulomb energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
+The total Coulomb energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
 
 $$
 \begin{equation}
@@ -83,7 +83,34 @@ $$
 > - By default, the solute dielectric constant is generaly set to 1.
 
 
+
 ### 1.2. Lennard-Jones energy
+The Lennard-Jones interaction between two atoms is given by the equation:
+
+$$
+\begin{equation}
+E_{ij} = 4 \varepsilon \left( \left( \frac{\sigma_{ij}}{r_{ij}} \right)^{12} - \left( \frac{\sigma_{ij}}{r_{ij}} \right)^6 \right)
+\end{equation}
+$$
+
+The components of the equation are calculated according to the following:
+
+$$
+\begin{align}
+\end{align}
+$$
+
+| Term | Signification | Unit |
+| ---- | ------------- | ---- |
+
+
+The total Lennard-Jones energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
+
+$$
+\begin{equation}
+E_{Lennard-Jones} = \sum_{i=1,j=1}^{N} E_{ij}
+\end{equation}
+$$
 
 
 #### 1.3. References
@@ -129,9 +156,9 @@ And the terms of the equations are defined as:
 | Term                     | Calculated as                              | Definition |
 | ------------------------ | ------------------------------------------ | ---------- |
 | *M*                      |                                            | Number of residues. |
-| $P(\{dist\}\mid AA)$         |                                            | Probability of observing the *ScSc* 4-distance combination (*{dist}*) for a given residue pair in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
+| $P(\{dist\}\mid AA)$     |                                            | Probability of observing the *ScSc* 4-distance combination (*{dist}*) for a given residue pair in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
 | $P(AA)$                  |                                            | Probability to observe a *ScSc* contact for a given residue pair in protein structures, in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
-| $P(\{dist\}\mid AX)$         |                                            | Probability of observing the *ScMc* 4-distance combination (*{dist}*) for a given residue pair in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
+| $P(\{dist\}\mid AX)$     |                                            | Probability of observing the *ScMc* 4-distance combination (*{dist}*) for a given residue pair in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
 | $P(AX)$                  |                                            | Probability to observe a *ScMc* contact for residue A in real structures ($P_{real}$) or in random structures ($P_{rand}$). |
 | $P_i^{rot}$              |                                            | Rotamer probability as taken from the backbone-dependent rotamer library from [Dunbrack and Cohen (1997)](https://doi.org/10.1002/pro.5560060807). |
 | $N_i^{rot}$              |                                            | Number of rotamers for a modelled residue. |
