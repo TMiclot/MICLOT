@@ -33,6 +33,7 @@ $$
 | $q_i$ and $q_j$                     | Charges of atom *i* and *j*. They come from the chosen force field in the *<Atom charge="xxxx"* lines, where *xxxx* is the charge value. | |
 | $r_{ij}$                            | Distance between atom *i* and *j*. | nm |
 | $\varepsilon_r$                     | Solute dielectric constant. | |
+| $E_{ij}$ | Coulomb energy.| kJ/mol |
 
 > [!NOTE]  
 > - The electric conversion factor is set as 138.935458 $kJ.mol^{-1}.nm.e^{-2}$. For more information, please refere to [GROMACS](https://www.gromacs.org/) documentation on [molecular quantities](https://manual.gromacs.org/current/reference-manual/definitions.html#md-units).
@@ -51,8 +52,9 @@ $$
 When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
 In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Coulomb energy.
 
-If $r_{ij} \leq$ cutoff, then $E_{ij} = \frac{ 1 }{ 4 \pi \varepsilon_0 } \times \frac{ q_i q_j }{ \varepsilon_r r_{ij} }$.
-But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$
+If $r_{ij} \leq$ cutoff, then $E_{ij}$ is calculated using the previous equation.
+But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$.
+
 
 #### 1.1.2. Coulomb with cutoff, using reaction field
 Another possibility for using a cutoff is to use the reaction field approximation ([Tironi *et al.*, 1995](https://doi.org/10.1063/1.469273)). 
@@ -93,7 +95,7 @@ E_{ij} = 4 \varepsilon_{ij} \left( \left( \frac{\sigma_{ij}}{r_{ij}} \right)^{12
 \end{equation}
 $$
 
-The components of the equation are calculated according to the following:
+The components of the equation are calculated according to Lorentz-Berthelot rules:
 
 $$
 \begin{align}
@@ -104,7 +106,12 @@ $$
 
 | Term | Signification | Unit |
 | ---- | ------------- | ---- |
-
+| $\sigma_{ij}$ |  |  |
+| $\sigma_{i}$ and $\sigma_{j}$ |  |  |
+| $\varepsilon_{ij}$ |  |  |
+| $\varepsilon_{i}$ and $\varepsilon_{j}$ |  |  |
+| $r_{ij}$                            | Distance between atom *i* and *j*. | nm |
+| $E_{ij}$ | Lennard-Jones energy.| kJ/mol |
 
 The total Lennard-Jones energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
 
@@ -115,7 +122,59 @@ E_{Lennard-Jones} = \sum_{i=1,j=1}^{N} E_{ij}
 $$
 
 
-#### 1.3. References
+#### 1.2.1. Lennard-Jones with "hard" cutoff
+When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
+In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Lennard-Jones energy.
+
+If $r_{ij} \leq$ cutoff, then $E_{ij}$ is calculated using the previous equation.
+But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$.
+
+
+#### 1.2.2. Lennard-Jones with cutoff, using switching function
+Another possibility for using a cutoff is to use a [switching function](https://manual.gromacs.org/current/reference-manual/functions/nonbonded-interactions.html#modified-non-bonded-interactions). 
+The switching function involves two distances $r_{switch}$ and $r_{cutoff}$, where $r_{switch} < r_{cutoff}$. Between these two distances, the energy is modified by a factor S that causes the energy to tend towards 0 when the integration distance reaches the cutoff. Because the 
+
+If $r_{ij} < r_{switch}$, the energie is not modified. If $r_{ij} \geq r_{cutoff}$, the returned energy is 0.
+But if $r_{switch} \leq r_{ij} < r_{cutoff}$ the energy is calculated as follow:
+
+$$
+\begin{equation}
+E_{switch} = E_{ij} * S
+\end{equation}
+$$
+
+Where the equation of *S* is:
+
+$$
+\begin{align}
+S & = 1 - 6x^5 + 15x^4 -10x^3 \\
+x & = \frac{r_{ij} - r_{switch}}{r_{cutoff} - r_{switch}}
+\end{align}
+$$
+
+| Term | Signification | Unit |
+| ---- | ------------- | ---- |
+| $r_{switch}$ | Switchind distance. It muste be lower than the cutoff distance. | nm |
+| $r_{cutoff}$ | Cutoff distance. | nm |
+| $r_{ij}$  | Distance between atom *i* and *j*. | nm |
+| $E_{ij}$ | Lennard-Jones energy.| kJ/mol |
+
+> [!WARNING]
+> The use of a switching potential increase the values in the switching region: from $r_{switch}$ to $r_{cutoff}$.
+> As a result, the energy value is underestimated, but should remain acceptable.
+
+
+#### 1.3. Total pair energy
+The total energy of a pair is given by the sum of the Coulomb energy and the Lennard-Jones energy.
+
+$$
+\begin{equation}
+E_{Total} = E_{Lennard-Jones} + E_{Coulomb}
+\end{equation}
+$$
+
+
+#### 1.4. References
 - Maier, J. A. et al. ff14sb: improving the accuracy of protein side chain and backbone parameters from ff99sb. *J. Chem. Theory Comput.* 11, 3696–3713 (2015). [https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)
 - Huang, J. & MacKerell, A. D. CHARMM36 all-atom additive protein force field: Validation based on comparison to NMR data. *J. Comput. Chem.* 34, 2135–2145 (2013). [https://doi.org/10.1021/acs.jctc.5b00255](https://doi.org/10.1021/acs.jctc.5b00255)
 - Tironi, I. G., Sperb, R., Smith, P. E. & Van Gunsteren, W. F. A generalized reaction field method for molecular dynamics simulations. *The Journal of Chemical Physics* 102, 5451–5459 (1995). [https://doi.org/10.1063/1.469273](https://doi.org/10.1063/1.469273)
