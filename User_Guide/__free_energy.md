@@ -106,12 +106,12 @@ $$
 
 | Term | Signification | Unit |
 | ---- | ------------- | ---- |
-| $\sigma_{ij}$ |  |  |
-| $\sigma_{i}$ and $\sigma_{j}$ |  |  |
-| $\varepsilon_{ij}$ |  |  |
+| $\sigma_{ij}$                           |  |  |
+| $\sigma_{i}$ and $\sigma_{j}$           |  |  |
+| $\varepsilon_{ij}$                      |  |  |
 | $\varepsilon_{i}$ and $\varepsilon_{j}$ |  |  |
-| $r_{ij}$                            | Distance between atom *i* and *j*. | nm |
-| $E_{ij}$ | Lennard-Jones energy.| kJ/mol |
+| $r_{ij}$                                | Distance between atom *i* and *j*. | nm |
+| $E_{ij}$                                | Lennard-Jones energy.| kJ/mol |
 
 The total Lennard-Jones energy for a given amino acids pair is calculated by summing all $E_{ij}$, for all *i* atom in residue 1 and all *j* atom in residue 2.
 
