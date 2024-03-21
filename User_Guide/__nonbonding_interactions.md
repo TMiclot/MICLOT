@@ -25,6 +25,6 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit or not between the two amino acids. | Boolean: <br/> True / False | None |
 | .get_distance      | Return a list of distance of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[distance],[indices]],...] | nm |
-| .get_angle         | Return a list of angles of the C-bond, it also return the corresponding C-bond atom indices. <br/> Theta 1: angle C...O=C <br/> Theta 2: angle Z-C...O | Integer | degree |
+| .get_angle         | Return a list of angles of the C-bond, it also return the corresponding C-bond atom indices. <br/> $\theta 1$ angle: C...O=C <br/> $\theta 2$ angle: Z-C...O | Integer | degree |
 | .get_energy        | Return a list of energy of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[energy],[indices]],...]  | kJ/mol |
 | .get_atoms         | Return a list of atoms index involved in C-bond. | List of set: <br/> [{indices},{indices},...] | None |
