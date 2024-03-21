@@ -12,4 +12,5 @@ We recommend using a Python environment with [Conda](https://docs.conda.io/proje
 | Numpy  ||||
 | MDTraj ||||
 | Pandas ||||
+| scikit-spatial ||||
 | OpenMM ||||
