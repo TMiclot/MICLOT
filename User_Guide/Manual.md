@@ -4,6 +4,8 @@
 
 Description ...
 
+To start exploring the software, you can take look at the [tutorials](../Tutorial/Tutorials.md).
+
 ## Theory behind MICLOT
 This part
 
