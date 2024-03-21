@@ -33,7 +33,7 @@ $$
 | $q_i$ and $q_j$                     | Charges of atom *i* and *j*. They come from the chosen force field in the *<Atom charge="xxxx"* lines, where *xxxx* is the charge value. | |
 | $r_{ij}$                            | Distance between atom *i* and *j*. | nm |
 | $\varepsilon_r$                     | Solute dielectric constant. | |
-| $E_{ij}$ | Coulomb energy.| kJ/mol |
+| $E_{ij}$                            | Coulomb energy.| kJ/mol |
 
 > [!NOTE]  
 > - The electric conversion factor is set as 138.935458 $kJ.mol^{-1}.nm.e^{-2}$. For more information, please refere to [GROMACS](https://www.gromacs.org/) documentation on [molecular quantities](https://manual.gromacs.org/current/reference-manual/definitions.html#md-units).
@@ -106,10 +106,10 @@ $$
 
 | Term | Signification | Unit |
 | ---- | ------------- | ---- |
-| $\sigma_{ij}$                           |  |  |
-| $\sigma_{i}$ and $\sigma_{j}$           |  |  |
-| $\varepsilon_{ij}$                      |  |  |
-| $\varepsilon_{i}$ and $\varepsilon_{j}$ |  |  |
+| $\sigma_{ij}$                           | Finite distance at which the inter-particle potential is zero, for the pair *ij*. | nm |
+| $\sigma_{i}$ and $\sigma_{j}$           | Finite distance at which the inter-particle potential, for *i* or *j*, is zero. Values come from the chosen force field in the *<NonbondedForce* section. | nm |
+| $\varepsilon_{ij}$                      | Depth of the potential wall for the pair *ij*. |  |
+| $\varepsilon_{i}$ and $\varepsilon_{j}$ | Depth of the potential wall for *i* or *j*. Values come from the chosen force field in the *<NonbondedForce* section. |  |
 | $r_{ij}$                                | Distance between atom *i* and *j*. | nm |
 | $E_{ij}$                                | Lennard-Jones energy.| kJ/mol |
 
