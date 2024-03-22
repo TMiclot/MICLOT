@@ -21,7 +21,7 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
 
 ### Properties
-| Property | Effect | Return | Unit |
+| Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit or not between the two amino acids. | Boolean: <br/> True / False | None |
 | .get_distance      | Return a list of distance of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[distance],[indices]],...] | nm |
