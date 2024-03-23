@@ -23,6 +23,8 @@ mindmap
         **Interface analysis**
         **Energy calculation**
             Protein-Protein binding
+                *PRODIGY* method
+                *HUNTER* method
             Amino acid pairs
                 Coulomb
                 Lennard-Jones
