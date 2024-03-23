@@ -19,23 +19,21 @@ MICLOT contains many tools. They are independent of each other, and each has its
 
 ```mermaid
 mindmap
-    root((**MICLOT**))
-        **Interface analysis**
-        **Energy calculation**
-            Protein-Protein binding
-                *PRODIGY* method
-                *HUNTER* method
-            Amino acid pairs
-                Coulomb
-                Lennard-Jones
-        **Cys-Cys bridge**
+    root)**MICLOT**(
+        id{{**Interface analysis**}}
+        id{{**Protein region**}}
+        id{{**Energy calculation**}}
+            *PRODIGY* method
+            *HUNTER* method
+            Coulomb & Lennard-Jones
+        id{{**Cys-Cys bridge**}}
             Disulfide bridge
             Diselenium bridge
             Selenosulfide bridge
-        **Interaction types**
+        id{{**Interaction types**}}
             Cannonicals
             Non-Cannonicals
-        **Database**
+        id{{**Database**}}
             Amino acids
             Atoms
 ```
