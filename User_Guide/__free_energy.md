@@ -1,7 +1,7 @@
 [User Guide home](Manual.md)
 # Free energy
 
-## 1. Between amino acids forming apair - Molecular mecanics
+## 1. Between amino acids forming a pair - Molecular mecanics
 
 This method use AMBERSB14 ([Maier *et al.*, 2015](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)) and CHARMM36 ([Huang *et al.*, 2013](https://doi.org/10.1021/acs.jctc.5b00255)) force fields. To be able to calculate the Coulomb and Lennard-Jones energies, you must download the force fields files here:
 - [https://github.com/openmm/openmm/blob/master/wrappers/python/openmm/app/data/amber14/protein.ff14SB.xml](https://github.com/openmm/openmm/blob/master/wrappers/python/openmm/app/data/amber14/protein.ff14SB.xml)
@@ -164,7 +164,8 @@ $$
 > As a result, the energy value is underestimated, but should remain acceptable.
 
 
-#### 1.3. Total pair energy
+
+### 1.3. Total pair energy
 The total energy of a pair is given by the sum of the Coulomb energy and the Lennard-Jones energy.
 
 $$
@@ -174,7 +175,7 @@ E_{Total} = E_{Lennard-Jones} + E_{Coulomb}
 $$
 
 
-#### 1.4. References
+### 1.4. References
 - Maier, J. A. et al. ff14sb: improving the accuracy of protein side chain and backbone parameters from ff99sb. *J. Chem. Theory Comput.* 11, 3696–3713 (2015). [https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)
 - Huang, J. & MacKerell, A. D. CHARMM36 all-atom additive protein force field: Validation based on comparison to NMR data. *J. Comput. Chem.* 34, 2135–2145 (2013). [https://doi.org/10.1021/acs.jctc.5b00255](https://doi.org/10.1021/acs.jctc.5b00255)
 - Tironi, I. G., Sperb, R., Smith, P. E. & Van Gunsteren, W. F. A generalized reaction field method for molecular dynamics simulations. *The Journal of Chemical Physics* 102, 5451–5459 (1995). [https://doi.org/10.1063/1.469273](https://doi.org/10.1063/1.469273)
@@ -189,7 +190,7 @@ $$
 
 *Hunter* method from [Potapov *et al.* (2010)](https://doi.org/10.1186/1471-2105-11-374) and [Cohen *et al.* (2009)](https://doi.org/10.1371/journal.pcbi.1000470) ****
 
->The favourable energies were accumulated in the $E_{lja}$ term and the repulsive ones in the $E_{ljr}$ term. To avoid excessive repulsion due to close placement of atoms during side chain optimization, the repulsive term $E_{ljr}$ was linearized at a cutoff distance $d_{ij}$ < 0.89 [46].
+> The favourable energies were accumulated in the $E_{lja}$ term and the repulsive ones in the $E_{ljr}$ term. To avoid excessive repulsion due to close placement of atoms during side chain optimization, the repulsive term $E_{ljr}$ was linearized at a cutoff distance $d_{ij}$ < 0.89 [46].
 
 $$
 \begin{equation}
@@ -233,3 +234,35 @@ And the terms of the equations are defined as:
 - Cohen, M., Potapov, V. & Schreiber, G. Four Distances between Pairs of Amino Acids Provide a Precise Description of their Interaction. *PLoS Comput Biol* 5, e1000470 (2009). [https://doi.org/10.1371/journal.pcbi.1000470](https://doi.org/10.1371/journal.pcbi.1000470)
 - Dunbrack, R. L. & Cohen, F. E. Bayesian statistical analysis of protein side‐chain rotamer preferences. *Protein Science* 6, 1661–1681 (1997). [https://doi.org/10.1002/pro.5560060807](https://doi.org/10.1002/pro.5560060807)
 - Neria, E., Fischer, S. & Karplus, M. Simulation of activation free energies in molecular systems. *The Journal of Chemical Physics* 105, 1902–1921 (1996). [https://doi.org/10.1063/1.472061](https://doi.org/10.1063/1.472061)
+
+
+
+
+
+## 3. For the binding interface - *PRODIGY* method
+> [!IMPORTANT]  
+> This is a reimplementation of PRODIGY method, from scratch. This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
+
+
+### *IC-NIS* model
+
+$$
+\begin{equation}
+	\Delta G = (- 0.09459 \times IC_{charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{polar}^{\\%}) + (0.3810 \times NIS_{charged}^{\\%}) -15.9433
+\end{equation}
+$$
+
+
+### *NIS* model
+
+$$
+\begin{equation}
+	- \log (K_d) =  (0.0857 \times NIS_{polar}^{\\%}) - (0.0685 \times NIS_{charged}^{\\%}) + (0.0262 \times N_{atoms \space in \space interface}) + 3.0125
+\end{equation}
+$$
+
+### References
+- Vangone, A. & Bonvin, A. M. Contacts-based prediction of binding affinity in protein–protein complexes. *eLife* 4, e07454 (2015). [https://doi.org/10.7554/eLife.07454](https://doi.org/10.7554/eLife.07454)
+- Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014).
+ [https://doi.org/10.1016/j.jmb.2014.04.017](https://doi.org/10.1016/j.jmb.2014.04.017)
+- Xue, L. C., Rodrigues, J. P., Kastritis, P. L., Bonvin, A. M. & Vangone, A. PRODIGY: a web server for predicting the binding affinity of protein–protein complexes. *Bioinformatics* 32, 3676–3678 (2016). [https://doi.org/10.1093/bioinformatics/btw514](https://doi.org/10.1093/bioinformatics/btw514)
