@@ -208,6 +208,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 Amino acids can be located in different regions of a protein complex, as shown in the image below.
 
 <img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
+<img src="pictures/protein_surface_NIS_IS" width="450">
 
 ### 6.1. Structural definition of protein regions & interface types
 | Protein region     | Surface type | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
