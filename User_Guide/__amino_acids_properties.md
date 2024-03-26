@@ -204,22 +204,26 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 
 
-## 6. Structural regions in protein
+## 6. Location in diffrent regions in protein & Role in interaction
 Amino acids can be located in different regions of a protein complex, as shown in the image below.
 
 <img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
 
-### 6.1. Properties of each regions
-|                    | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
-| ------------------ | ----------------------- | -------------------------- | ------------ |
-| Surface & Hydrated |                         | > 40%                      | = 0          |
-| Surface            |                         | 25% $\leq$ rASA $\leq$ 40% | = 0          |
-| Interior           |                         | $\leq$ 25%                 | = 0          |
-| Support            | $\leq$ 25%              |                            | > 0          |
-| Rim                |                         | $\geq$ 25%                 | > 0          |
-| Core               | $\geq$ 25%              | $\leq$ 25%                 | > 0          | 
+### 6.1. Structural definition of protein regions & interface types
+| Protein region     | Surface type | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
+| ------------------ | ------------ | ----------------------- | -------------------------- | ------------ |
+| Surface & Hydrated | NIS          |                         | > 40%                      | = 0          |
+| Surface            | NIS          |                         | 25% $\leq$ rASA $\leq$ 40% | = 0          |
+| Interior           |              |                         | < 25%                      | = 0          |
+| Support            | NIS          | < 25%                   |                            | 0 < $\Delta rASA \leq$ 0.05         |
+| Rim                | NIS          |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05         |
+| Core               | NIS          | > 25%                   | < 25%                      | 0 < $\Delta rASA \leq$ 0.05         |
+| Support            | Interaction  | < 25%                   |                            | > 0.05          |
+| Rim                | Interaction  |                         | > 25%                      | > 0.05          |
+| Core               | Interaction  | > 25%                   | < 25%                      | > 0.05          | 
 
-### 6.2. Equations used to calculate the rASA and the $\Delta$ rASA
+
+### 6.2. Equations used to calculate the relative ASA (rASA) and the $\Delta$ rASA
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
@@ -231,7 +235,8 @@ $$
 | ---- | ------------- | ---- |
 | ASA    | Measured ASA of a residue | $nm^2$ or Å$^2$ |
 | MaxASA | See [Maximum ASA in proteins](#3-maximum-asa-in-proteins). | $nm^2$ or $Å^2$ |
-
+	 
 ### 6.3. References
 - Levy, E. D. A Simple Definition of Structural Regions in Proteins and Its Use in Analyzing Interface Evolution. *Journal of Molecular Biology* 403, 660–670 (2010). [https://doi.org/10.1016/j.jmb.2010.09.028](https://doi.org/10.1016/j.jmb.2010.09.028)
 - Wang, S., Li, W., Liu, S. & Xu, J. RaptorX-Property: a web server for protein structure property prediction. *Nucleic Acids Res* 44, W430–W435 (2016). [https://doi.org/10.1093/nar/gkw306](https://doi.org/10.1093/nar/gkw306)
+- Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014). [https://doi.org/10.1016/j.jmb.2014.04.017](https://doi.org/10.1016/j.jmb.2014.04.017)
