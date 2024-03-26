@@ -205,23 +205,26 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 
 ## 6. Location in diffrent regions in protein & Role in interaction
-Amino acids can be located in different regions of a protein complex, as shown in the image below.
+Within a protein complex, amino acids can be located in different regions. It is possible to determine in which region an amino acid is located, by measuring its accessible surface. There are 5 regions: surface, interior, core, support and rim (Figure 1).
 
-<img src="pictures/protein_regions.png" width="450">  Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028).
-<img src="pictures/protein_surface_NIS_IS" width="450">
+Residues located on the surface do not participate in the interaction and form part of the Non-interactin surface (NIS), see Figure 2. Two types of residue can be distinguished. On the one hand, there are those that are only slightly exposed to solvent, and secondly, those that are highly exposed to seolvent and are said to be hydrated. In this case, their relative ASA in complex is > 40%.
+
+There's a subtlety to the residues in the rim. Since this is the interface boundary, the residues are somewhat exposed to the solvent. So we need to distinguish between those that are in the NIS and those that play a role in the interaction. Residues involved in the complex interface have a difference of more than 5% between their relative ASA in monomer and complex.
+
+| Figure 1 - Regions in protein | Figure 2 - Non-interacting surface and Interacting surface |
+| --- | --- |
+| <img src="pictures/protein_regions.png" width="450">  <br/> Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028). | <img src="pictures/protein_surface_NIS_IS.png" width="450"> <br/> Amino acids in *Rim* can be part of the NIS or not.|
 
 ### 6.1. Structural definition of protein regions & interface types
-| Protein region     | Surface type | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
-| ------------------ | ------------ | ----------------------- | -------------------------- | ------------ |
-| Surface & Hydrated | NIS          |                         | > 40%                      | = 0          |
-| Surface            | NIS          |                         | 25% $\leq$ rASA $\leq$ 40% | = 0          |
-| Interior           |              |                         | < 25%                      | = 0          |
-| Support            | NIS          | < 25%                   |                            | 0 < $\Delta rASA \leq$ 0.05         |
-| Rim                | NIS          |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05         |
-| Core               | NIS          | > 25%                   | < 25%                      | 0 < $\Delta rASA \leq$ 0.05         |
-| Support            | Interaction  | < 25%                   |                            | > 0.05          |
-| Rim                | Interaction  |                         | > 25%                      | > 0.05          |
-| Core               | Interaction  | > 25%                   | < 25%                      | > 0.05          | 
+| Protein region     | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
+| ------------------ | ----------------------- | -------------------------- | ------------- |
+| Surface & Hydrated |                         | > 40%                      | = 0           |
+| Surface            |                         | 25% $\leq$ rASA $\leq$ 40% | = 0           |
+| Interior           |                         | < 25%                      | = 0           |
+| Rim & NIS          |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05 |
+| Rim & Interaction  |                         | > 25%                      | > 0.05 |
+| Support            | < 25%                   |                            | > 0    |
+| Core               | > 25%                   | < 25%                      | > 0    |
 
 
 ### 6.2. Equations used to calculate the relative ASA (rASA) and the $\Delta$ rASA
@@ -234,7 +237,7 @@ $$
 
 | Term | Signification | Unit |
 | ---- | ------------- | ---- |
-| ASA    | Measured ASA of a residue | $nm^2$ or Å$^2$ |
+| ASA    | Measured ASA of a residue | $nm^2$ or $Å^2$ |
 | MaxASA | See [Maximum ASA in proteins](#3-maximum-asa-in-proteins). | $nm^2$ or $Å^2$ |
 	 
 ### 6.3. References
