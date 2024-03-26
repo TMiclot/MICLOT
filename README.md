@@ -33,6 +33,9 @@ mindmap
         id{{**Interaction types**}}
             Cannonicals
             Non-Cannonicals
+        id{{**Interaction network**}}
+            Protein complex
+            Protein folding
         id{{**Database**}}
             Amino acids
             Atoms
