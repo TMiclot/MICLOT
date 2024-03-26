@@ -244,7 +244,7 @@ And the terms of the equations are defined as:
 > This is a reimplementation of PRODIGY method, from scratch. This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
 
 
-### *IC-NIS* model
+***IC-NIS* model** is calculated as follow:
 
 $$
 \begin{equation}
@@ -253,13 +253,18 @@ $$
 $$
 
 
-### *NIS* model
+***NIS* model** is calculated as follow:
 
 $$
 \begin{equation}
 	- \log (K_d) =  (0.0857 \times NIS_{polar}^{\\%}) - (0.0685 \times NIS_{charged}^{\\%}) + (0.0262 \times N_{atoms \space in \space interface}) + 3.0125
 \end{equation}
 $$
+
+And the terms of the equations are defined as:
+| Term                     | Calculated as                              | Definition |
+| ------------------------ | ------------------------------------------ | ---------- |
+
 
 ### References
 - Vangone, A. & Bonvin, A. M. Contacts-based prediction of binding affinity in protein–protein complexes. *eLife* 4, e07454 (2015). [https://doi.org/10.7554/eLife.07454](https://doi.org/10.7554/eLife.07454)
