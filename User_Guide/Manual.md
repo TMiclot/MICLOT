@@ -16,7 +16,7 @@ This part
 - [Free energy of residue pairs & Complex binding energy](__free_energy.md)
 - [Glossary](__glossary.md)
 
-## API
+## Usage
 This part provide information about the classes and methods available in MICLOT.
 
 - [Installation guide](__installation.md)
