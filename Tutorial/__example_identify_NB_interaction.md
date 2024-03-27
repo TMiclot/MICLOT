@@ -351,6 +351,91 @@ print(interaction.get_hbond)
 ```
 
 
+## 5. Hydrogen bond
+
+> [!IMPORTANT]
+> Remember, as demonstrated in the previous section, that the chosen method influences the output. 
+
+### 5.1. Simple usage example
+
+**Code**
+
+```python
+pdb_file = 'Hbond_1.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = hydrogen_bond_TEST(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_angle)
+print(interaction.get_distance)
+print(interaction.get_subtype)
+```
+
+**Result**
+
+```
+True
+[[12 18  6]
+ [17 22  6]]
+[[151.36641, array([12, 18,  6])], [156.7908, array([17, 22,  6])]]
+[[3.152380883693695, array([12, 18,  6])], [3.1175026297569275, array([17, 22,  6])]]
+[['regular', array([12, 18,  6])], ['regular', array([17, 22,  6])]]
+```
+
+
+### 5.2. Effect of changing parameters of the "baker_hubbard"
+
+**Code**
+
+```python
+pdb_file = 'Hbond_2.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = hydrogen_bond_TEST(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_angle)
+print(interaction.get_distance)
+print(interaction.get_subtype)
+```
+
+**Result**
+
+```
+False
+[]
+[]
+[]
+[]
+```
+
+Now, if we decrese the angle cutoff from 150° (Default) to 120°, the command detect an H-bond.
+
+**Code**
+
+```python
+pdb_file = 'Hbond_2.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = hydrogen_bond_TEST(traj, 0,1, angle_cutoff=120)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_angle)
+print(interaction.get_distance)
+print(interaction.get_subtype)
+```
+
+**Result**
+
+```
+True
+[[ 7 14 21]
+ [ 7 14 28]]
+[[122.01538, array([ 7, 14, 21])], [145.35005, array([ 7, 14, 28])]]
+[[3.183967173099518, array([ 7, 14, 21])], [3.0763807892799377, array([ 7, 14, 28])]]
+[['regular', array([ 7, 14, 21])], ['regular', array([ 7, 14, 28])]]
+```
+
+
+
 <!--- TEMPLATE
 ## 4. Salt bridge
 
