@@ -186,8 +186,8 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 | method      | string | Use 'baker_hubbard' or 'kabsch_sander' or 'wernet_nilsson' method to detect H-bond. | optional |
 | MAX_distance_CA  | integer | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 13.0 | optional  |
 | MIN_distance_charges  | integer | Minimum distance between charges of each residue to consider as interacting. <br/> Unit: Å <br/> Default value: 4.0 | optional  |
-| distance_cutoff | integer | In the 'baker_hubbard' method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
-| angle_cutoff    | integer | In the 'baker_hubbard' method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
+| distance_cutoff | integer | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
+| angle_cutoff    | integer | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
 
 ### Properties
 
@@ -195,9 +195,11 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the ionic bond exist or not, the second identify hydrogen bond. Output: <br/> True,True: Interaction exist. <br/> True,False: Only ionic bond. <br/> False,True: Only H-bond. <br/> False,False: Interaction don't exist. | Boolean (True / False / None) & String|  |
 | .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (integer), distance_charge (integer) | Å |
-| .get_hbond         | Return the atom indices forming H-bond in the pair. For each method, the output is converted to an **np.array**. | np.array |  |
+| .get_hbond         | Return the atom indices forming H-bond in the pair. For each method, the output is converted to an np.array. | np.array |  |
 
 > [!IMPORTANT]
 > If you structure or trajectory don't contain hydrogens, the analysis can't provide H-bond analysis. So if their is a possible salt bride `.check_interaction` will return *True, False*. Of course this result can also depand the chosen method.
 
 
+
+## 6. Hydrogen bond
