@@ -13,7 +13,8 @@
 > [!IMPORTANT]
 > Concerning software implementation it is necessary to remark:
 > - In [MDTraj shrake_rupley](https://github.com/mdtraj/mdtraj/blob/master/mdtraj/geometry/sasa.py) the van der Waals raddi is diffrent for the hydrogen and is set at 1.20 Å.
-> - Compare to MDTraj, the software NACCESS use van der Waals radii from [Chothia *et al.* (1976)](https://doi.org/10.1016/0022-2836(76)90191-1). These values are greater because it *include* van der Waals radii of hydrogen into non-hydrogen atoms. Also, Selenium is missing.
+> - Compare to MDTraj, the software NACCESS use van der Waals radii from [Chothia *et al.* (1976)](https://doi.org/10.1016/0022-2836(76)90191-1): O is 1.40 Å, N is 1.65 Å (trigonal) or 1.50 Å (tetrahedral), C is 1.87 Å (tetrahedral) or 1.76 (trigonal), S is 1.85 Å. These values are greater because they *include* van der Waals radii of hydrogen into non-hydrogen atoms, and selenium is missing.
+
 
 ### References
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
