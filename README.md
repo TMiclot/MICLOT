@@ -23,8 +23,8 @@ mindmap
         id{{**Interface analysis**}}
         id{{**Protein region**}}
         id{{**Energy calculation**}}
-            *PRODIGY* method
-            *HUNTER* method
+            Contacts-based method
+            4-distance method
             Coulomb & Lennard-Jones
         id{{**Cys-Cys bridge**}}
             Disulfide bridge
