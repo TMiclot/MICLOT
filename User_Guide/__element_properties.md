@@ -1,4 +1,5 @@
 [User Guide home](Manual.md)
+
 # Properties of elements found in amino acids
 
 | Element  | Symbol | Atomic weight | van der Waals radii (Å) | Covalent radii (Å) | Spin | Mag. moment | I Ground state ionization energy (eV) | II Ground state ionization energy (eV) |
@@ -17,6 +18,7 @@
 
 
 ### References
+
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Prohaska, T. et al. Standard atomic weights of the elements 2021 (IUPAC Technical Report). *Pure and Applied Chemistry* 94, 573–600 (2022). [https://doi.org/10.1515/pac-2019-0603](https://doi.org/10.1515/pac-2019-0603)
 - NIST: Basic Atomic Spectroscopic Data. [https://dx.doi.org/10.18434/T4FW23](https://dx.doi.org/10.18434/T4FW23)
