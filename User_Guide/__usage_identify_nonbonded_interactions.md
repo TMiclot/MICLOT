@@ -198,8 +198,75 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 | .get_hbond         | Return the atom indices forming H-bond in the pair. For each method, the output is converted to an np.array. | np.array |  |
 
 > [!IMPORTANT]
-> If you structure or trajectory don't contain hydrogens, the analysis can't provide H-bond analysis. So if their is a possible salt bride `.check_interaction` will return *True, False*. Of course this result can also depand the chosen method.
+> If your structure, or trajectory, don't contain hydrogens, the analysis can't provide H-bond analysis. So if their is a possible salt bride `.check_interaction` will return *True, False*. Of course this result can also depand of the chosen method.
 
 
 
 ## 6. Hydrogen bond
+
+**hydrogen_bond**(trajectory, res_index_A, res_index_B, *method="baker_hubbard", distance_cutoff=3.0, angle_cutoff=150, frame=0*)
+
+### Description
+
+Identify H-bond in a structure, or a trajectory. H-bonds can be computed using 3 diffrent methods: [baker_hubbard](https://mdtraj.org/1.9.4/api/generated/mdtraj.baker_hubbard.html), [kabsch_sander](https://mdtraj.org/1.9.4/api/generated/mdtraj.kabsch_sander.html), [wernet_nilsson](https://mdtraj.org/1.9.4/api/generated/mdtraj.wernet_nilsson.html).
+
+Based on distances, this class can also discriminate regular, low-barrier, and single-well H-bond subtypes. This information is directly related to the energy profile of the interaction.
+
+> [!IMPORTANT]
+> - The structure, or a trajectory must contain hydrogens.
+> - To avoid redundancy with the class [salt_bridge](#5-salt-bridge), this command exclude H-bond involved in a salt bridge only.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. </br> Have no effect with the method 'baker_hubbard', because it implementation analyse the whole trajectory. <br/> Default value: 0 | optional |
+| method      | string | Use 'baker_hubbard' or 'kabsch_sander' or 'wernet_nilsson' method to detect H-bond. | optional |
+| distance_cutoff | integer | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
+| angle_cutoff    | integer | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | ----------- | ------ | ---- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_atoms         | Return a list of atoms index involved in H-bond. | numpy.array: <br/> [{indices},{indices},...] |  |
+| .get_distance      | Return a list of distance between donnor and acceptor, it also return the corresponding C-bond atom indices.  | List: <br/> [[distance,[indices]],...] | Å |
+| .get_angle         | Return a list of angles (DHA) of all H-bonds, it also return the corresponding atom indices. | List of interger: <br/> [[angle,[indices]],...] | degree |
+| .get_subtype       | Return the subtype of the H-bond.  | List: <br/> [[subtype,[indices]],...] | |
+
+
+
+
+
+
+
+
+
+<!--- TEMPLATE
+## 5. Salt bridge
+
+**command**(trajectory, res_index_A, res_index_B, ...)
+
+### Description
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. </br> Have no effect with the method 'baker_hubbard', because it implementation analyse the whole trajectory. <br/> Default value: 0 | optional |
+
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_distance      | Distances between CA-CA atoms of the two residues. | interger | Å |
+-->
