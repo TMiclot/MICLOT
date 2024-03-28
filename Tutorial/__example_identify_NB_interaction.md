@@ -12,7 +12,7 @@ import ***
 
 ***
 
-# How to identify internal non-bonded interaction inside a amino acid
+# How to identify internal non-bonded interaction inside a amino acid ?
 
 ## C5 hydrogen bond
 
@@ -39,7 +39,7 @@ True
 
 
 
-# How to identify a given non-bonded interaction into an amino acid pair
+# How to identify a given non-bonded interaction into an amino acid pair ?
 
 ## 1. C-bond
 
@@ -72,7 +72,7 @@ Energy: [[-21.651590464607594, {1953, 1954, 1946, 1943}]]
 
 ## 2. Hydrophobic interaction & Hydrophobe/Hydrophile clash
 
-### 2.1. Case: No interaction
+### 2.1. No interaction
 
 **Code**
 
@@ -91,7 +91,7 @@ print(interaction.get_distance)
 (8.198665976524353, 7.304799486171744)
 ```
 
-### 2.2. Case: Hydrophobic interaction
+### 2.2. Hydrophobic interaction
 
 **Code**
 
@@ -110,7 +110,7 @@ print(interaction.get_distance)
 (8.934004306793213, 4.607366824181708)
 ```
 
-### 2.3. Case: Hydrophobe/Hydrophile clash
+### 2.3. Hydrophobe/Hydrophile clash
 
 **Code**
 
@@ -129,7 +129,7 @@ print(interaction.get_distance)
 (7.733982801437378, 4.12462471880705)
 ```
 
-### 2.4. Case: Hydrophobe/Hydrophile NO clash
+### 2.4. Hydrophobe/Hydrophile without clash
 
 **Code**
 
@@ -152,7 +152,7 @@ print(interaction.get_distance)
 
 ## 3. Charge clash & Charge repulsion
 
-### 3.1. Case: Charge clash
+### 3.1. Charge clash
 
 **Code**
 
@@ -171,7 +171,7 @@ print(interaction.get_distance)
 (4.897868633270264, 3.945750892162323)
 ```
 
-### 3.2. Case: Charge repulsion
+### 3.2. Charge repulsion
 
 **Code**
 
@@ -363,7 +363,7 @@ print(interaction.get_hbond)
 ```python
 pdb_file = 'Hbond_1.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = hydrogen_bond_TEST(traj, 0,1)
+interaction = hydrogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_angle)
@@ -390,7 +390,7 @@ True
 ```python
 pdb_file = 'Hbond_2.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = hydrogen_bond_TEST(traj, 0,1)
+interaction = hydrogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_angle)
@@ -415,7 +415,7 @@ Now, if we decrese the angle cutoff from 150° (Default) to 120°, the command d
 ```python
 pdb_file = 'Hbond_2.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = hydrogen_bond_TEST(traj, 0,1, angle_cutoff=120)
+interaction = hydrogen_bond(traj, 0,1, angle_cutoff=120)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_angle)
@@ -433,6 +433,114 @@ True
 [[3.183967173099518, array([ 7, 14, 21])], [3.0763807892799377, array([ 7, 14, 28])]]
 [['regular', array([ 7, 14, 21])], ['regular', array([ 7, 14, 28])]]
 ```
+
+
+
+
+## 6. van der Waals
+
+### 6.1. Simple usage example
+
+**Code**
+
+```python
+pdb_file = 'vdw.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 1,2)
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_number_contacts)
+print(interaction.get_interface)
+```
+
+**Result**
+
+```
+True
+([2.7280741930007935, 2.323926091194153, 2.363763749599457, 3.7214794754981995, 2.4790769815444946, 2.4385419487953186, 3.139965832233429, 2.0333456993103027, 2.530612051486969, 3.2540124654769897, 2.2418467700481415, 2.785297930240631, 3.1580671668052673, 2.5184500217437744, 3.466078042984009, 3.0537447333335876], [[ARG137-N, GLY138-N], [ARG137-N, GLY138-H], [ARG137-CA, GLY138-N], [ARG137-CA, GLY138-CA], [ARG137-CA, GLY138-H], [ARG137-C, GLY138-CA], [ARG137-C, GLY138-C], [ARG137-C, GLY138-H], [ARG137-C, GLY138-HA3], [ARG137-C, GLY138-HA2], [ARG137-O, GLY138-N], [ARG137-O, GLY138-CA], [ARG137-O, GLY138-C], [ARG137-O, GLY138-HA3], [ARG137-CB, GLY138-N], [ARG137-HA, GLY138-N]])
+16
+24.29358959197998
+```
+
+
+
+### 6.2. Effect of inoring hydrogens
+
+Ignoring hydrogens during this analysis decrease the number of contact and the interface between the two residues.
+
+**Code**
+
+```python
+pdb_file = 'vdw.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 1,2 , set_hydrogen=False)
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_number_contacts)
+print(interaction.get_interface)
+```
+
+**Result**
+
+```
+True
+([2.7280741930007935, 2.363763749599457, 3.7214794754981995, 2.4385419487953186, 3.139965832233429, 2.2418467700481415, 2.785297930240631, 3.1580671668052673, 3.466078042984009], [[ARG137-N, GLY138-N], [ARG137-CA, GLY138-N], [ARG137-CA, GLY138-CA], [ARG137-C, GLY138-CA], [ARG137-C, GLY138-C], [ARG137-O, GLY138-N], [ARG137-O, GLY138-CA], [ARG137-O, GLY138-C], [ARG137-CB, GLY138-N]])
+9
+22.14486598968506
+```
+
+
+
+### 6.3. Effect of reducing the `distance_toerance` parameter
+
+Playing with the distance tolerance *N* can increase or decrease the number of contact and the interface between the two residues.
+
+**Code**
+
+```python
+pdb_file = 'vdw.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 1,2 , distance_tolerance=0)
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_number_contacts)
+print(interaction.get_interface)
+```
+
+**Result**
+
+```
+True
+([2.7280741930007935, 2.323926091194153, 2.363763749599457, 2.4790769815444946, 2.4385419487953186, 3.139965832233429, 2.0333456993103027, 2.530612051486969, 2.2418467700481415, 2.785297930240631, 3.1580671668052673, 2.5184500217437744], [[ARG137-N, GLY138-N], [ARG137-N, GLY138-H], [ARG137-CA, GLY138-N], [ARG137-CA, GLY138-H], [ARG137-C, GLY138-CA], [ARG137-C, GLY138-C], [ARG137-C, GLY138-H], [ARG137-C, GLY138-HA3], [ARG137-O, GLY138-N], [ARG137-O, GLY138-CA], [ARG137-O, GLY138-C], [ARG137-O, GLY138-HA3]])
+12
+24.29358959197998
+```
+
+
+
+### 6.4. No interaction *between residues indices 0 and 1*
+
+**Code**
+
+```python
+pdb_file = 'vdw.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_number_contacts)
+print(interaction.get_interface)
+```
+
+**Result**
+
+```
+False
+([], [])
+0
+None
+```
+
 
 
 
