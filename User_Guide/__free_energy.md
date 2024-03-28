@@ -15,7 +15,7 @@ This method use AMBERSB14 ([Maier *et al.*, 2015](https://pubs.acs.org/doi/10.10
 
 > [!TIP]
 > Because of their different file sizes, using AMBER ff14SB is faster than CHARMM36.
-> Calculation with ff14SB run for 0.05 s while this time is 0.4 s.
+> Calculation with ff14SB run for 0.05 s while this time is 0.4 s for CHARMM.
 > These are approximate values which may vary depending on your computer configuration.
 
 ### 1.1. Coulomb energy
