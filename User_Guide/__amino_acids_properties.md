@@ -2,22 +2,27 @@
 # Amino acids properties
 
 ## 1. Standard atom names use in PDB and Force field
+
 > [!NOTE] 
 > For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
 
 ### 1.1. Backbone
+
 <img src="pictures/backbone.png" width="200"> OR <img src="pictures/backbone-1.png" width="200">
 
 ### 1.2. Side chaine *without CYS and MET*
+
 <img src="pictures/side_chain.png" width="900">
 
 ### 1.3. Cystein, Methionine, Selenocystein and Selenomethionine
+
 <img src="pictures/cysteine_methionine.png" width="300">
 
 
 
 
 ## 2. The 3 letter codes of standard residues in PDB
+
 The table below refers to the standard items found in the PDB files. It use standard atom and residue nomenclature as described in the [monomer section](https://files.wwpdb.org/pub/pdb/data/monomers) of the Chemical Component Dictionary. Some code name may change or not be recognize, depending on the force field. For more information see [Standard residues in MDAnalysis selections](https://userguide.mdanalysis.org/stable/standard_selections.html) to find out which types of residue are recognized and selectable by MDAnalysis.
 
 | Amino acid    | Standard code | Reduced | Oxydized | Neutral     | Deprotonated (Negative charge) | Protonated (Positive charge) | Selenium containing |
@@ -54,6 +59,7 @@ The table below refers to the standard items found in the PDB files. It use stan
 > - C-terminal residue contain an C a the begining (ex.: CPHE) & N-ternimal residues contain an N at the begining (ex.: NPHE).
 
 ### References
+
 - Lee, J. et al. CHARMM-GUI supports the Amber force fields. *The Journal of Chemical Physics* 153, 035103 (2020). [https://doi.org/10.1063/5.0012280](https://doi.org/10.1063/5.0012280)
 - Westbrook, J. D. et al. The chemical component dictionary: complete descriptions of constituent molecules in experimentally determined 3D macromolecules in the Protein Data Bank. *Bioinformatics* 31, 1274–1278 (2015). [http://dx.doi.org/10.1093/bioinformatics/btu789](http://dx.doi.org/10.1093/bioinformatics/btu789)
 - CHARMM Small Molecule Library (CSML) [https://www.charmm-gui.org/?doc=archive&lib=csml](https://www.charmm-gui.org/?doc=archive&lib=csml)
@@ -62,6 +68,7 @@ The table below refers to the standard items found in the PDB files. It use stan
 
 
 ## 3. Maximum ASA in proteins
+
 The table below give the maximum possible solvent accessible surface area (ASA), in $Å^2$, for the residue, according to various sources.
 
 > [!NOTE]
@@ -91,6 +98,7 @@ The table below give the maximum possible solvent accessible surface area (ASA),
 | VAL | 174.00 | 165.00 | 160.00 | 164.50 | 149.00 | 162.24 | 103.12 |
 
 ### References
+
 - Samanta, U., Bahadur, R. P. & Chakrabarti, P. Quantifying the accessible surface area of protein residues in their local environment. *Protein Engineering, Design and Selection* 15, 659–667 (2002). [https://doi.org/10.1093/protein/15.8.659](https://doi.org/10.1093/protein/15.8.659)
 - Lins, L., Thomas, A. & Brasseur, R. Analysis of accessible surface of residues in proteins. *Protein Science* 12, 1406–1417 (2003). [https://doi.org/10.1110/ps.0304803](https://doi.org/10.1110/ps.0304803)
 - Tien, M. Z., Meyer, A. G., Sydykova, D. K., Spielman, S. J. & Wilke, C. O. Maximum Allowed Solvent Accessibilites of Residues in Proteins. *PLoS ONE* 8, e80635 (2013). [https://doi.org/10.1371/journal.pone.0080635](https://doi.org/10.1371/journal.pone.0080635)
@@ -101,6 +109,7 @@ The table below give the maximum possible solvent accessible surface area (ASA),
 
 
 ## 4. Physico-chemical properties of amino acids
+
 | Residue | Molecular weight | Volume ($Å^3$) [Zamyatnin *et al.* (1972)](https://doi.org/10.1016/0079-6107(72)90005-3)| Melting point (˚C) | $pK_a$  | $pK_b$   | $pK_c$   | pI    | Solubility in water (g/ kg) | $V_0^2$ (${cm}^3$/mol) | Hydropathy [Kyte *et al.* (1982)](https://doi.org/10.1016/0022-2836(82)90515-0)| Hydropathy classe  | Chemical classe  | Physico-chemical classe  | Charge              | Polarity | Hydrogen donor / acceptor |
 | ------- | ---------------- | ------ | ------------------ | ---- | ----- | ----- | ----- | --------------------------- | -------------------- | ---------- | ------------------ | ---------------- | ------------------------ | ------------------- | -------- | ------------------------- |
 | Ala     |  89.09           |  88.6  | 297                | 2.33 |  9.71 |       |  6.00 | 166.9                       | 60.54                |  1.8       | hydrophobic        | aliphatic        | aliphatic                | neutral             | nonpolar | none                      |
@@ -130,6 +139,7 @@ The table below give the maximum possible solvent accessible surface area (ASA),
 > - $V_0^2$ is the partial molar volume in aqueous solution at infinite dilution (at 25°C).
 
 ### 4.1. Relative hydrophathy of amino acids in each scale
+
 |     | Hessa [2007](https://doi.org/10.1038/nature06387), [2005](https://doi.org/10.1038/nature03216)| [PM1D](https://doi.org/10.1073/pnas.0905394106)  | [UHS](https://doi.org/10.1002/prot.22315)   | [PM3D](https://doi.org/10.1073/pnas.0905394106)  | [Kyte](https://doi.org/10.1016/0022-2836(82)90515-0)  | [Eisenberg](https://doi.org/10.1039/FS9821700109) | [GES](https://doi.org/10.1146/annurev.bb.15.060186.001541)   | [Janin](https://doi.org/10.1038/277491a0) | [Guy](https://doi.org/10.1016/S0006-3495(85)83877-7)   | [Hopp](https://doi.org/10.1073/pnas.78.6.3824)  | [Wimley](https://doi.org/10.1021/bi9600153) | [Moon](https://doi.org/10.1073/pnas.1103979108)  | Average | Standard deviation |
 | --- | ----- | ----- | ----- | ----- | ----- | --------- | ----- | ----- | ----- | ----- | ------ | ----- | ------- | ---- |
 | ALA | -0.75 | -0.75 | -0.73 | -0.66 | -0.79 | -0.64     | -0.62 | -0.60 |  0.18 | -0.15 | -0.01  | -0.46 | -0.50   | 0.32 |
@@ -158,6 +168,7 @@ The table below give the maximum possible solvent accessible surface area (ASA),
 Reproduced from [Peters et *al.* (2014)](https://doi.org/10.1002/prot.24582).
 
 ### 4.2. References
+
 - McDonald, I. K. & Thornton, J. M. Satisfying Hydrogen Bonding Potential in Proteins. Journal of Molecular Biology 238, 777–793 (1994). [https://doi.org/10.1006/jmbi.1994.1334](https://doi.org/10.1006/jmbi.1994.1334)
 - McDonald, I. & Thornton, J. M. Atlas of Side-Chain and Main-Chain Hydrogen Bonding. [https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/](https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/) (1994).
 - Kyte, J. & Doolittle, R. F. A simple method for displaying the hydropathic character of a protein. Journal of Molecular Biology 157, 105–132 (1982). [https://doi.org/10.1016/0022-2836(82)90515-0](https://doi.org/10.1016/0022-2836(82)90515-0)
@@ -169,6 +180,7 @@ Reproduced from [Peters et *al.* (2014)](https://doi.org/10.1002/prot.24582).
 
 
 ## 5. Secondary structure
+
 Secondary structure of each residue is assigned using the DSSP 2.2.0 written by Maarten L. Hekkelman and implemented in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This implementation eliminates the need for the user to install, or compile, third-party software. This increases the module's ease of installation and portability between OS. It also avoids the need to read/write numerous output files.
 
 > [!IMPORTANT] 
@@ -177,6 +189,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 > - STRIDE, source aviable [here](https://github.com/MDAnalysis/stride),  with the wraper [pySTRIDE](https://github.com/MDAnalysis/pystride) created by [MDAnalysis](https://docs.mdanalysis.org/stable/index.html) team.
 
 ### 5.1. Complete assignment code
+
 | Code | Description                                  |
 | ---- | -------------------------------------------- |
 | H    | Alpha helix                                  |
@@ -190,6 +203,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | NA   | "residue" in the topology which isn't actually a protein residue. |
 
 ### 5.2. Simplified assignment code
+
 | Code | Description | Corresponding complete code |
 | ---- | ----------- | --------------------------- |
 | H    | Helix       | H, G, I                     |
@@ -198,6 +212,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | NA   | "residue" in the topology which isn't actually a protein residue. | NA |
 
 ### 5.3. References
+
 - Kabsch, W. & Sander, C. Dictionary of protein secondary structure: Pattern recognition of hydrogen‐bonded and geometrical features. *Biopolymers* 22, 2577–2637 (1983). [https://doi.org/10.1002/bip.360221211](https://doi.org/10.1002/bip.360221211)
 - Frishman, D. & Argos, P. Knowledge‐based protein secondary structure assignment. *Proteins* 23, 566–579 (1995). [https://doi.org/10.1002/prot.340230412](https://doi.org/10.1002/prot.340230412)
 
@@ -205,6 +220,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 
 ## 6. Location in diffrent regions in protein & Role in interaction
+
 Within a protein complex, amino acids can be located in different regions. It is possible to determine in which region an amino acid is located, by measuring its accessible surface. There are 5 regions: surface, interior, core, support and rim (Figure 1).
 
 Residues located on the surface do not participate in the interaction and form part of the Non-interactin surface (NIS), see Figure 2. Two types of residue can be distinguished. On the one hand, there are those that are only slightly exposed to solvent, and secondly, those that are highly exposed to seolvent and are said to be hydrated. In this case, their relative ASA in complex is > 40%.
@@ -216,6 +232,7 @@ There's a subtlety to the residues in the rim. Since this is the interface bound
 | <img src="pictures/protein_regions.png" width="450">  <br/> Redrawed from [Levy (2010)](https://doi.org/10.1016/j.jmb.2010.09.028). | <img src="pictures/protein_surface_NIS_IS.png" width="450"> <br/> Amino acids in *Rim* can be part of the NIS or not.|
 
 ### 6.1. Structural definition of protein regions & interface types
+
 | Protein region     | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
 | ------------------ | ----------------------- | -------------------------- | ------------- |
 | Surface & Hydrated |                         | > 40%                      | = 0           |
@@ -228,6 +245,7 @@ There's a subtlety to the residues in the rim. Since this is the interface bound
 
 
 ### 6.2. Equations used to calculate the relative ASA (rASA) and the $\Delta$ rASA
+
 $$
 \begin{align}
 	rASA = & \frac{ASA}{MaxASA} \\
@@ -241,6 +259,7 @@ $$
 | MaxASA | See [Maximum ASA in proteins](#3-maximum-asa-in-proteins). | $nm^2$ or $Å^2$ |
 	 
 ### 6.3. References
+
 - Levy, E. D. A Simple Definition of Structural Regions in Proteins and Its Use in Analyzing Interface Evolution. *Journal of Molecular Biology* 403, 660–670 (2010). [https://doi.org/10.1016/j.jmb.2010.09.028](https://doi.org/10.1016/j.jmb.2010.09.028)
 - Wang, S., Li, W., Liu, S. & Xu, J. RaptorX-Property: a web server for protein structure property prediction. *Nucleic Acids Res* 44, W430–W435 (2016). [https://doi.org/10.1093/nar/gkw306](https://doi.org/10.1093/nar/gkw306)
 - Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014). [https://doi.org/10.1016/j.jmb.2014.04.017](https://doi.org/10.1016/j.jmb.2014.04.017)
