@@ -240,6 +240,36 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 
 
 
+## 7. van der Waals
+
+**van_der_waals**(trajectory, res_index_A, res_index_B, frame=0, set_hydrogen=True, distance_tolerance=0.5, MIN_contact_numbers=1)
+
+### Description
+
+Identify van der Waals interaction between two residues.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| set_hydrogen | boolean (True / False) | Set if hydrogens are taken in acount, or not, for vdW interaction. <br/> Default value: True | optional |
+| distance_tolerance | integer | The range of distance is $radii_{vdw \space atom \space 1} + radii_{vdw \space atom \space 2} + N$ <br/> Range of values: 0.0 to 0.6 Å. <br/> Default value: 0.5 Å | optional |
+| MIN_contact_numbers | integer | Min number of contacts tow residues must have to consider a vdW interaction. <br/> Default value: 1 | optional |
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction   | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_distance        | Return the list distances between atoms pairs making vdW interaction and the list of their index. | list_distance (list), list_contacts (list) | Å |
+| .get_number_contacts | Return the number of atom-atom vdW contact between the two residues. | integer |  |
+| .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | interger or boolean | $Å^2$ |
+
+
 
 
 
@@ -260,7 +290,7 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 | trajectory  | integer | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
-| frame       | integer | Frame ID on which to perform the analysis. </br> Have no effect with the method 'baker_hubbard', because it implementation analyse the whole trajectory. <br/> Default value: 0 | optional |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
 
 
 ### Properties
