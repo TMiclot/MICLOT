@@ -19,6 +19,7 @@ This method use AMBERSB14 ([Maier *et al.*, 2015](https://pubs.acs.org/doi/10.10
 > These are approximate values which may vary depending on your computer configuration.
 
 ### 1.1. Coulomb energy
+
 The Coulomb interaction between two atoms is given by the equation:
 
 $$
@@ -49,6 +50,7 @@ $$
 
 
 #### 1.1.1. Coulomb with "hard" cutoff
+
 When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
 In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Coulomb energy.
 
@@ -57,6 +59,7 @@ But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$.
 
 
 #### 1.1.2. Coulomb with cutoff, using reaction field
+
 Another possibility for using a cutoff is to use the reaction field approximation ([Tironi *et al.*, 1995](https://doi.org/10.1063/1.469273)). 
 This method considers thant everything above the cutoff is a constant dielectric environment. Coulomb's equation is rewritten as follows:
 
@@ -87,6 +90,7 @@ $$
 
 
 ### 1.2. Lennard-Jones energy
+
 The Lennard-Jones interaction between two atoms is given by the equation:
 
 $$
@@ -123,6 +127,7 @@ $$
 
 
 #### 1.2.1. Lennard-Jones with "hard" cutoff
+
 When we're interested in short-term interactions, it's better not to consider all the interactions between atoms.
 In this case, it is necessary to apply a cutoff. This means that all pairs of atoms *ij* separated by a distance greater than the cutoff are not taken into account in the calculation. Finally, only pairs of atoms separated by a distance less than or equal to the cutoff will be used to calculate the Lennard-Jones energy.
 
@@ -131,6 +136,7 @@ But, if $r_{ij} >$ cutoff, then $E_{ij} = 0$.
 
 
 #### 1.2.2. Lennard-Jones with cutoff, using switching function
+
 Another possibility for using a cutoff is to use a [switching function](https://manual.gromacs.org/current/reference-manual/functions/nonbonded-interactions.html#modified-non-bonded-interactions). 
 The switching function involves two distances $r_{switch}$ and $r_{cutoff}$, where $r_{switch} < r_{cutoff}$. Between these two distances, the energy is modified by a factor S that causes the energy to tend towards 0 when the integration distance reaches the cutoff. Because the 
 
@@ -166,6 +172,7 @@ $$
 
 
 ### 1.3. Total pair energy
+
 The total energy of a pair is given by the sum of the Coulomb energy and the Lennard-Jones energy.
 
 $$
@@ -176,6 +183,7 @@ $$
 
 
 ### 1.4. References
+
 - Maier, J. A. et al. ff14sb: improving the accuracy of protein side chain and backbone parameters from ff99sb. *J. Chem. Theory Comput.* 11, 3696–3713 (2015). [https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)
 - Huang, J. & MacKerell, A. D. CHARMM36 all-atom additive protein force field: Validation based on comparison to NMR data. *J. Comput. Chem.* 34, 2135–2145 (2013). [https://doi.org/10.1021/acs.jctc.5b00255](https://doi.org/10.1021/acs.jctc.5b00255)
 - Tironi, I. G., Sperb, R., Smith, P. E. & Van Gunsteren, W. F. A generalized reaction field method for molecular dynamics simulations. *The Journal of Chemical Physics* 102, 5451–5459 (1995). [https://doi.org/10.1063/1.469273](https://doi.org/10.1063/1.469273)
@@ -184,7 +192,8 @@ $$
 
 
 
-## 2. For the binding interface - *Hunter* method
+## 2. Protein binding: *4-distance description* method
+
 > "You should enjoy the little detours to the fullest. Because that's where you'll find things more important than what you want."
 > Ging Freecs, *Hunter X Hunter*
 
@@ -230,6 +239,7 @@ And the terms of the equations are defined as:
 
 
 ### References
+
 - Potapov, V., Cohen, M., Inbar, Y. & Schreiber, G. Protein structure modelling and evaluation based on a 4-distance description of side-chain interactions. *BMC Bioinformatics* 11, 374 (2010). [https://doi.org/10.1186/1471-2105-11-374](https://doi.org/10.1186/1471-2105-11-374)
 - Cohen, M., Potapov, V. & Schreiber, G. Four Distances between Pairs of Amino Acids Provide a Precise Description of their Interaction. *PLoS Comput Biol* 5, e1000470 (2009). [https://doi.org/10.1371/journal.pcbi.1000470](https://doi.org/10.1371/journal.pcbi.1000470)
 - Dunbrack, R. L. & Cohen, F. E. Bayesian statistical analysis of protein side‐chain rotamer preferences. *Protein Science* 6, 1661–1681 (1997). [https://doi.org/10.1002/pro.5560060807](https://doi.org/10.1002/pro.5560060807)
@@ -239,9 +249,10 @@ And the terms of the equations are defined as:
 
 
 
-## 3. For the binding interface - *PRODIGY* method
+## 3. Protein binding: *Contacts-based* method
+
 > [!IMPORTANT]  
-> This is a reimplementation of PRODIGY method, from scratch. This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
+> This is an implementation, from scratch, of the contacts-based method by [Vangone *et al.* (2015)](https://doi.org/10.7554/eLife.07454). This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
 
 
 ***IC-NIS* model** is calculated as follow:
@@ -267,6 +278,7 @@ And the terms of the equations are defined as:
 
 
 ### References
+
 - Vangone, A. & Bonvin, A. M. Contacts-based prediction of binding affinity in protein–protein complexes. *eLife* 4, e07454 (2015). [https://doi.org/10.7554/eLife.07454](https://doi.org/10.7554/eLife.07454)
 - Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014).
  [https://doi.org/10.1016/j.jmb.2014.04.017](https://doi.org/10.1016/j.jmb.2014.04.017)
