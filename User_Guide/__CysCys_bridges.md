@@ -70,7 +70,7 @@ $$
 > - *The mean value is 1.0 kcal/mol, and the 90th percentile is 2.2 kcal/mol*. [(Craig *et al.*, 2013)](https://doi.org/10.1186/1471-2105-14-346).
 
 > [!WARNING]
-> - Compare to the original equation, we modify the term $E_{\theta}$ by multiplying it by the factor $\frac{1}{4184}$ , converting J/mol to kcal/mol, to be able to reproduce the results of [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/). The use of this factor is not written in the server documentation, nor in their publications.
+> Compare to the original equation, we modify the term $E_{\theta}$ by multiplying it by the factor $\frac{1}{4184}$ , converting J/mol to kcal/mol, to be able to reproduce the results of [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/). The use of this factor is not written in the server documentation, nor in their publications.
 
 
 ### 1.4. Energy computation: *Dihedral strain energy* method
