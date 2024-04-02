@@ -135,7 +135,7 @@ The recent work by [Reddy et al (2020)](https://doi.org/10.1016/j.compbiolchem.2
 
 ### 2.2. Parameters used
 
-The structural parameters used to detect disulfide bridges are general enough to be applied to diselenine and selenosulfide bridges. And the Se-S and Se-Se distances used correspond to the covalent radii of these atoms (Se-Se: 2.36, S-Se: 2.22) +0.05 .
+The structural parameters used to detect disulfide bridges are general enough to be applied to diselenine and selenosulfide bridges. And the Se-S and Se-Se distances used correspond to the covalent radii of these atoms `(Se-Se: 2.36, S-Se: 2.22) +0.05` .
 
 But the S-S bond energy calculation method cannot be applied to S-Se and Se-Se bonds, because it is not calibrated for them.
 
