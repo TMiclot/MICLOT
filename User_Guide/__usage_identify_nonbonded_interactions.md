@@ -208,7 +208,7 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 
 ### Description
 
-Identify H-bond in a structure, or a trajectory. H-bonds can be computed using 3 diffrent methods: [baker_hubbard](https://mdtraj.org/1.9.4/api/generated/mdtraj.baker_hubbard.html), [kabsch_sander](https://mdtraj.org/1.9.4/api/generated/mdtraj.kabsch_sander.html), [wernet_nilsson](https://mdtraj.org/1.9.4/api/generated/mdtraj.wernet_nilsson.html).
+Identify H-bond in a structure, or a trajectory. H-bonds can be computed using 3 diffrent methods: [baker_hubbard](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.baker_hubbard.html), [kabsch_sander](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.kabsch_sander.html), [wernet_nilsson](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.wernet_nilsson.html).
 
 Based on distances, this class can also discriminate regular, low-barrier, and single-well H-bond subtypes. This information is directly related to the energy profile of the interaction.
 
