@@ -1,3 +1,5 @@
+<img src="https://www.python.org/static/community_logos/python-powered-w.svg" alt="python_logo" width="80">
+
 <img src="__banner.png" alt="banner" class="center">
 
 MICLOT is a collection of tools for the analysis of protein-protein interactions.
