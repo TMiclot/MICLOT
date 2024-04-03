@@ -42,7 +42,7 @@ Two cysteines can form a covalent bond between their chalcogen atoms. But in som
 
 ### 1.3. Energy computation: disulfide model structure method
 
-> [!WARNING]  
+> [!IMPORTANT]  
 > This is an implementation, from scratch, of the method by [Dombkowski *et al.* (2003)](https://doi.org/10.1093/bioinformatics/btg231) and [Craig *et al.* (2013)](https://doi.org/10.1186/1471-2105-14-346). This code is different and is not related to the one from [Disulfide by Design 2.0 web server](http://cptweb.cpt.wayne.edu/DbD2/). Also this code use the structural calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html).
 
 
