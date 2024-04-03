@@ -252,7 +252,7 @@ And the terms of the equations are defined as:
 
 ## 3. Protein binding: *Contacts-based* method
 
-> [!WARNING]  
+> [!IMPORTANT]  
 > This is an implementation, from scratch, of the contacts-based method by [Vangone *et al.* (2015)](https://doi.org/10.7554/eLife.07454). This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
 
 
