@@ -259,7 +259,7 @@ And the terms of the equations are defined as:
 
 $$
 \begin{equation}
-	\Delta G = (- 0.09459 \times IC_{charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{polar}^{\\%}) + (0.3810 \times NIS_{charged}^{\\%}) -15.9433
+	\Delta G = (- 0.09459 \times IC_{charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{polar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) -15.9433
 \end{equation}
 $$
 
