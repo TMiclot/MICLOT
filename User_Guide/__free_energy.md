@@ -1,6 +1,7 @@
 [User Guide home](Manual.md)
 # Free energy
 
+
 ## 1. Between amino acids forming a pair - Molecular mecanics
 
 This method use AMBERSB14 ([Maier *et al.*, 2015](https://pubs.acs.org/doi/10.1021/acs.jctc.5b00255)) and CHARMM36 ([Huang *et al.*, 2013](https://doi.org/10.1021/acs.jctc.5b00255)) force fields. To be able to calculate the Coulomb and Lennard-Jones energies, you must download the force fields files here:
@@ -282,4 +283,3 @@ And the terms of the equations are defined as:
 - Vangone, A. & Bonvin, A. M. Contacts-based prediction of binding affinity in protein–protein complexes. *eLife* 4, e07454 (2015). [https://doi.org/10.7554/eLife.07454](https://doi.org/10.7554/eLife.07454)
 - Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014).
  [https://doi.org/10.1016/j.jmb.2014.04.017](https://doi.org/10.1016/j.jmb.2014.04.017)
-- Xue, L. C., Rodrigues, J. P., Kastritis, P. L., Bonvin, A. M. & Vangone, A. PRODIGY: a web server for predicting the binding affinity of protein–protein complexes. *Bioinformatics* 32, 3676–3678 (2016). [https://doi.org/10.1093/bioinformatics/btw514](https://doi.org/10.1093/bioinformatics/btw514)
