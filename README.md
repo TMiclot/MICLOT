@@ -65,3 +65,5 @@ For the easy installation, we provide a file containing all the information conc
 * * *
 # Citing us
 Miclot, T. & Timr, S. The famous title. *Journal* ... 
+
+Made with :heart: by Tom Miclot
