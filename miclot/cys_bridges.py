@@ -438,6 +438,12 @@ class cys_bridge:
     @property
     def check_interaction(self):
         """
+        DESCRIPTION
+            Check if two cyctein are invloved in a bridge (disulfide, diselenide, selenosulfide).
+        
+        RETURN
+            True      The interaction exist.
+            False     The interaction don't exist.
         """
         if self.method == None and self.geometric_checking == True:
             return True, self.bridge_type
