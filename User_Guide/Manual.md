@@ -1,6 +1,6 @@
 <img src="../__banner.png" alt="banner" class="center">
 
-# User guide
+# User guide :notebook_with_decorative_cover:
 
 Description ...
 
