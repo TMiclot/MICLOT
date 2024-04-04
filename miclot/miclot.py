@@ -20,10 +20,10 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
-#=====[ Import all scripts ]=====
+#=====| Import all scripts|=====
 
 
-#=====[ ]=====
+#=====| |=====
 if __name__ == "__main__":
     main()
 
