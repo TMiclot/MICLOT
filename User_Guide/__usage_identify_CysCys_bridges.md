@@ -14,7 +14,13 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ### Description
 
-Identify disulfide, diselenide or selenosulfide bridge between two Cys.
+ Identify disulfide, diselenide or selenosulfide bridge between two Cys.
+ It ca use two methods to calculate the bridge energy:
+
+ - Dihedral strain energy (DSE)
+ - Disulfide model structure (DMS)
+
+
 
 ### Arguments
 
@@ -24,23 +30,27 @@ Identify disulfide, diselenide or selenosulfide bridge between two Cys.
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
-| MAX_distance_XX | integer | <br/> Default value: 0 | optional |
-| MAX_distance_CA | integer | <br/> Default value: 0 | optional |
-| MIN_distance_CA | integer | <br/> Default value: 0 | optional |
-| MAX_distance_CB | integer | <br/> Default value: 0 | optional |
-| method     | boolean | <br/> Default value: False | optional |
-| MAX_energy | integer | <br/> Default value: 0 | optional |
-| MIN_energy | integer | <br/> Default value: 0 | optional |
+| MAX_distance_XX | integers. | Maximum distance beween S, Se, atoms. <br/> Unit: Å <br/> Default value: Covalent radii | optional |
+| MAX_distance_CA | integer | Maximum distance between the CA of each Cys. <br/> Unit: Å <br/> Default value: 7.5 | optional |
+| MIN_distance_CA | integer | Minimum distance between the CA of each Cys. <br/> Unit: Å <br/> Default value: 3.0 | optional |
+| MAX_distance_CB | integer | Maximum distance between the CB of each Cys. <br/> Unit: Å <br/> Default value: 5.5 | optional |
+| method | boolean | <br/> Default value: 0 | optional |
+| MAX_energy | integer | Maximum energy to consider a bridge. To use it, remember to choose a method. <br/> Unit: kcal/mol or kJ/mol (Depend on method) <br/> Default value: 0 | optional |
+| MIN_energy | integer | Minimum energy to consider a bridge. To use it, remember to choose a method. <br/> Unit: kcal/mol or kJ/mol (Depend on method)  <br/> Default value: 0 | optional |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between CA-CA atoms of the two residues. | interger | Å |
+| .get_distance      | Return all CA-CA, CB-CB and X-X distances. | interger | Å |
+| .get_angle         | Return all X1, X2, X3 and theta angles.    | interger | degree |
+| .get_energy | Return the calculated energy for the method DSE and for the method DMS. | dse_total (integer), dms_total (integer) | DSE in kJ/mol, DMS  in kcal/mol |
+| .get_energy_dse | Return the calculated energies for: X1 angles, X2 angles and X3 angle used in the method DSE. | integers: (X1_A,  X1_B), (X2_A,  X2_B), X3 | kJ/mol |
+| .get_energy_dms | Return the calculated energies for: X1 angles, X2 angles and X3 angle used in the method DSE. | integers: (X1_A,  X1_B), X3, (theta_A,  theta_B) | kcal/mol |
 
 > [!WARNING]
-> This method return same value for angle and energies as [Disulfide Bond Dihedral Angle Energy Server](https://services.mbi.ucla.edu/disulfide/).
+> This this method return same value for angle and energies as [Disulfide Bond Dihedral Angle Energy Server](https://services.mbi.ucla.edu/disulfide/).
 > But it can return diffrent result compare to [Disulfide by Design 2.0 Server](http://cptweb.cpt.wayne.edu/DbD2/), because the angle measurements can be different between MDTraj, or a manual measurement with [VMD](https://www.ks.uiuc.edu/Research/vmd/), and what is given by this server.
 
 
@@ -52,12 +62,16 @@ Identify disulfide, diselenide or selenosulfide bridge between two Cys.
 
 ### Description
 
+This command check a PDB structure to identify all CYS-CYS bridges. It can identify disulfide, diselenide or selenosulfide bridges. 
+
+> [!TIP]
+> A progress bar is displayed to inform the user on the status of the analysis.
 
 
 ### Arguments
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| pdb_file | string  | MDTraj trajectory. | mandatory |
-| outfile  | boolean | Index of residue A in MDTraj topology. | optional |
-| logfile  | boolean | Index of residue B in MDTraj topology. | optional |
+| pdb_file | string  | PDB structure path. | mandatory |
+| outfile  | boolean | Write a PDB file with modified Cys names (CYS to CYX, or SEC to XSE) if any bridge is detected. <br/> Default value: True | optional |
+| logfile  | boolean | Generate an output file in CSV format containing all tests performed and their results. If set to False the result will be print in the terminal, but with less informations. <br/> Default value: True | optional |
