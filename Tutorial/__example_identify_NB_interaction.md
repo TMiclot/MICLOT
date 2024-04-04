@@ -11,12 +11,7 @@ import ***
 ```
 
 
-
-***
-
-# How to identify internal non-bonded interaction inside a amino acid ?
-
-## C5 hydrogen bond
+## 0. C5 hydrogen bond
 
 **Code**
 
@@ -39,9 +34,6 @@ True
 
 
 
-
-
-# How to identify a given non-bonded interaction into an amino acid pair ?
 
 ## 1. C-bond
 
