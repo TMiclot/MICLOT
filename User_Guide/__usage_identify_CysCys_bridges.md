@@ -62,16 +62,41 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ### Description
 
-This command check a PDB structure to identify all CYS-CYS bridges. It can identify disulfide, diselenide or selenosulfide bridges. 
+This command check a PDB structure to identify all CYS-CYS bridges. It can identify disulfide, diselenide or selenosulfide bridges.
+(seleno-)cystein are renamed: CYS to CYX, or SEC to XSE if they are involved into a bridge.
 
 > [!TIP]
 > A progress bar is displayed to inform the user on the status of the analysis.
-
 
 ### Arguments
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
 | pdb_file | string  | PDB structure path. | mandatory |
-| outfile  | boolean | Write a PDB file with modified Cys names (CYS to CYX, or SEC to XSE) if any bridge is detected. <br/> Default value: True | optional |
+| outfile  | boolean | Write a PDB file with modified Cys names if any bridge is detected. <br/> Default value: True | optional |
 | logfile  | boolean | Generate an output file in CSV format containing all tests performed and their results. If set to False the result will be print in the terminal, but with less informations. <br/> Default value: True | optional |
+
+> [!IMPORTANT]
+> In the output PDB file, chain name and residue number can be renamed and/or renumbered, because that's how MDTraj works.
+> Take these changes into account in your analysis.
+
+### Information contained in the `logfile`
+
+The logfile is in [CSV format](https://en.wikipedia.org/wiki/Comma-separated_values), it contain 12 columns.
+Part of them are related to the first cystein (_A columns), or to the second cystein (_B columns).
+
+The logfile show all Cys-Cys pairs tested and their results. 
+In this table, (seleno-)cystein are renamed only when they are involved into a bridge.
+
+| Column name | Description |
+| ----------- | ----------- |
+| ResName     | Name of the cysteine. |
+| ResID       | ID of the cysteine in the MDTraj topology. |
+| ResSeq      | Residue number in the sequence. |
+| ChainID     | ID of the residue chain in the MDTraj topology. |
+| ChainName   | Converted ID number to alphabetic name. |
+| Bridge      | A boolean value which is True if their is a bridge between the two cysteine, or which is False if not. |
+| Type        | Type of the bridge: disulfide, diselenide, selenosulfide or Fals if their is no bridge. |
+
+
+
