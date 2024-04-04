@@ -14,7 +14,7 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ### Description
 
-
+Identify disulfide, diselenide or selenosulfide bridge between two Cys.
 
 ### Arguments
 
@@ -24,7 +24,13 @@ To meet the user's needs, two commands have been implemented to identify cystein
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
-
+| MAX_distance_XX | integer | <br/> Default value: 0 | optional |
+| MAX_distance_CA | integer | <br/> Default value: 0 | optional |
+| MIN_distance_CA | integer | <br/> Default value: 0 | optional |
+| MAX_distance_CB | integer | <br/> Default value: 0 | optional |
+| method     | boolean | <br/> Default value: False | optional |
+| MAX_energy | integer | <br/> Default value: 0 | optional |
+| MIN_energy | integer | <br/> Default value: 0 | optional |
 
 ### Properties
 
@@ -34,7 +40,7 @@ To meet the user's needs, two commands have been implemented to identify cystein
 | .get_distance      | Distances between CA-CA atoms of the two residues. | interger | Å |
 
 > [!WARNING]
-> This this method return same value for angle and energies as [Disulfide Bond Dihedral Angle Energy Server](https://services.mbi.ucla.edu/disulfide/).
+> This method return same value for angle and energies as [Disulfide Bond Dihedral Angle Energy Server](https://services.mbi.ucla.edu/disulfide/).
 > But it can return diffrent result compare to [Disulfide by Design 2.0 Server](http://cptweb.cpt.wayne.edu/DbD2/), because the angle measurements can be different between MDTraj, or a manual measurement with [VMD](https://www.ks.uiuc.edu/Research/vmd/), and what is given by this server.
 
 
@@ -53,5 +59,5 @@ To meet the user's needs, two commands have been implemented to identify cystein
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
 | pdb_file | string  | MDTraj trajectory. | mandatory |
-| outfile | boolean | Index of residue A in MDTraj topology. | optional |
-| logfile | boolean | Index of residue B in MDTraj topology. | optional |
+| outfile  | boolean | Index of residue A in MDTraj topology. | optional |
+| logfile  | boolean | Index of residue B in MDTraj topology. | optional |
