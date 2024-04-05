@@ -651,7 +651,7 @@ def check_cys_bridges(pdb_file, outfile=True, logfile=True):
         name = pdb_file.split('.')[0]
         
         # Export DataFrame to CSV file
-        df.to_csv(f'{name}_log.csv', index=False)  # Set index=False to exclude row indices
+        df.to_csv(f'{name}_CYS_log.csv', index=False)  # Set index=False to exclude row indices
 
   
     #===== Export the the modified structure in PDB file or export the topology =====
