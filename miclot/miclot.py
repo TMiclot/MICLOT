@@ -23,7 +23,7 @@ __version__ = "Version: 1.0 -- jj/mm/2024"
 #=====| Import all scripts|=====
 
 
-#=====| |=====
+#=====| Module end |=====
 if __name__ == "__main__":
     main()
 
