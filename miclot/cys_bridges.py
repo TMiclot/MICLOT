@@ -664,3 +664,11 @@ def check_cys_bridges(pdb_file, outfile=True, logfile=True):
         
     else:
         print("INFO - No structure files (.pdb) have been modified or written.")
+
+
+
+
+
+#=====| Module end |=====
+if __name__ == "__main__":
+    main()
