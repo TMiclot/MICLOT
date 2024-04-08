@@ -14,10 +14,6 @@ This method use AMBERSB14 ([Maier *et al.*, 2015](https://pubs.acs.org/doi/10.10
 > This XML format is easier to read and use thant the original files.
 > This also makes it easier to compare the energies calculated by this software. For example if you use the same method as wrote in the [cookbook](https://openmm.github.io/openmm-cookbook/latest/notebooks/cookbook/Computing%20Interaction%20Energies.html).
 
-> [!TIP]
-> Because of their different file sizes, using AMBER ff14SB is faster than CHARMM36.
-> Calculation with ff14SB run for 0.05 s while this time is 0.4 s for CHARMM.
-> These are approximate values which may vary depending on your computer configuration.
 
 ### 1.1. Coulomb energy
 
