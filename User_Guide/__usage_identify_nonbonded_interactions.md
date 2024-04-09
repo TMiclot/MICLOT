@@ -273,7 +273,7 @@ Identify van der Waals interaction between two residues.
 
 
 
-## 8. Amino-$\pi$
+## 8. Amino- $\pi$
 
 **amino_pi**(trajectory, trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, angular_tolerance=30.0*)
 
