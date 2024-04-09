@@ -127,6 +127,7 @@ class C5_hydrogen_bond:
             True     The interaction exist.
             False    The interaction don't exist.
         """
+        # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
         if self.distance <= self.MAX_distance \
         and np.isclose(abs(self.angle_phi_res), 140.0, atol=self.angular_tolerance) \
         and np.isclose(abs(self.angle_psi_res), 140.0, atol=self.angular_tolerance): #take absolute value of the angle for the checking
