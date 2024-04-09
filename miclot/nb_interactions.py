@@ -1267,6 +1267,161 @@ class van_der_waals:
 
 
 #=====================================================
+#===== Class for Amino-Pi
+#=====================================================
+class amino_pi:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=5.5, angular_tolerance=30.0):
+        """
+        INTERACTION TYPE    amino-Pi
+        SUBTYPE(S)          no
+
+        DESCRIPTION
+            Interaction the amino group (-NH2) of ASN, or GLN, and an aromatic rings.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+        Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
+        
+            MAX_distance          Maximum distance between COM of aromatic ring and the N of the amino group
+                                  Default value: 5.5
+
+            angular_tolerance     The range of angle is 90.0 +/- N.
+                                  Default value of N: 30.0
+
+            frame                 Frame ID on which to perform the analysis.
+                                  Default value: 0
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.MAX_distance = MAX_distance
+        self.angular_tolerance = angular_tolerance
+
+        
+        
+        #===== Create dictionaries to  =====
+        self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
+                                   "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "HIS": 'CG ND1 CD2 CE1 NE2',
+                                  }
+        
+        
+        self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
+                           "TRP": ['CD2', 'CZ2',  'CZ3'],
+                           "PHE": ['CG',  'CE1',  'CE2'],
+                           "HIS": ['CG',  'CE1',  'NE2'],
+                          }
+
+        
+        
+        #===== Identify residues and get their names =====
+        # Identify the aromatic and the amino AA
+        if self.top.residue(res_index_A).name in self.dict_aromatic_ring and self.top.residue(res_index_B).name in ["ASN", "GLN"]:
+            self.res_amino = res_index_B
+            self.res_aromatic = res_index_A
+        elif self.top.residue(res_index_B).name in self.dict_aromatic_ring and self.top.residue(res_index_A).name in ["ASN", "GLN"]:
+            self.res_amino = res_index_A
+            self.res_aromatic = res_index_B
+        else:
+            raise ValueError('Residues are not TYR TRP PHE HIS / ASN GLN')
+            
+        # Get residues names
+        self.res_amino_name = self.top.residue(self.res_amino).name
+        self.res_aromatic_name = self.top.residue(self.res_aromatic).name
+
+        
+        #===== Distance between COM of aromatic and N =====
+        # Compute COM of aromatic ring
+        self.COM_aromatic = md.compute_center_of_mass(self.traj, select=f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}")[0]
+        
+        # Get position of the N
+        self.atom_N_index = self.top.select(f"resid {self.res_amino} and name ND2 NE2")[0]
+        self.atom_N_position = self.traj.xyz[0][self.atom_N_index]
+        
+        # create a vector between aromatic COM and N & measure it's norm
+        self.vector_COM_N = Vector.from_points(self.COM_aromatic, self.atom_N_position)
+        self.distance = self.vector_COM_N.norm() *10 # *10 to convert nm to angstrom
+        
+        
+        #===== Create planes and get it's normal vector =====
+        # Get position of all atom in aromatic plane
+        self.list_aromatic_atom_position = []
+        #
+        for self.atom in self.dict_plane[self.res_aromatic_name]:
+            self.atom_index = self.top.residue(self.res_aromatic).atom(self.atom).index
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_atom_position.append(self.atom_position)
+        
+        # create aromatic plane
+        self.plane_aromatic = Plane.from_points(self.list_aromatic_atom_position[0], self.list_aromatic_atom_position[1], self.list_aromatic_atom_position[2])
+        
+        # Get normal vector od the aromatic plane
+        self.vector_normal_plane_aromatic = self.plane_aromatic.normal
+        
+         
+        # ===== Measure angle between the normal vector of aromatic plane and the vector COM --> N =====
+        # get cosine similarity between the two vectors
+        self.similarity = self.vector_normal_plane_aromatic.cosine_similarity(self.vector_COM_N)
+        
+        # if the vector are in the opposit direction, reverse the direction of the aromatic plane norm
+        if self.similarity < 0:
+            self.vector_normal_plane_aromatic = self.vector_normal_plane_aromatic.different_direction()
+            
+        # calculate the angle and convert it to degree
+        self.angle = np.rad2deg( self.vector_normal_plane_aromatic.angle_between(self.vector_COM_N) )
+        
+        # Ensure angle is within -180 to 180 range
+        self.angle = (self.angle + 180) % 360 - 180
+        
+        
+        
+    #===== Return results =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if the C5 H-bond interaction exist for the residue.
+        
+        RETURN
+            True     The interaction exist.
+            False    The interaction don't exist.
+        """
+        # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
+        if self.distance <= self.MAX_distance and np.isclose(abs(self.angle), 90.0, atol=self.angular_tolerance):
+            return True
+        else:
+            return False
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle betwee the N-COM and the normal of the amino plane
+        RETURN         angle_planes
+        UNIT           degree
+        """
+        return abs(self.angle)
+
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Distance between COM of aromatic ring and N of the amino group
+        RETURN         distance
+        UNIT           Angstrom
+        """
+        return self.distance
+    
+
+
+
+
+
+
+
+#=====================================================
 #===== Class for 
 #=====================================================
-

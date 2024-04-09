@@ -433,7 +433,7 @@ True
 
 ## 6. van der Waals
 
-### 6.1. Simple usage example
+### 6.1. Simple usage
 
 **Code**
 
@@ -538,10 +538,60 @@ None
 
 
 
+## 7. Amino-$\pi$
+
+### 7.1. Simple usage
+
+**Code**
+
+```python
+pdb_file = '7veg.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = amino_pi(traj, 12,54) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+True
+3.5438241270201325
+109.76115407329473
+
+```
+
+
+### 7.2. No interaction
+
+**Code**
+
+```python
+pdb_file = '7veg.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = amino_pi(traj, 34,10) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+False
+7.389154148287681
+62.269396599020865
+```
+
+
+
+
+
 <!--- TEMPLATE
 ## 4. Salt bridge
 
-### 3.1. Case: Charge clash
+### 3.1. Simple usage
 
 **Code**
 

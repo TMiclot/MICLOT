@@ -58,7 +58,7 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 | -------- | --- | --- | --- |
 | trajectory        | integer | MDTraj trajectory.  | mandatory |
 | res_index         | integer | Index of the residue in MDTraj topology. | mandatory |
-| angular_tolerance | integer | Set an absolute tolerance parameter N. So the range of angle is 140.0 +/- N. <br/> Default value of N: 10.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html). | optional |
+| angular_tolerance | integer | Set an absolute tolerance parameter N. So the range of angle is 140.0˚ +/- N. <br/> Default value of N: 10.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html). | optional |
 | frame             | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
 | MAX_distance      | integer | Maximum distance between O and H, in angstrom. <br/> Unit: Å <br/> Default value: 2.7 | optional  |
 
@@ -268,6 +268,37 @@ Identify van der Waals interaction between two residues.
 | .get_distance        | Return the list distances between atoms pairs making vdW interaction and the list of their index. | list_distance (list), list_contacts (list) | Å |
 | .get_number_contacts | Return the number of atom-atom vdW contact between the two residues. | integer |  |
 | .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | interger or boolean | $Å^2$ |
+
+
+
+
+
+## 8. Amino-$\pi$
+
+**amino_pi**(trajectory, trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, angular_tolerance=30.0*)
+
+### Description
+
+Identify the interaction between the amino group of Asn or Gln and the $\pi$ ring of the residue.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory   | integer | MDTraj trajectory.  | mandatory |
+| res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MAX_distance | integer | Maximum distance between the atom N and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
+| angular_tolerance | integer | Set an absolute tolerance parameter N. So the range of angle is 90.0˚ +/- N. <br/> Default value of N: 30.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html).  | optional |
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_distance      | Distances between the COM of the ring and the N atom. | interger | Å |
+| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ N. | interger | degree |
 
 
 
