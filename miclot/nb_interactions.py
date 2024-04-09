@@ -1,7 +1,28 @@
 #!/usr/bin/env python3
 
 """
-This script is part of MICLOT ...
+  ___      ___   __     ______   ___        ______  ___________  
+ |"  \    /"  | |" \   /" _  "\ |"  |      /    " \("     _   ") 
+  \   \  //   | ||  | (: ( \___)||  |     // ____  \)__/  \\__/  
+  /\\  \/.    | |:  |  \/ \     |:  |    /  /    ) :)  \\_ /     
+ |: \.        | |.  |  //  \ _   \  |___(: (____/ //   |.  |     
+ |.  \    /:  | /\  |\(:   _) \ ( \_|:  \\        /    \:  |     
+ |___|\__/|___|(__\_|_)\_______) \_______)\"_____/      \__|
+
+ Molecular InteraCtion anaLysis tOolkiTs
+ _______________________________________
+ 
+ This module is provide function to compute the non-bonding interactions between two residues.
+ 
+ The non-bonding interactions are:
+    - C5 H-bond
+    - C-bond
+    - Hydrophobic & Repulsion hydrophobe/hydrophile
+    - Charges clash & charges repulsion
+    - Salt bridges
+    - Hydrogen bond
+    - van der Waals
+    - 
 """
 
 __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'
@@ -214,12 +235,12 @@ class C_bond:
         
 
         #===== Get atoms index for residue A =====
-        self.res_A_name = self.traj.topology.residue(self.res_A).name
+        self.res_A_name = self.top.residue(self.res_A).name
         self.atoms_Csp3_res_A = self.traj.topology.select(f"resid {self.res_A} and name {self.Csp3[self.res_A_name]}")
         self.atoms_O_res_A = self.traj.topology.select(f"resid {self.res_A} and name {self.O_carbonyl[self.res_A_name]}")
         
         #===== Get atoms index for residue B =====
-        self.res_B_name = self.traj.topology.residue(self.res_B).name
+        self.res_B_name = self.top.residue(self.res_B).name
         self.atoms_Csp3_res_B = self.traj.topology.select(f"resid {self.res_B} and name {self.Csp3[self.res_B_name]}")
         self.atoms_O_res_B = self.traj.topology.select(f"resid {self.res_B} and name {self.O_carbonyl[self.res_B_name]}")
         
@@ -429,8 +450,8 @@ class hydrophobic:
         self.list_aa_hydrophobic_hydrophilic = self.aa_hydrophobic + self.aa_hydrophilic
         
         #===== Get residue A and B names =====
-        self.res_A_name = self.traj.topology.residue(self.res_A).name
-        self.res_B_name = self.traj.topology.residue(self.res_B).name
+        self.res_A_name = self.top.residue(self.res_A).name
+        self.res_B_name = self.top.residue(self.res_B).name
         
         #===== Get CA atoms index and distance for residue A and B =====
         self.atom_CA_res_A = self.top.select(f"resid {self.res_A} and name CA")[0]
@@ -540,12 +561,12 @@ class charge_clash_repulsion:
         
         #===== Get atoms index & name for residue A =====
         self.atom_CA_res_A = self.top.select(f"resid {self.res_A} and name CA")[0]
-        self.res_A_name = self.traj.topology.residue(self.res_A).name
+        self.res_A_name = self.top.residue(self.res_A).name
         self.charged_atoms_res_A = self.top.select(f"resid {self.res_A} and name {self.charged_atoms[self.res_A_name]}")[0]
         
         #===== Get atoms index & name for residue B =====
         self.atom_CA_res_B = self.top.select(f"resid {self.res_B} and name CA")[0]
-        self.res_B_name = self.traj.topology.residue(self.res_B).name
+        self.res_B_name = self.top.residue(self.res_B).name
         self.charged_atoms_res_B = self.top.select(f"resid {self.res_B} and name {self.charged_atoms[self.res_B_name]}")[0]
         
         #==== Compute CA-CA and X-X distances =====
@@ -679,12 +700,12 @@ class salt_bridge:
         
         #===== Get atoms index & name for residue A =====
         self.atom_CA_res_A = self.top.select(f"resid {self.res_A} and name CA")[0]
-        self.res_A_name = self.traj.topology.residue(self.res_A).name
+        self.res_A_name = self.top.residue(self.res_A).name
         self.charged_atoms_res_A = self.top.select(f"resid {self.res_A} and name {self.charged_atoms[self.res_A_name]}")[0]
         
         #===== Get atoms index & name for residue B =====
         self.atom_CA_res_B = self.top.select(f"resid {self.res_B} and name CA")[0]
-        self.res_B_name = self.traj.topology.residue(self.res_B).name
+        self.res_B_name = self.top.residue(self.res_B).name
         self.charged_atoms_res_B = self.top.select(f"resid {self.res_B} and name {self.charged_atoms[self.res_B_name]}")[0]
         
         #==== Compute CA-CA and X-X distances =====
@@ -869,8 +890,8 @@ class hydrogen_bond:
         
         
         #===== Get atoms index & name for the pair =====
-        self.res_A_name = self.traj.topology.residue(self.res_A).name
-        self.res_B_name = self.traj.topology.residue(self.res_B).name
+        self.res_A_name = self.top.residue(self.res_A).name
+        self.res_B_name = self.top.residue(self.res_B).name
         
         
         #===== identify Hbonds =====
