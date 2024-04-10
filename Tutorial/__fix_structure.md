@@ -3,7 +3,7 @@
 # Fix a PDB structure
 
 This part will explain how to ...
-Using [OpenMM](https://openmm.org/) or ...
+Using PDB2PQR-APBS with Propka (or [OpenMM](https://openmm.org/))
 
 ## 1. Check protonation state
 

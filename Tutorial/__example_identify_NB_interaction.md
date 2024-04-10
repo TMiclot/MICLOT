@@ -587,6 +587,76 @@ False
 
 
 
+## 8. Salt bridge
+
+### 8.1. Case: anion- $\Pi$
+
+**Code**
+
+```python
+pdb_file = 'anion_pi.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = charge_aromatic(traj, 0, 1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'anion-Pi')
+3.6034270897476572
+79.49791083897665
+```
+
+### 8.2. Case: anion-quadrupole
+
+**Code**
+
+```python
+pdb_file = 'anion_quadrupole.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = charge_aromatic(traj, 0, 1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'anion-quadrupole')
+5.097612414323615
+0.2565586234471908
+```
+
+### 8.3. Case: cation-intermediate
+
+**Code**
+
+```python
+pdb_file = 'cation_intermediate.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = charge_aromatic(traj, 0, 1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'cation-intermediate')
+4.818607454378017
+35.839345180706204
+```
+
+
+
+
+
+
 
 <!--- TEMPLATE
 ## 4. Salt bridge

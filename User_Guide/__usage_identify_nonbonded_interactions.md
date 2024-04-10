@@ -275,7 +275,7 @@ Identify van der Waals interaction between two residues.
 
 ## 8. Amino- $\pi$
 
-**amino_pi**(trajectory, trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, angular_tolerance=30.0*)
+**amino_pi**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, angular_tolerance=30.0*)
 
 ### Description
 
@@ -301,6 +301,44 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 | .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ N. | interger | degree |
 
 
+
+
+
+
+
+## 9. Charge-Aromatic ring
+
+**charge_aromatic**(trajectory, res_index_A, res_index_B, frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0)
+
+### Description
+
+Identify the interaction between the amino group of Asn or Gln and the $\pi$ ring of the residue.
+It identify 3 subtypes, where *charge* is cation or anion:
+
+- *charge*-$\pi$
+- *charge*-intermediate (when the angle is between the $\pi$ area and the quadrupole area)
+- *charge*-quadrupole
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory   | integer | MDTraj trajectory.  | mandatory |
+| res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MAX_distance | integer | Maximum distance between the charge and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
+| MIN_pi_angle | integer | Minumum angle to set Pi area. (The max angle is 90) <br/> Unit: degree <br/> Default value: 60.0 | optional |
+| MAX_quadrupole_angle | integer | Maximum angle to set quadrupole area. (The min angle is 0) <br/> Unit: degree <br/> Default value: 35.0 | optional |
+
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_distance      | Distances between the COM of the ring and the charged atom. | interger | Å |
+| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ charge. | interger | degree |
 
 
 

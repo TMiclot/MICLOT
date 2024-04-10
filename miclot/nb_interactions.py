@@ -1285,7 +1285,7 @@ class amino_pi:
         
         OPTIONAL ARGUMENTS
         Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
-        
+
             MAX_distance          Maximum distance between COM of aromatic ring and the N of the amino group
                                   Default value: 5.5
 
@@ -1303,13 +1303,12 @@ class amino_pi:
 
         
         
-        #===== Create dictionaries to  =====
+        #===== Create dictionaries of ring and their plans =====
         self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
                                    "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
                                    "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
                                    "HIS": 'CG ND1 CD2 CE1 NE2',
                                   }
-        
         
         self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
                            "TRP": ['CD2', 'CZ2',  'CZ3'],
@@ -1365,18 +1364,30 @@ class amino_pi:
         
          
         # ===== Measure angle between the normal vector of aromatic plane and the vector COM --> N =====
-        # get cosine similarity between the two vectors
-        self.similarity = self.vector_normal_plane_aromatic.cosine_similarity(self.vector_COM_N)
-        
-        # if the vector are in the opposit direction, reverse the direction of the aromatic plane norm
-        if self.similarity < 0:
-            self.vector_normal_plane_aromatic = self.vector_normal_plane_aromatic.different_direction()
-            
         # calculate the angle and convert it to degree
         self.angle = np.rad2deg( self.vector_normal_plane_aromatic.angle_between(self.vector_COM_N) )
         
-        # Ensure angle is within -180 to 180 range
-        self.angle = (self.angle + 180) % 360 - 180
+        # Convert the angle to a range of values from 0 to 90 degrees
+        if self.angle <= 90:
+            None # the angle is already in the range 0 to 90 degrees
+        elif self.angle <= 180:
+            self.angle = 180 - self.angle
+        elif self.angle <= 270:
+            self.angle = self.angle - 180
+        else:
+            self.angle = 360 - self.angle
+        
+        # The angle is before is between the normal vector of the plan and the vector COM --> N
+        # But the normal vector is perpendicular to the plan and geometric criteria are for the angle between the plan and the vector COM --> N.
+        #
+        #    Pn                Pn is the normal vector to Plane.
+        #    |   v             We calculate the angle between Pn and v.
+        #    |  /              We need the angle between V and Plane. 
+        #    | /
+        # ___|/_____ Plane
+        #
+        # So angle is converted to correspond to be the one betwen the plan and the vector COM --> N.
+        self.angle = 90 - self.angle
         
         
         
@@ -1385,7 +1396,7 @@ class amino_pi:
     def check_interaction(self):
         """
         DESCRIPTION
-            Check if the C5 H-bond interaction exist for the residue.
+            Check if the amino group of GLN or ASN interact with an aromatic ring.
         
         RETURN
             True     The interaction exist.
@@ -1400,7 +1411,7 @@ class amino_pi:
     @property
     def get_angle(self):
         """
-        DESCRIPTION    Angle betwee the N-COM and the normal of the amino plane
+        DESCRIPTION    Angle betwee the N-COM and the normal of the aromatic ring
         RETURN         angle_planes
         UNIT           degree
         """
@@ -1417,6 +1428,199 @@ class amino_pi:
     
 
 
+
+
+
+
+
+#=====================================================
+#===== Class for charge-aromatic interactions
+#=====================================================
+class charge_aromatic:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0):
+        """
+        INTERACTION TYPE    charge with aromatic ring
+        SUBTYPE(S)          cation-pi, anion-pi / cation-intermediate, anion-intermediate / cation-quadrupole, anion-quadrupole
+
+        DESCRIPTION
+            Interaction with the charged amino acid and an aromatic rings.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+        Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
+        
+            MAX_distance          Maximum distance between COM of aromatic ring and the charge
+                                  Default value: 5.5
+                                  
+            MIN_pi_angle          Minumum angle to set Pi area. (The max angle is 90)
+                                  Default value: 60.0
+                                  
+            MAX_quadrupole_angle   Maximum angle to set quadrupole area. (The min angle is 0)
+                                   Default value: 35.0
+
+            frame                 Frame ID on which to perform the analysis.
+                                  Default value: 0: 0
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.MAX_distance = MAX_distance
+        self.MIN_pi_angle = MIN_pi_angle
+        self.MAX_quadrupole_angle = MAX_quadrupole_angle
+
+        
+        #===== Create dictionaries of aromatic ring and corresponding plans =====
+        self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
+                                   "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "HIS": 'CG ND1 CD2 CE1 NE2',
+                                  }
+        
+        self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
+                           "TRP": ['CD2', 'CZ2',  'CZ3'],
+                           "PHE": ['CG',  'CE1',  'CE2'],
+                           "HIS": ['CG',  'CE1',  'NE2'],
+                          }
+
+        
+        #===== Create a dictionnary of atoms representig charge position in charged AA =====
+        self.dict_charged_atoms = {
+            "ARG": "CZ",
+            "LYS": "NZ",
+            "HIP": "ND1", # Protonated HIS
+            "HSP": "ND1", # Protonated HIS in CHARMM
+            "ASP": "CG",
+            "GLU": "CD"
+            }
+        
+        
+        #===== Identify residues and get their names =====
+        # Identify the aromatic and the amino AA
+        if self.top.residue(res_index_A).name in self.dict_aromatic_ring and self.top.residue(res_index_B).name in self.dict_charged_atoms:
+            self.res_charge = res_index_B
+            self.res_aromatic = res_index_A
+        elif self.top.residue(res_index_B).name in self.dict_aromatic_ring and self.top.residue(res_index_A).name in self.dict_charged_atoms:
+            self.res_charge = res_index_A
+            self.res_aromatic = res_index_B
+        else:
+            raise ValueError('Residues are not TYR TRP PHE HIS / ARG LYS ASP GLU HIP(HSP)')
+            
+        # Get residues names
+        self.res_charge_name = self.top.residue(self.res_charge).name
+        self.res_aromatic_name = self.top.residue(self.res_aromatic).name
+    
+        
+        #===== Distance between COM of aromatic and charge =====
+        # Compute COM of aromatic ring
+        self.COM_aromatic = md.compute_center_of_mass(self.traj, select=f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}")[0]
+        
+        # Get position of the charge
+        self.atom_charge_index = self.top.select(f"resid {self.res_charge} and name {self.dict_charged_atoms[self.res_charge_name]}")[0]
+        self.atom_charge_position = self.traj.xyz[0][self.atom_charge_index]
+        
+        # create a vector between aromatic COM and charge & measure it's norm
+        self.vector_COM_charge = Vector.from_points(self.COM_aromatic, self.atom_charge_position)
+        self.distance = self.vector_COM_charge.norm() *10 # *10 to convert nm to angstrom
+        
+        
+        #===== Create planes and get it's normal vector =====
+        # Get position of all atom in aromatic plane
+        self.list_aromatic_atom_position = []
+        #
+        for self.atom in self.dict_plane[self.res_aromatic_name]:
+            self.atom_index = self.top.residue(self.res_aromatic).atom(self.atom).index
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_atom_position.append(self.atom_position)
+        
+        # create aromatic plane
+        self.plane_aromatic = Plane.from_points(self.list_aromatic_atom_position[0], self.list_aromatic_atom_position[1], self.list_aromatic_atom_position[2])
+        
+        # Get normal vector od the aromatic plane
+        self.vector_normal_plane_aromatic = self.plane_aromatic.normal
+        
+         
+        # ===== Measure angle between the normal vector of aromatic plane and the vector COM --> charge =====
+        # calculate the angle and convert it to degree
+        self.angle = np.rad2deg( self.vector_normal_plane_aromatic.angle_between(self.vector_COM_charge) )
+        
+        # Convert the angle to a range of values from 0 to 90 degrees
+        if self.angle <= 90:
+            None # the angle is already in the range 0 to 90 degrees
+        elif self.angle <= 180:
+            self.angle = 180 - self.angle
+        elif self.angle <= 270:
+            self.angle = self.angle - 180
+        else:
+            self.angle = 360 - self.angle
+        
+        # The angle is before is between the normal vector of the plan and the vector COM --> charge
+        # But the normal vector is perpendicular to the plan and geometric criteria are for the angle between the plan and the vector COM --> charge.
+        #
+        #    Pn                Pn is the normal vector to Plane.
+        #    |   v             We calculate the angle between Pn and v.
+        #    |  /              We need the angle between V and Plane. 
+        #    | /
+        # ___|/_____ Plane
+        #
+        # So angle is converted to correspond to be the one betwen the plan and the vector COM --> charge.
+        self.angle = 90 - self.angle
+        
+        
+        
+    #===== Return results =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if a charged residue interact with an aromatic ring.
+        
+        RETURN  
+            When True, 'charge' is replaced by cation or anion.
+            True, 'charge'-Pi              The interaction exist.
+            True, 'charge'-intermediate    The interaction exist.
+            True, 'charge'-quadrupole      The interaction exist.
+            
+            False, False                   The interaction don't exist.
+        """
+        # get charge type
+        if self.res_charge_name in ["ARG","LYS","HIP","HSP"]:
+            charge_type = "cation"
+        elif self.res_charge_name in ["GLU","ASP"]:
+            charge_type = "anion"
+        
+        # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
+        if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle <= 90.0:
+            return True, f"{charge_type}-Pi"
+        elif self.distance <= self.MAX_distance and self.MAX_quadrupole_angle < self.angle < self.MIN_pi_angle:
+            return True, f"{charge_type}-intermediate"
+        elif self.distance <= self.MAX_distance and 0 <= self.angle <= self.MAX_quadrupole_angle:
+            return True, f"{charge_type}-quadrupole"
+        else:
+            return False, False
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle betwee the charge-COM and the normal of the aromatic ring
+        RETURN         angle_planes
+        UNIT           degree
+        """
+        return abs(self.angle)
+
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Distance between COM of aromatic ring and N of the amino group
+        RETURN         distance
+        UNIT           Angstrom
+        """
+        return self.distance
+    
+    
 
 
 
