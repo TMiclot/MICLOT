@@ -1308,12 +1308,20 @@ class amino_pi:
                                    "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
                                    "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
                                    "HIS": 'CG ND1 CD2 CE1 NE2',
+                                   "HID": 'CG ND1 CD2 CE1 NE2',
+                                   "HIE": 'CG ND1 CD2 CE1 NE2',
+                                   "HSD": 'CG ND1 CD2 CE1 NE2',
+                                   "HSE": 'CG ND1 CD2 CE1 NE2',
                                   }
-        
+           
         self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
                            "TRP": ['CD2', 'CZ2',  'CZ3'],
                            "PHE": ['CG',  'CE1',  'CE2'],
                            "HIS": ['CG',  'CE1',  'NE2'],
+                           "HID": ['CG',  'CE1',  'NE2'],
+                           "HIE": ['CG',  'CE1',  'NE2'],
+                           "HSE": ['CG',  'CE1',  'NE2'],
+                           "HSD": ['CG',  'CE1',  'NE2'],
                           }
 
         
@@ -1478,12 +1486,20 @@ class charge_aromatic:
                                    "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
                                    "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
                                    "HIS": 'CG ND1 CD2 CE1 NE2',
+                                   "HID": 'CG ND1 CD2 CE1 NE2',
+                                   "HIE": 'CG ND1 CD2 CE1 NE2',
+                                   "HSD": 'CG ND1 CD2 CE1 NE2',
+                                   "HSE": 'CG ND1 CD2 CE1 NE2',
                                   }
-        
+           
         self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
                            "TRP": ['CD2', 'CZ2',  'CZ3'],
                            "PHE": ['CG',  'CE1',  'CE2'],
                            "HIS": ['CG',  'CE1',  'NE2'],
+                           "HID": ['CG',  'CE1',  'NE2'],
+                           "HIE": ['CG',  'CE1',  'NE2'],
+                           "HSE": ['CG',  'CE1',  'NE2'],
+                           "HSD": ['CG',  'CE1',  'NE2'],
                           }
 
         

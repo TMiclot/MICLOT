@@ -589,7 +589,7 @@ False
 
 ## 8. Salt bridge
 
-### 8.1. Case: anion- $\Pi$
+### 8.1. Case: anion- $\pi$
 
 **Code**
 
