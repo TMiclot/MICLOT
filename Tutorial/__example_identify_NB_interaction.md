@@ -653,6 +653,135 @@ print(interaction.get_angle)
 ```
 
 
+## 9. Aromatic-Aromatic
+
+### 9.1. Parallel staking *with an His*
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 0, 1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'parallel')
+(2.5460074915990494, 0.18071826162264856)
+(17.187747281098666, 85.92963671729052, 76.88224145182211)
+```
+
+### 9.2. Parallel staking
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 4, 5) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'parallel')
+(2.595882453866925, 0.016921747589102098)
+(7.1782407546847935, 89.62712644895419, 82.45980025611104)
+```
+
+
+### 9.3. Parallel offset staking
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 2,3) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'offset')
+(3.650135066732187, 1.6735494388664918)
+(7.180590776004067, 62.710309550248354, 63.487965235398406)
+```
+
+### 9.4. Colanar staking
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 6,7) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'coplanar')
+(5.26093305171583, 5.24341615361119)
+(0.8632076124065122, 4.676875951018019, 3.817067170661801)
+```
+
+### 9.5. Y-shaped
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 8,9) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'Y-shaped')
+(4.3140753842702315, 0.48750438497343557)
+(86.70693939174281, 83.5115593333615, 2.532489405500428)
+```
+
+### 9.6. T-shaped
+
+**Code**
+
+```python
+pdb_file = 'aromatic-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = aromatic_aromatic(traj, 10,11) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'T-shaped')
+(4.460427485980406, 0.3986486489188704)
+(86.25358515508681, 84.87236075386747, 1.3610945987459075)
+
+```
 
 
 

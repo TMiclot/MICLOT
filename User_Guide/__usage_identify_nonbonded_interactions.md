@@ -25,7 +25,7 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
@@ -35,9 +35,9 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit or not between the two amino acids. | Boolean (True / False) |  |
-| .get_distance      | Return a list of distance of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[distance],[indices]],...] < br/> distance and indices are integer. | Å |
-| .get_angle         | Return a list of angles of the C-bond, it also return the corresponding C-bond atom indices. <br/> $\theta 1$ angle: C...O=C <br/> $\theta 2$ angle: Z-C...O | integer | degree |
-| .get_energy        | Return a list of energy of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[energy],[indices]],...] < br/> energy and indices are integer. | kJ/mol |
+| .get_distance      | Return a list of distance of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[distance],[indices]],...] < br/> distance and indices are float. | Å |
+| .get_angle         | Return a list of angles of the C-bond, it also return the corresponding C-bond atom indices. <br/> $\theta 1$ angle: C...O=C <br/> $\theta 2$ angle: Z-C...O | float | degree |
+| .get_energy        | Return a list of energy of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[energy],[indices]],...] < br/> energy are float and indices are integer. | kJ/mol |
 | .get_atoms         | Return a list of atoms index involved in C-bond. | List of set: <br/> [{indices},{indices},...] <br/> indices are integer. |  |
 
 
@@ -58,17 +58,17 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 | -------- | --- | --- | --- |
 | trajectory        | integer | MDTraj trajectory.  | mandatory |
 | res_index         | integer | Index of the residue in MDTraj topology. | mandatory |
-| angular_tolerance | integer | Set an absolute tolerance parameter N. So the range of angle is 140.0˚ +/- N. <br/> Default value of N: 10.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html). | optional |
+| angular_tolerance | float | Set an absolute tolerance parameter N. So the range of angle is 140.0˚ +/- N. <br/> Default value of N: 10.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html). | optional |
 | frame             | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
-| MAX_distance      | integer | Maximum distance between O and H, in angstrom. <br/> Unit: Å <br/> Default value: 2.7 | optional  |
+| MAX_distance      | float | Maximum distance between O and H, in angstrom. <br/> Unit: Å <br/> Default value: 2.7 | optional  |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. | Boolean (True / False) |  |
-| .get_distance      | Distance between atoms O and H in the backbone of the residue. | integer | Å |
-| .get_angle         | Values of Phi and Psi angle of the residue. | angle_phi, angle_psi | integer |
+| .get_distance      | Distance between atoms O and H in the backbone of the residue. | float | Å |
+| .get_angle         | Values of Phi and Psi angle of the residue. | angle_phi, angle_psi | float |
 
 
 
@@ -94,20 +94,20 @@ Identify interaction between tow hydrophobic residue or clash between hydrophili
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional |
-| MAX_distance_COM  | integer | Maximum distance between center of mass of each residue. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
-| MAX_distance_CA  | integer | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 9.5 | optional  |
-| MIN_distance_CA  | integer | Minimum distance between CA of each residue to consider as clash. <br/> Unit: Å <br/> Default value: 3.8 | optional  |
+| MAX_distance_COM  | float | Maximum distance between center of mass of each residue. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
+| MAX_distance_CA  | float | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 9.5 | optional  |
+| MIN_distance_CA  | float | Minimum distance between CA of each residue to consider as clash. <br/> Unit: Å <br/> Default value: 3.8 | optional  |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the interaction exist or not, the second identify *hydrophobic interaction* or *clash*. Output: <br/> True,True,"hydrophobic" <br/> True,False,"clash" <br/> False,False,None | Boolean (True / False / None) , String|  |
-| .get_distance      | Distances between CA-CA atoms and side chaine COM-COM of the two residues. | distance_CA (integer), distance_COM (integer) | Å |
+| .get_distance      | Distances between CA-CA atoms and side chaine COM-COM of the two residues. | distance_CA (float), distance_COM (float) | Å |
 
 
 
@@ -137,19 +137,19 @@ Check if their is a clash or a repulsion interaction between the two residues.
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional |
-| MAX_distance_CA  | integer | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 13.0 | optional  |
-| MIN_distance_charges  | integer | Minimum distance between charges of each residue to consider as clash. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
+| MAX_distance_CA  | float | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 13.0 | optional  |
+| MIN_distance_charges  | float | Minimum distance between charges of each residue to consider as clash. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the interaction exist or not, the second identify *repulsion* or *clash*. Output: <br/> True,True,"clash" <br/> True,False,"repulsion" <br/> False,False,None | Boolean (True / False / None) , String|  |
-| .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (integer), distance_charge (,integer) | Å |
+| .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (float), distance_charge (,float) | Å |
 
 
 
@@ -179,22 +179,22 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Have no effect with the method 'baker_hubbard', because it implementation analyse the whole trajectory. <br/> Default value: 0 | optional |
 | method      | string | Use 'baker_hubbard' or 'kabsch_sander' or 'wernet_nilsson' method to detect H-bond. | optional |
-| MAX_distance_CA  | integer | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 13.0 | optional  |
-| MIN_distance_charges  | integer | Minimum distance between charges of each residue to consider as interacting. <br/> Unit: Å <br/> Default value: 4.0 | optional  |
-| distance_cutoff | integer | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
-| angle_cutoff    | integer | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
+| MAX_distance_CA  | float | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 13.0 | optional  |
+| MIN_distance_charges  | float | Minimum distance between charges of each residue to consider as interacting. <br/> Unit: Å <br/> Default value: 4.0 | optional  |
+| distance_cutoff | float | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
+| angle_cutoff    | float | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the ionic bond exist or not, the second identify hydrogen bond. Output: <br/> True,True: Interaction exist. <br/> True,False: Only ionic bond. <br/> False,True: Only H-bond. <br/> False,False: Interaction don't exist. | Boolean (True / False / None) & String|  |
-| .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (integer), distance_charge (integer) | Å |
+| .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (float), distance_charge (float) | Å |
 | .get_hbond         | Return the atom indices forming H-bond in the pair. For each method, the output is converted to an np.array. | np.array |  |
 
 > [!IMPORTANT]
@@ -220,13 +220,13 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Have no effect with the method 'baker_hubbard', because it implementation analyse the whole trajectory. <br/> Default value: 0 | optional |
 | method      | string | Use 'baker_hubbard' or 'kabsch_sander' or 'wernet_nilsson' method to detect H-bond. | optional |
-| distance_cutoff | integer | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
-| angle_cutoff    | integer | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
+| distance_cutoff | float | In the **baker_hubbard** method, the distance cutoff of Donor-H...Acceptor contact. <br/> Unit: Å <br/> Default value: 3.0 | optional |
+| angle_cutoff    | float | In the **baker_hubbard** method, the angle cutoff of the angle $\theta$. <br/> Unit: degree <br/> Default value: 120 | optional |
 
 ### Properties
 
@@ -235,7 +235,7 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
 | .get_atoms         | Return a list of atoms index involved in H-bond. | numpy.array: <br/> [{indices},{indices},...] |  |
 | .get_distance      | Return a list of distance between donnor and acceptor, it also return the corresponding C-bond atom indices.  | List: <br/> [[distance,[indices]],...] | Å |
-| .get_angle         | Return a list of angles (DHA) of all H-bonds, it also return the corresponding atom indices. | List of interger: <br/> [[angle,[indices]],...] | degree |
+| .get_angle         | Return a list of angles (DHA) of all H-bonds, it also return the corresponding atom indices. | List of float: <br/> [[angle,[indices]],...] | degree |
 | .get_subtype       | Return the subtype of the H-bond.  | List: <br/> [[subtype,[indices]],...] | |
 
 
@@ -252,13 +252,13 @@ Identify van der Waals interaction between two residues.
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
 | set_hydrogen | boolean (True / False) | Set if hydrogens are taken in acount, or not, for vdW interaction. <br/> Default value: True | optional |
-| distance_tolerance | integer | The range of distance is $radii_{vdw \space atom \space 1} + radii_{vdw \space atom \space 2} + N$ <br/> Range of values: 0.0 to 0.6 Å. <br/> Default value: 0.5 Å | optional |
-| MIN_contact_numbers | integer | Min number of contacts tow residues must have to consider a vdW interaction. <br/> Default value: 1 | optional |
+| distance_tolerance | float | The range of distance is $radii_{vdw \space atom \space 1} + radii_{vdw \space atom \space 2} + N$ <br/> Range of values: 0.0 to 0.6 Å. <br/> Default value: 0.5 Å | optional |
+| MIN_contact_numbers | float | Min number of contacts tow residues must have to consider a vdW interaction. <br/> Default value: 1 | optional |
 
 ### Properties
 
@@ -267,7 +267,7 @@ Identify van der Waals interaction between two residues.
 | .check_interaction   | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
 | .get_distance        | Return the list distances between atoms pairs making vdW interaction and the list of their index. | list_distance (list), list_contacts (list) | Å |
 | .get_number_contacts | Return the number of atom-atom vdW contact between the two residues. | integer |  |
-| .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | interger or boolean | $Å^2$ |
+| .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | float or boolean | $Å^2$ |
 
 
 
@@ -289,16 +289,16 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
-| MAX_distance | integer | Maximum distance between the atom N and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
-| angular_tolerance | integer | Set an absolute tolerance parameter N. So the range of angle is 90.0˚ +/- N. <br/> Default value of N: 30.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html).  | optional |
+| MAX_distance | float | Maximum distance between the atom N and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
+| angular_tolerance | float | Set an absolute tolerance parameter N. So the range of angle is 90.0˚ +/- N. <br/> Default value of N: 30.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html).  | optional |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between the COM of the ring and the N atom. | interger | Å |
-| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ N. | interger | degree |
+| .get_distance      | Distances between the COM of the ring and the N atom. | float | Å |
+| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ N. | float | degree |
 
 
 
@@ -327,9 +327,9 @@ It identify 3 subtypes, where *charge* is cation or anion:
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
-| MAX_distance | integer | Maximum distance between the charge and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
-| MIN_pi_angle | integer | Minumum angle to set Pi area. (The max angle is 90) <br/> Unit: degree <br/> Default value: 60.0 | optional |
-| MAX_quadrupole_angle | integer | Maximum angle to set quadrupole area. (The min angle is 0) <br/> Unit: degree <br/> Default value: 35.0 | optional |
+| MAX_distance | float | Maximum distance between the charge and the center of mass (COM) of the ring. <br/> Unit: Å <br/> Default value: 5.5 | optional |
+| MIN_pi_angle | float | Minumum angle to set Pi area. (The max angle is 90) <br/> Unit: degree <br/> Default value: 60.0 | optional |
+| MAX_quadrupole_angle | float | Maximum angle to set quadrupole area. (The min angle is 0) <br/> Unit: degree <br/> Default value: 35.0 | optional |
 
 
 ### Properties
@@ -337,11 +337,34 @@ It identify 3 subtypes, where *charge* is cation or anion:
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between the COM of the ring and the charged atom. | interger | Å |
-| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ charge. | interger | degree |
+| .get_distance      | Distances between the COM of the ring and the charged atom. | float | Å |
+| .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ charge. | float | degree |
 
 
 
+
+## 10. Aromatic aromatic MUST BE DONE
+
+**command**(trajectory, res_index_A, res_index_B, ...)
+
+### Description
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_distance      | Distances between CA-CA atoms of the two residues. | float | Å |
 
 
 
@@ -356,7 +379,7 @@ It identify 3 subtypes, where *charge* is cation or anion:
 
 | Argument | Description | Format | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | integer | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
@@ -367,5 +390,5 @@ It identify 3 subtypes, where *charge* is cation or anion:
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between CA-CA atoms of the two residues. | interger | Å |
+| .get_distance      | Distances between CA-CA atoms of the two residues. | float | Å |
 -->

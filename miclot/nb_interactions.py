@@ -1045,12 +1045,12 @@ class hydrogen_bond:
 #=====================================================
 #===== Class for van der Waals interaction
 #=====================================================
-
 class van_der_waals:
     def __init__(self, trajectory, res_index_A, res_index_B, frame=0, set_hydrogen=True, distance_tolerance=0.5, MIN_contact_numbers=1):
         """
         INTERACTION TYPE    van der Waals
-        SUBTYPE(S)          no
+        SUBTYPE(S)          charged-charged, charged-polar, charged-apolar,
+                            polar-polar, polar-apolar, apolar-apolar
 
         DESCRIPTION
             Van der Waals interaction between residues.
@@ -1120,6 +1120,10 @@ class van_der_waals:
         #===== Get residues informations =====
         self.res_A_topology = self.top.residue(self.res_A)
         self.res_B_topology = self.top.residue(self.res_B)
+        
+        # Get names
+        self.res_A_name = self.top.residue(self.res_A).name
+        self.res_B_name = self.top.residue(self.res_B).name  
           
             
         #===== Compute VDW and interfaces between residues ====
@@ -1216,17 +1220,37 @@ class van_der_waals:
             Check if the van der Waals interaction exist between the two residues.
         
         RETURN
-            True      The interaction exist.
-            False     The interaction don't exist.
+            True, 'subtype'    The interaction exist.
+            False, False       The interaction don't exist.
         """
+        # List of AA properties
+        polar = ['CYS', 'HIS', 'ASN', 'GLN', 'SER', 'THR', 'TRP']
+        apolar = ['ALA', 'PHE', 'GLY', 'ILE', 'LEU', 'VAL', 'MET', 'PRO', 'TYR']
+        charged = ['GLU', 'ASP', 'LYS', 'ARG', 'HIP', 'CYM', 'TYM']
+        
+        if self.res_A_name in polar and self.res_B_name in polar:
+            subtype = "polar-polar"
+        elif self.res_A_name in apolar and self.res_B_name in apolar:
+            subtype = "apolar-apolar"
+        elif self.res_A_name in charged and self.res_B_name in charged:
+            subtype = "charged-charged"
+        elif (self.res_A_name in polar and self.res_B_name in apolar) or (self.res_B_name in polar and self.res_A_name in apolar):
+            subtype = "polar-apolar"
+        elif (self.res_A_name in charged and self.res_B_name in apolar) or (self.res_B_name in charged and self.res_A_name in apolar):
+            subtype = "charged-apolar"
+        elif (self.res_A_name in charged and self.res_B_name in polar) or (self.res_B_name in charged and self.res_A_name in polar):
+            subtype = "charged-polar"
+        
+        
+        # Check geomatric parameters
         if self.MIN_contact_numbers <=0:
             raise ValueError("MIN_contact_numbers must be greater or equal to 1.")
         else:
             # if the list of contact contain a number equal or gereter of element, return true 
             if self.MIN_contact_numbers <= len(self.list_contacts): 
-                return True
+                return True, subtype
             else:
-                return False
+                return False, False
      
         
     @property
@@ -1261,6 +1285,8 @@ class van_der_waals:
             return self.interface
         else:
             return None
+        
+        
         
 
 
@@ -1458,9 +1484,7 @@ class charge_aromatic:
             res_index_A    Index of residue A
             res_index_B    Index of residue B
         
-        OPTIONAL ARGUMENTS
-        Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
-        
+        OPTIONAL ARGUMENTS        
             MAX_distance          Maximum distance between COM of aromatic ring and the charge
                                   Default value: 5.5
                                   
@@ -1471,7 +1495,7 @@ class charge_aromatic:
                                    Default value: 35.0
 
             frame                 Frame ID on which to perform the analysis.
-                                  Default value: 0: 0
+                                  Default value: 0
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
@@ -1609,11 +1633,11 @@ class charge_aromatic:
             charge_type = "anion"
         
         # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
-        if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle <= 90.0:
+        if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle:
             return True, f"{charge_type}-Pi"
         elif self.distance <= self.MAX_distance and self.MAX_quadrupole_angle < self.angle < self.MIN_pi_angle:
             return True, f"{charge_type}-intermediate"
-        elif self.distance <= self.MAX_distance and 0 <= self.angle <= self.MAX_quadrupole_angle:
+        elif self.distance <= self.MAX_distance and self.angle <= self.MAX_quadrupole_angle:
             return True, f"{charge_type}-quadrupole"
         else:
             return False, False
@@ -1637,6 +1661,323 @@ class charge_aromatic:
         return self.distance
     
     
+
+
+
+
+
+#=====================================================
+#===== Class for aromatic-aromatic interactions =====
+#=====================================================    
+class aromatic_aromatic:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_angle_planarity=30.0, MAX_distance_COM=5.5, MIN_distance_offset=1.6, MAX_distance_offset=2.0, \
+                 MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0, MAX_angle_Tshaped=5.0):
+        """
+        INTERACTION TYPE    charge with aromatic ring
+        SUBTYPE(S)          parallel, offset, t-shaped, y-shaped, coplanar, intermediate
+
+        DESCRIPTION
+            Interaction with the charged amino acid and an aromatic rings.
+            Please note that protonated histidine are not taken in acount are not taken into account because they can make charge-aromatic interactions.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+            frame    Frame ID on which to perform the analysis.
+                     Default value: 0
+
+            MAX_angle_planarity: 
+                     Default value: 30.0            
+
+            MAX_distance_COM=5.5
+            MIN_distance_offset=1.6
+            MAX_distance_offset=2.0
+            MIN_pi_angle=60.0
+            MAX_quadrupole_angle=35.0
+            MAX_angle_Tshaped=5.0      angle between the normal of a plane and the vector COM --> atom ring
+
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.res_index_A = res_index_A
+        self.res_index_B = res_index_B
+        self.MAX_distance_COM = MAX_distance_COM # distance between the COM-COM of the two residues
+        self.MIN_distance_offset = MIN_distance_offset
+        self.MAX_distance_offset = MAX_distance_offset
+        self.MIN_pi_angle = MIN_pi_angle
+        self.MAX_quadrupole_angle = MAX_quadrupole_angle
+        self.MAX_angle_planarity = MAX_angle_planarity
+        self.MAX_angle_Tshaped = MAX_angle_Tshaped
+
+        
+        #===== Create dictionaries of aromatic ring and corresponding plans =====
+        self.dict_aromatic_ring = {"TYR": ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
+                                   "TRP": ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'],
+                                   "PHE": ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'],
+                                   "HIS": ['CG', 'ND1', 'CD2', 'CE1', 'NE2'],
+                                   "HID": ['CG', 'ND1', 'CD2', 'CE1', 'NE2'],
+                                   "HIE": ['CG', 'ND1', 'CD2', 'CE1', 'NE2'],
+                                   "HSD": ['CG', 'ND1', 'CD2', 'CE1', 'NE2'],
+                                   "HSE": ['CG', 'ND1', 'CD2', 'CE1', 'NE2'],
+                                  }
+           
+        self.dict_plane = {"TYR": ['CG',  'CE1', 'CE2'],
+                           "TRP": ['CD2', 'CZ2', 'CZ3'],
+                           "PHE": ['CG',  'CE1', 'CE2'],
+                           "HIS": ['CG',  'CE1', 'NE2'],
+                           "HID": ['CG',  'CE1', 'NE2'],
+                           "HIE": ['CG',  'CE1', 'NE2'],
+                           "HSE": ['CG',  'CE1', 'NE2'],
+                           "HSD": ['CG',  'CE1', 'NE2'],
+                          }
+        
+        
+        
+        #===== Identify residues properties and create their plan =====
+        # get residue names
+        self.res_index_A_name = self.top.residue(self.res_index_A).name
+        self.res_index_B_name = self.top.residue(self.res_index_B).name
+        
+        # get atoms in the rings
+        self.aromatic_A_atoms_list = self.dict_aromatic_ring[self.res_index_A_name]
+        self.aromatic_B_atoms_list = self.dict_aromatic_ring[self.res_index_B_name]
+        
+        # Get position of atom makin the plane of the two residues
+        self.list_aromatic_A_atom_position = []
+        for self.atom in self.dict_plane[self.res_index_A_name]:
+            self.atom_index = self.top.select(f"resid {self.res_index_A} and name {self.atom}")[0]
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_A_atom_position.append(self.atom_position)
+
+        self.list_aromatic_B_atom_position = []
+        for self.atom in self.dict_plane[self.res_index_B_name]:
+            self.atom_index = self.top.select(f"resid {self.res_index_B} and name {self.atom}")[0]
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_B_atom_position.append(self.atom_position)    
+            
+        # Create the plane of each residue
+        self.plane_aromatic_A = Plane.from_points(self.list_aromatic_A_atom_position[0], self.list_aromatic_A_atom_position[1], self.list_aromatic_A_atom_position[2])
+        self.plane_aromatic_B = Plane.from_points(self.list_aromatic_B_atom_position[0], self.list_aromatic_B_atom_position[1], self.list_aromatic_B_atom_position[2])
+        
+        # Get normal vector of the planes
+        self.vector_normal_plane_aromatic_A = self.plane_aromatic_A.normal
+        self.vector_normal_plane_aromatic_B = self.plane_aromatic_B.normal
+        
+        
+        #===== Distance COM-COM of aromatics =====
+        # Compute COM of aromatic rings
+        self.COM_aromatic_A = md.compute_center_of_mass(self.traj, select=f"resid {self.res_index_A} and name {' '.join(self.aromatic_A_atoms_list)}")[0]
+        self.COM_aromatic_B = md.compute_center_of_mass(self.traj, select=f"resid {self.res_index_B} and name {' '.join(self.aromatic_B_atoms_list)}")[0]
+        
+        # create a vector between aromatic COMs and measure it's norm
+        self.vector_COM_COM = Vector.from_points(self.COM_aromatic_A, self.COM_aromatic_B)
+        self.distance_COM_COM = self.vector_COM_COM.norm() *10 # *10 to convert nm to angstrom
+        
+        
+        
+        #===== Distance between COM of resiaue A and the projected point of the COM of residue B into the plane of residue A =====
+        # Get projected point of COM resid B on the plane of residue A
+        self.porjected_COM_aromatic_B = self.plane_aromatic_A.project_point(self.COM_aromatic_B)
+        
+        # create a vector between aromatic COM of residue A and the projected point
+        self.vector_COM_projected = Vector.from_points(self.COM_aromatic_A, self.porjected_COM_aromatic_B)
+        self.distance_COM_projected = self.vector_COM_projected.norm() *10 # *10 to convert nm to angstrom
+
+        
+        
+        #===== Angles (3) between norms and vector COM-COM =====
+        
+        #---- angle between the two plan normals -----
+        # calculate the angle and convert it to degree
+        self.angle_norm_norm = np.rad2deg( self.vector_normal_plane_aromatic_A.angle_between(self.vector_normal_plane_aromatic_B) )
+        # Convert the angle to a range of values from 0 to 90 degrees
+        self.angle_norm_norm = self.convert_angle(self.angle_norm_norm)
+        
+        #---- angle between the vector_COM_COM and normal of the plane of residue A -----
+        # calculate the angle and convert it to degree
+        self.angle_norm_A_COMCOM = np.rad2deg( self.vector_normal_plane_aromatic_A.angle_between(self.vector_COM_COM) )
+        # Convert the angle to a range of values from 0 to 90 degrees
+        self.angle_norm_A_COMCOM = self.convert_angle(self.angle_norm_A_COMCOM)      
+        
+        #---- angle between the vector_COM_COM and normal of the plane of residue B -----
+        # calculate the angle and convert it to degree
+        self.angle_norm_B_COMCOM = np.rad2deg( self.vector_normal_plane_aromatic_B.angle_between(self.vector_COM_COM) )
+        # Convert the angle to a range of values from 0 to 90 degrees
+        self.angle_norm_B_COMCOM = self.convert_angle(self.angle_norm_B_COMCOM)         
+    
+        #---- Convert angle to correspond to the plane and not the normal
+        # The angle is before is between the normal vector of the plan and the vector COM --> charge
+        # But the normal vector is perpendicular to the plan and geometric criteria are for the angle between the plan and the vector COM --> charge.
+        #
+        #    Pn                Pn is the normal vector to Plane.
+        #    |   v             We calculate the angle between Pn and v.
+        #    |  /              We need the angle between V and Plane. 
+        #    | /
+        # ___|/_____ Plane
+        #
+        # So angle is converted to correspond to be the one betwen the plan and the vector COM --> charge.
+        self.angle_plane_plane = self.angle_norm_norm # angle between normals is the angle between the planes
+        self.angle_plane_A_COMCOM = 90 - self.angle_norm_A_COMCOM
+        self.angle_plane_B_COMCOM = 90 - self.angle_norm_B_COMCOM
+    
+    
+        #===== Angles of Y or T shapes position =====
+        #----- Generate all vector between the COM and the atoms in ring -----
+        self.list_vector_COM_atom_ring_A = self.generate_list_vector_COM_atom_ring(self.COM_aromatic_A, self.res_index_A, self.aromatic_A_atoms_list)
+        self.list_vector_COM_atom_ring_B = self.generate_list_vector_COM_atom_ring(self.COM_aromatic_B, self.res_index_B, self.aromatic_B_atoms_list)
+    
+        #----- Generate all angle between the normal of (other) plan and all vectors COM-atom_ring -----
+        # Residue A
+        self.list_angles_normal_vector_COM_atom_ring_A = []
+        for self.vector in self.list_vector_COM_atom_ring_A:
+            # calculate the angle and convert it to degree
+            self.angle = np.rad2deg( self.vector_normal_plane_aromatic_B.angle_between(self.vector) )
+            # Convert the angle to a range of values from 0 to 90 degrees
+            self.angle = self.convert_angle(self.angle)
+            # Convert angle to correspond to the plane and not the normal
+            self.angle = 90 - self.angle
+            # append the list
+            self.list_angles_normal_vector_COM_atom_ring_A.append(self.angle)
+         
+        # Residue B
+        self.list_angles_normal_vector_COM_atom_ring_B = []
+        for self.vector in self.list_vector_COM_atom_ring_B:
+            # calculate the angle and convert it to degree
+            self.angle = np.rad2deg( self.vector_normal_plane_aromatic_A.angle_between(self.vector) )
+            # Convert the angle to a range of values from 0 to 90 degrees
+            self.angle = self.convert_angle(self.angle)
+            # Convert angle to correspond to the plane and not the normal
+            self.angle = 90 - self.angle
+            # append the list
+            self.list_angles_normal_vector_COM_atom_ring_B.append(self.angle)
+        
+
+    
+    
+    #===== Functions =====
+    def convert_angle(self, angle):
+        """
+        Take angle in degree, in the range 0-360, and convert it to an equavalent range 0-90.
+        """
+        if angle <= 90:
+            return angle # the angle is already in the range 0 to 90 degrees
+        elif angle <= 180:
+            return 180 - angle
+        elif angle <= 270:
+            return self.angle - 180
+        else:
+            return 360 - angle
+    
+    #-----    
+    def generate_list_vector_COM_atom_ring(self, COM_position, residue_ID, aromatic_atoms_list):
+        """
+        Create a list of vector COM-atom for all atom in the aromatic ring
+        """
+        # create a list to store all vectors
+        list_vector_ring = []
+        
+        # generate all possible COM-atom_ring vectors
+        for atom in aromatic_atoms_list:
+            # Get position of the atom position
+            atom_index = self.top.select(f"resid {residue_ID} and name {atom}")[0]
+            atom_position = self.traj.xyz[0][atom_index]
+            
+            # create the vector COM-atom
+            vector = Vector.from_points(COM_position, atom_position)
+            
+            # Add the vector to the list
+            list_vector_ring.append(vector)
+            
+        # return the list containing all vectors
+        return list_vector_ring
+    
+    
+    
+    #===== Return properties =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if a charged residue interact between two aromatic ring.
+        
+        RETURN  
+            True, 'subtype'  The interaction exist            
+            False, False     The interaction don't exist.
+        """
+        # check if the distance between the COM-COM is greeter than the 'MAX_distance_COM'
+        if self.distance_COM_COM > self.MAX_distance_COM:
+            return False, False
+        
+        # if the distance is not greter than 'MAX_distance_COM', the identify the subtype
+        else:
+            
+            # identify coplanar parameters
+            if self.angle_plane_plane <= self.MAX_angle_planarity and self.angle_plane_A_COMCOM <= self.MAX_quadrupole_angle and self.angle_plane_B_COMCOM <= self.MAX_quadrupole_angle:
+                return True, 'coplanar'
+            
+             # identify parallel parameters
+            elif self.angle_plane_plane <= self.MAX_angle_planarity and self.MIN_pi_angle <= self.angle_plane_A_COMCOM and self.MIN_pi_angle <= self.angle_plane_B_COMCOM \
+            and self.distance_COM_projected < self.MIN_distance_offset:
+                return True, 'parallel'
+            
+             # identify offset parameters    
+            elif self.angle_plane_plane <= self.MAX_angle_planarity and self.MIN_pi_angle <= self.angle_plane_A_COMCOM and self.MIN_pi_angle <= self.angle_plane_B_COMCOM \
+            and self.MIN_distance_offset <= self.distance_COM_projected <= self.MAX_distance_offset:
+                return True, 'offset'
+            
+            # identify coplanar parameters
+            elif self.MIN_pi_angle <= self.angle_plane_plane \
+            and ((self.MIN_pi_angle <= self.angle_plane_A_COMCOM and self.angle_plane_B_COMCOM <= self.MAX_quadrupole_angle) or (self.MIN_pi_angle <= self.angle_plane_B_COMCOM and self.angle_plane_A_COMCOM <= self.MAX_quadrupole_angle)):
+                
+                # the type is T-shaped or Y-shaped. Now distinguish between them:
+                
+                # check if one of the angle is in bellow 'MAX_angle_Tshaped'
+                self.check_vector_COM_atom_ring_A = any(self.num <= self.MAX_angle_Tshaped for self.num in self.list_angles_normal_vector_COM_atom_ring_A)
+                self.check_vector_COM_atom_ring_B = any(self.num <= self.MAX_angle_Tshaped for self.num in self.list_angles_normal_vector_COM_atom_ring_B)
+                
+                # if at least one of the angle betwwen vector COM-atom_ring and the opposit ring plane correspond to the pi area
+                if self.check_vector_COM_atom_ring_A or self.check_vector_COM_atom_ring_B:
+                    return True, 'T-shaped'
+                else:
+                    return True, 'Y-shaped'
+                
+            # identify intermediate parameters
+            else:
+                return True, 'intermediate'
+        
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle between the atomatic plane, and the vector COM-COM with each of the plane
+        RETURN         angle_plane_plane, angle_plane_A_COMCOM, angle_plane_B_COMCOM
+        UNIT           degree
+        """
+        return self.angle_plane_plane, self.angle_plane_A_COMCOM, self.angle_plane_B_COMCOM
+
+    
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    COM-COM distance between the aromatic rings, and their COM-projectedCOM distance
+        RETURN         distance_COM_COM, distance_COM_projected
+        UNIT           Angstrom
+        """
+        return self.distance_COM_COM, self.distance_COM_projected
+    
+    
+
+
+
+
+
+#=====================================================
+#===== Class for 
+#=====================================================    
 
 
 
