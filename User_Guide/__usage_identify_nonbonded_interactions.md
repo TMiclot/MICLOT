@@ -343,11 +343,15 @@ It identify 3 subtypes, where *charge* is cation or anion:
 
 
 
-## 10. Aromatic aromatic MUST BE DONE
+## 10. Aromatic aromatic
 
-**command**(trajectory, res_index_A, res_index_B, ...)
+**aromatic_aromatic**(trajectory, res_index_A, res_index_B, *frame=0, MAX_angle_planarity=30.0, MAX_distance_COM=5.5, MIN_distance_offset=1.6, MAX_distance_offset=2.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0, MAX_angle_Tshaped=5.0*)
 
 ### Description
+
+Identify the stacking of two aromatic residues. Their is parallel, offset, t-shaped, y-shaped, coplanar, and when the angular parameters don't correspond to a specific subtype: intermediate.
+
+Please note that protonated histidine (HIP or HSP) are not taken in acount are not taken into account because they can make charge-aromatic interactions.
 
 ### Arguments
 
@@ -364,7 +368,8 @@ It identify 3 subtypes, where *charge* is cation or anion:
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between CA-CA atoms of the two residues. | float | Å |
+| .get_angle         | Angle between the two plane, angle betewwn the vector COM $\rightarrow$ COM and plane A then with plane B. Finally it return the hsaped position angle.| float | degree |
+| .get_distance      | Return the distances between COM-COM and distance between the COM and the projected COM on a plane. | float | Å |
 
 
 

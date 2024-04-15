@@ -1673,11 +1673,11 @@ class aromatic_aromatic:
     def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_angle_planarity=30.0, MAX_distance_COM=5.5, MIN_distance_offset=1.6, MAX_distance_offset=2.0, \
                  MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0, MAX_angle_Tshaped=5.0):
         """
-        INTERACTION TYPE    charge with aromatic ring
+        INTERACTION TYPE    Stacking of two aromatic residues.
         SUBTYPE(S)          parallel, offset, t-shaped, y-shaped, coplanar, intermediate
 
         DESCRIPTION
-            Interaction with the charged amino acid and an aromatic rings.
+            Stacking of two aromatic rings.
             Please note that protonated histidine are not taken in acount are not taken into account because they can make charge-aromatic interactions.
             
         ARGUMENTS
@@ -1686,19 +1686,10 @@ class aromatic_aromatic:
             res_index_B    Index of residue B
         
         OPTIONAL ARGUMENTS
+
+
             frame    Frame ID on which to perform the analysis.
                      Default value: 0
-
-            MAX_angle_planarity: 
-                     Default value: 30.0            
-
-            MAX_distance_COM=5.5
-            MIN_distance_offset=1.6
-            MAX_distance_offset=2.0
-            MIN_pi_angle=60.0
-            MAX_quadrupole_angle=35.0
-            MAX_angle_Tshaped=5.0      angle between the normal of a plane and the vector COM --> atom ring
-
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
@@ -1855,7 +1846,9 @@ class aromatic_aromatic:
             # append the list
             self.list_angles_normal_vector_COM_atom_ring_B.append(self.angle)
         
-
+        # Get the smallest angle from 'self.list_angles_normal_vector_COM_atom_ring_A' and 'self.list_angles_normal_vector_COM_atom_ring_B'
+        self.angle_shaped = min(self.list_angles_normal_vector_COM_atom_ring_A + self.list_angles_normal_vector_COM_atom_ring_B)
+    
     
     
     #===== Functions =====
@@ -1902,7 +1895,7 @@ class aromatic_aromatic:
     def check_interaction(self):
         """
         DESCRIPTION
-            Check if a charged residue interact between two aromatic ring.
+            Check if two aromatic residues interact with each other.
         
         RETURN  
             True, 'subtype'  The interaction exist            
@@ -1935,12 +1928,8 @@ class aromatic_aromatic:
                 
                 # the type is T-shaped or Y-shaped. Now distinguish between them:
                 
-                # check if one of the angle is in bellow 'MAX_angle_Tshaped'
-                self.check_vector_COM_atom_ring_A = any(self.num <= self.MAX_angle_Tshaped for self.num in self.list_angles_normal_vector_COM_atom_ring_A)
-                self.check_vector_COM_atom_ring_B = any(self.num <= self.MAX_angle_Tshaped for self.num in self.list_angles_normal_vector_COM_atom_ring_B)
-                
                 # if at least one of the angle betwwen vector COM-atom_ring and the opposit ring plane correspond to the pi area
-                if self.check_vector_COM_atom_ring_A or self.check_vector_COM_atom_ring_B:
+                if self.angle_shaped <= self.MAX_angle_Tshaped:
                     return True, 'T-shaped'
                 else:
                     return True, 'Y-shaped'
@@ -1954,10 +1943,10 @@ class aromatic_aromatic:
     def get_angle(self):
         """
         DESCRIPTION    Angle between the atomatic plane, and the vector COM-COM with each of the plane
-        RETURN         angle_plane_plane, angle_plane_A_COMCOM, angle_plane_B_COMCOM
+        RETURN         angle_plane_plane, angle_plane_A_COMCOM, angle_plane_B_COMCOM, angle_shaped
         UNIT           degree
         """
-        return self.angle_plane_plane, self.angle_plane_A_COMCOM, self.angle_plane_B_COMCOM
+        return self.angle_plane_plane, self.angle_plane_A_COMCOM, self.angle_plane_B_COMCOM, self.angle_shaped
 
     
     @property
@@ -1968,17 +1957,239 @@ class aromatic_aromatic:
         UNIT           Angstrom
         """
         return self.distance_COM_COM, self.distance_COM_projected
-    
-    
 
-
+    
 
 
 
 #=====================================================
-#===== Class for 
+#===== Class for Arg-Arg & Arg-Aromatic
 #=====================================================    
+class arg_involved:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=6.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0):
+        """
+        INTERACTION TYPE    Arginine involved stacking: Arg-Aromatic, Arg-Arg
+        SUBTYPE(S)          perpendicular, parallel, intermediate
 
+        DESCRIPTION
+            Interaction with the charged amino acid and an aromatic rings.
+            Please note that protonated histidine are not taken in acount are not taken into account because they can make charge-aromatic interactions.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+
+            frame    Frame ID on which to perform the analysis.
+                     Default value: 0
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.MAX_distance = MAX_distance
+        self.MIN_pi_angle = MIN_pi_angle
+        self.MAX_quadrupole_angle = MAX_quadrupole_angle
+
+        
+        #===== Create dictionaries of aromatic ring and corresponding plans =====
+        self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
+                                   "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "HIS": 'CG ND1 CD2 CE1 NE2',
+                                   "HID": 'CG ND1 CD2 CE1 NE2',
+                                   "HIE": 'CG ND1 CD2 CE1 NE2',
+                                   "HSD": 'CG ND1 CD2 CE1 NE2',
+                                   "HSE": 'CG ND1 CD2 CE1 NE2',
+                                  }
+           
+        self.dict_plane = {"TYR": ['CG',  'CE1', 'CE2'],
+                           "TRP": ['CD2', 'CZ2', 'CZ3'],
+                           "PHE": ['CG',  'CE1', 'CE2'],
+                           "HIS": ['CG',  'CE1', 'NE2'],
+                           "HID": ['CG',  'CE1', 'NE2'],
+                           "HIE": ['CG',  'CE1', 'NE2'],
+                           "HSE": ['CG',  'CE1', 'NE2'],
+                           "HSD": ['CG',  'CE1', 'NE2'],
+                           "ARG": ['NE',  'NH1', 'NH2'],
+                          }
+        
+        
+        
+        #===== Identify residues properties and create the type of interaction =====       
+        if self.top.residue(res_index_A).name == 'ARG' and self.top.residue(res_index_B).name in self.dict_aromatic_ring:
+            self.res_arg_index = res_index_A
+            self.res_aromatic_index = res_index_B
+            self.res_aromatic_name = self.top.residue(res_index_B).name
+            self.type = "Arg-Aromatic"
+            
+        elif self.top.residue(res_index_B).name == 'ARG' and self.top.residue(res_index_A).name in self.dict_aromatic_ring:
+            self.res_arg_index = res_index_B
+            self.res_aromatic_index = res_index_A
+            self.res_aromatic_name = self.top.residue(res_index_A).name
+            self.type = "Arg-Aromatic"
+            
+        elif self.top.residue(res_index_A).name == 'ARG' and self.top.residue(res_index_B).name == 'ARG':
+            self.res_index_A = res_index_A
+            self.res_index_B = res_index_B
+            self.type = "Arg-Arg"
+            
+        else:
+            raise ValueError("Residue A and B must be both ARG, or one must be ARG and the other is aromatic.")
+        
+        
+        
+        #===== Identify interaction for "Arg-Aromatic"  =====
+        if self.type == "Arg-Aromatic":
+            
+            #----- Get angle between ARG plane and aromatic plane -----
+            # get atoms in the aromatic ring
+            self.aromatic_atoms_list = self.dict_aromatic_ring[self.res_aromatic_name]
+            
+            # Get position of atom making the aromatic plane
+            self.list_aromatic_atom_position = []
+            for self.atom in self.dict_plane[self.res_aromatic_name]:
+                self.atom_index = self.top.select(f"resid {self.res_aromatic_index} and name {self.atom}")[0]
+                self.atom_position = self.traj.xyz[0][self.atom_index]
+                self.list_aromatic_atom_position.append(self.atom_position)
+                
+            # Get position of atom making the ARG plane
+            self.list_arg_atom_position = []
+            for self.atom in self.dict_plane['ARG']:
+                self.atom_index = self.top.select(f"resid {self.res_arg_index} and name {self.atom}")[0]
+                self.atom_position = self.traj.xyz[0][self.atom_index]
+                self.list_arg_atom_position.append(self.atom_position)
+            
+            # Create the 2 planes
+            self.plane_aromatic = Plane.from_points(self.list_aromatic_atom_position[0], self.list_aromatic_atom_position[1], self.list_aromatic_atom_position[2])
+            self.plane_arg = Plane.from_points(self.list_arg_atom_position[0], self.list_arg_atom_position[1], self.list_arg_atom_position[2])
+            
+            # Get normal vector of the planes
+            self.vector_normal_plane_aromatic = self.plane_aromatic.normal
+            self.vector_normal_plane_arg = self.plane_arg.normal
+            
+            # Calculate the angle between the two planes
+            self.angle = np.rad2deg( self.vector_normal_plane_aromatic.angle_between(self.vector_normal_plane_arg) )
+            # Convert the angle to a range of values from 0 to 90 degrees
+            self.angle = self.convert_angle(self.angle)
+            
+            #----- Measure distance between CZ of ARG and COM of aromatic ring -----
+            # Get 
+            self.COM_aromatic = md.compute_center_of_mass(self.traj, select=f"resid {self.res_aromatic_index} and name {self.dict_aromatic_ring[self.res_aromatic_name]}")[0]
+            self.CZ_atom_arg_index = self.top.select(f"resid {self.res_arg_index} and name CZ")[0]
+            self.CZ_atom_arg_position = self.traj.xyz[0][self.CZ_atom_arg_index]
+            
+            # Get the distance between the aromatic ring COM and the CZ atom of ARG
+            self.vector_COM_CZ = Vector.from_points(self.COM_aromatic, self.CZ_atom_arg_position)
+            self.distance = self.vector_COM_CZ.norm() *10 # *10 to convert nm to angstrom
+        
+            
+        
+        #===== Identify interaction for "Arg-Arg"  =====
+        elif self.type == "Arg-Arg":
+            #----- Calculate angle between the 2 planes -----
+            # Get position of atom making the ARG plane A
+            self.list_arg_A_atom_position = []
+            for self.atom in self.dict_plane['ARG']:
+                self.atom_index = self.top.select(f"resid {self.res_index_A} and name {self.atom}")[0]
+                self.atom_position = self.traj.xyz[0][self.atom_index]
+                self.list_arg_A_atom_position.append(self.atom_position)
+                
+            # Get position of atom making the ARG plane B
+            self.list_arg_B_atom_position = []
+            for self.atom in self.dict_plane['ARG']:
+                self.atom_index = self.top.select(f"resid {self.res_index_B} and name {self.atom}")[0]
+                self.atom_position = self.traj.xyz[0][self.atom_index]
+                self.list_arg_B_atom_position.append(self.atom_position)
+ 
+            # Create the 2 planes
+            self.plane_A = Plane.from_points(self.list_arg_A_atom_position[0], self.list_arg_A_atom_position[1], self.list_arg_A_atom_position[2])
+            self.plane_B = Plane.from_points(self.list_arg_B_atom_position[0], self.list_arg_B_atom_position[1], self.list_arg_B_atom_position[2])
+            
+            # Get normal vector of the planes
+            self.vector_normal_plane_A = self.plane_A.normal
+            self.vector_normal_plane_B = self.plane_B.normal
+            
+            # Calculate the angle between the two planes
+            self.angle = np.rad2deg( self.vector_normal_plane_A.angle_between(self.vector_normal_plane_B) )
+            # Convert the angle to a range of values from 0 to 90 degrees
+            self.angle = self.convert_angle(self.angle)
+            
+            #----- Calculate the distance between the two ARG -----
+            # Get 
+            self.CZ_A_index = self.top.select(f"resid {self.res_index_A} and name CZ")[0]
+            self.CZ_A_position = self.traj.xyz[0][self.CZ_A_index]
+            self.CZ_B_index = self.top.select(f"resid {self.res_index_B} and name CZ")[0]
+            self.CZ_B_position = self.traj.xyz[0][self.CZ_B_index]
+            
+            # Get the distance between the aromatic ring COM and the CZ atom of ARG
+            self.vector_CZ = Vector.from_points(self.CZ_A_position, self.CZ_B_position)
+            self.distance = self.vector_CZ.norm() *10 # *10 to convert nm to angstrom            
+    
+    
+    #===== Functions =====
+    def convert_angle(self, angle):
+        """
+        Take angle in degree, in the range 0-360, and convert it to an equavalent range 0-90.
+        """
+        if angle <= 90:
+            return angle # the angle is already in the range 0 to 90 degrees
+        elif angle <= 180:
+            return 180 - angle
+        elif angle <= 270:
+            return self.angle - 180
+        else:
+            return 360 - angle
+    
+    
+    
+    #===== Return properties =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if a charged residue interact between Arg-Arg or Arg-Aromatic
+        
+        RETURN  
+            True, 'subtype'  The interaction exist            
+            False, False     The interaction don't exist.
+        """
+        if self.distance > self.MAX_distance:
+            return False, False, False
+        
+        else:
+            if self.angle <= self.MAX_quadrupole_angle:
+                return True, self.type, "parallel"
+            
+            elif self.MIN_pi_angle <= self.angle:
+                return True, self.type, "perpendicular"
+            
+            else:
+                return True, self.type, "intermediate"
+
+        
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle between the 2 Arg plane or the angle between the Arg plane and the aromatic plane
+        RETURN         angle
+        UNIT           degree
+        """
+        return self.angle
+
+    
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Distance between the CZ of each Arg, of distance between the CZ of Arg and the COM of the aromatic plane
+        RETURN         distance
+        UNIT           Angstrom
+        """
+        return self.distance
+    
+    
 
 
 
