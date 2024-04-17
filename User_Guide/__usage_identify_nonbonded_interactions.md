@@ -305,19 +305,21 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 
 
 
-
 ## 9. Charge-Aromatic ring
 
 **charge_aromatic**(trajectory, res_index_A, res_index_B, frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0)
 
 ### Description
 
-Identify the interaction between the amino group of Asn or Gln and the $\pi$ ring of the residue.
+Identify the interaction with the charged amino acid and an aromatic rings.
 It identify 3 subtypes, where *charge* is cation or anion:
 
 - *charge*-$\pi$
 - *charge*-intermediate (when the angle is between the $\pi$ area and the quadrupole area)
 - *charge*-quadrupole
+
+>[!NOTE]
+> Protonated histidine (HIP or HSP) are considered as charged residue only.
 
 ### Arguments
 
@@ -343,7 +345,7 @@ It identify 3 subtypes, where *charge* is cation or anion:
 
 
 
-## 10. Aromatic aromatic
+## 10. Aromatic-Aromatic
 
 **aromatic_aromatic**(trajectory, res_index_A, res_index_B, *frame=0, MAX_angle_planarity=30.0, MAX_distance_COM=5.5, MIN_distance_offset=1.6, MAX_distance_offset=2.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0, MAX_angle_Tshaped=5.0*)
 
@@ -361,15 +363,132 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MAX_distance_COM | float | Distance between the COMs of each residue <br/> Default value: 5.5 Å | optional |
+| MIN_distance_offset | float | Minimum distance between the COM of the first residue and the COM of the second residue projected on the plane of the first residue. <br/> Default value: 1.6 Å | optional |
+| MAX_distance_offset | float | Maximum distance between the COM of the first residue and the COM of the second residue projected on the plane of the first residue. <br/> Default value: 2.0 Å | optional |
+| MIN_pi_angle | float | Minimum angle defining the Pi area (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
+| MAX_quadrupole_angle | float | Maximum angle defining the quadrupole area (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
+| MAX_angle_planarity | float | Maximum angle defining the planarity between the two planes (the maximum is 0˚). <br/> Default value: 30.0˚ | optional |
+| MAX_angle_Tshaped | float | Maximum angle between the normal vector of an aromatic plane of residue 1 and the vector $\overrightarrow{COM \space C}$ of the ring of the residue 2 (the maximum is 0˚). <br/> Default value: 5.0˚ | optional |
 
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ), string (subtype) |  |
+| .get_angle         | Angle between the two plane, angle beteewn the vector COM $\rightarrow$ COM and plane A then with plane B. Finally it return the hsaped position angle.| float | degree |
+| .get_distance      | Return the distances between COM-COM and distance between the COM and the projected COM on a plane. | float | Å |
+
+
+
+
+## 11. ARG involved
+
+**command**(trajectory, res_index_A, res_index_B, ...)
+
+### Description
+
+A specific class to precise the ARG-Aromatic and ARG-ARG interaction. It is possible to identify 3 subtypes: perpendicular, parallel, intermediate.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MAX_distance | float | Distance between the CZ atom of the ARG and COM of and aromatic ring or CZ of another ARG. <br/> Default value: 6.0 Å | optional |
+| MIN_pi_angle | float | Minimum angle defining the Pi area (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
+| MAX_quadrupole_angle | float | Maximum angle defining the quadrupole area (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_angle         | Angle between the two plane, angle betewwn the vector COM $\rightarrow$ COM and plane A then with plane B. Finally it return the hsaped position angle.| float | degree |
-| .get_distance      | Return the distances between COM-COM and distance between the COM and the projected COM on a plane. | float | Å |
+| .get_angle         | Angle between the 2 Arg plane or the angle between the Arg plane and the aromatic plane. | float | degree |
+| .get_distance      | Distance between the CZ of each Arg, of distance between the CZ of Arg and the COM of the aromatic plane. | float | Å |
+
+
+
+
+## 12. $\pi$ hydrogen bond
+
+**pi_hbond**(trajectory, res_index_A, res_index_B, *frame=0, MIN_angle=120.0, MAX_distance_X_COM=5.5, MAX_distance_H_COM=3.0, MAX_distance_Hp_COM=1.2*)
+
+### Description
+
+Identify an hydrogen bond involving a $\pi$ area of an aromatic cycle.
+
+It don't take in acount H of aromatic cycle, due to a false positive with aromatic-aromatic interaction, and the H of chaged residues (only the charged part), due to false positive with charge-aromatic interaction. 
+
+Please note that protonated histidine are not taken in acount are not taken into account because they are involved in charge-aromatic interactions.
+
+> [!IMPORTANT]
+> The structure, or a trajectory must contain hydrogens.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MIN_angle   | float | Minimum angle of X-H...COM. <br/> Default value: 120.0˚ | optional |
+| MAX_distance_X_COM | float | Maximum distance between H donnor (X) and COM. <br/> Default value: 5.5 Å | optional |
+| MAX_distance_H_COM | float | Maximum distance between H and COM <br/> Default value: 3.0 Å | optional |
+| MAX_distance_Hp_COM | float | Maximum distance between H projected on aromatic plane and COM <br/> Default value: 1.2 Å | optional |
+
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ), string (type), string (subtype) |  |
+| .get_atoms    | Return a list of atoms index involved in H-bond.  | list of list: [[H_index, X_index],...] <br/> *X atom is the hydrogen donor.*|  |
+| .get_angle    | List of angle betwee the N-COM and the normal of the aromatic ring. | list: [[angle],...] | degree |
+| .get_distance | List of distance between COM of aromatic ring and N of the amino group. | list of list: [[distance_H_COM, distance_COM_Hprojected, distance_X_COM],...] | Å |
+
+> [!TIP]
+> In each list, the angle and distances have the same index as the list of atoms (H,X) making the $\pi$ H-bond.
+
+
+
+
+
+
+## 13. $n \rightarrow \pi^*$
+
+**n_pi**(trajectory, res_index_A, res_index_B, *frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110 , angular_tolerance=5.0*)
+
+### Description
+
+Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| ref_distance | float | Distance between O..C atoms. <br/> Default value: 3.0 Å | optional |
+| distance_tolerance | float | The range of distance is ref_distance +/- N. <br/> Default value of N: 0.25 | optional |
+| ref_angle | float | Angle between O..C=O atoms. <br/> Default value: 110.0 | optional |
+| angular_tolerance | float | The range of angle is ref_angle +/- N. <br/> Default value of N: 5.0 | optional |
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ), string (regular / reciprocal) |  |
+| .get_distance      | Return the two O...C distances. | floats: distance_O_res_A_C_res_B, distance_O_res_B_C_res_A | Å |
+| .get_angle         | Return the two O...C=O angles.  | floats: angle_O_res_A_CO_res_B, angle_O_res_B_CO_res_A | degree |
+
+
 
 
 
@@ -379,6 +498,9 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 **command**(trajectory, res_index_A, res_index_B, ...)
 
 ### Description
+
+> [!IMPORTANT]
+> - The structure, or a trajectory must contain hydrogens.
 
 ### Arguments
 

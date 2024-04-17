@@ -12,7 +12,7 @@
  Molecular InteraCtion anaLysis tOolkiTs
  _______________________________________
  
- A collectin of tools to analyse protein-protein interactions.
+ A collection of tools to analyse protein-protein interactions.
 """
 
 __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'

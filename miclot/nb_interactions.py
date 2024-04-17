@@ -693,8 +693,8 @@ class salt_bridge:
         self.hbond_atoms = {
             "ARG": "HE NE NH1 HH11 HH12 NH2 HH21 HH22",
             "LYS": "NZ HZ1 HZ2 HZ3",
-            "HIP": "ND1 NE2 HE2 HD1", # Protonated HIS
-            "HSP": "ND1 NE2 HE2 HD1", # Protonated HIS in CHARMM
+            "HIP": "ND1 NE2 HE2 HD1 HD2", # Protonated HIS
+            "HSP": "ND1 NE2 HE2 HD1 HD2", # Protonated HIS in CHARMM
             "ASP": "OD1 OD2 HD2",
             "GLU": "OE1 OE2 HE2"
             }
@@ -883,8 +883,8 @@ class hydrogen_bond:
         self.hbond_atoms = {
             "ARG": "HE NE NH1 HH11 HH12 NH2 HH21 HH22",
             "LYS": "NZ HZ1 HZ2 HZ3",
-            "HIP": "ND1 NE2 HE2 HD1", # Protonated HIS
-            "HSP": "ND1 NE2 HE2 HD1", # Protonated HIS in CHARMM
+            "HIP": "ND1 NE2 HE2 HD1 HD2", # Protonated HIS
+            "HSP": "ND1 NE2 HE2 HD1 HD2", # Protonated HIS in CHARMM
             "ASP": "OD1 OD2 HD2",
             "GLU": "OE1 OE2 HE2"
             }
@@ -1687,9 +1687,24 @@ class aromatic_aromatic:
         
         OPTIONAL ARGUMENTS
 
-
             frame    Frame ID on which to perform the analysis.
                      Default value: 0
+                     
+            MAX_distance_COM        Distance between the COMs of each residue
+                                    Default value: 5.5 Å
+            MIN_distance_offset     Minimum distance between the COM of the first residue and the COM of the second residue projected on the plane of the first residue.
+                                    Default value: 1.6 Å
+            MAX_distance_offset     Maximum distance between the COM of the first residue and the COM of the second residue projected on the plane of the first residue.
+                                    Default value: 2.0 Å
+            MIN_pi_angle            Minimum angle defining the Pi area (the maximum is 90˚).
+                                    Default value: 60.0˚
+            MAX_quadrupole_angle    Maximum angle defining the quadrupole area (the maximum is 0˚).
+                                    Default value: 35.0˚
+            MAX_angle_planarity     Maximum angle defining the planarity between the two planes (the maximum is 0˚).
+                                    Default value: 30.0˚
+            MAX_angle_Tshaped       Maximum angle between the normal vector of an aromatic plane of residue 1 and the vector COM-->C of the ring of the residue 2
+                                    (the maximum is 0˚).
+                                    Default value: 5.0˚
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
@@ -1772,10 +1787,10 @@ class aromatic_aromatic:
         
         #===== Distance between COM of resiaue A and the projected point of the COM of residue B into the plane of residue A =====
         # Get projected point of COM resid B on the plane of residue A
-        self.porjected_COM_aromatic_B = self.plane_aromatic_A.project_point(self.COM_aromatic_B)
+        self.projected_COM_aromatic_B = self.plane_aromatic_A.project_point(self.COM_aromatic_B)
         
         # create a vector between aromatic COM of residue A and the projected point
-        self.vector_COM_projected = Vector.from_points(self.COM_aromatic_A, self.porjected_COM_aromatic_B)
+        self.vector_COM_projected = Vector.from_points(self.COM_aromatic_A, self.projected_COM_aromatic_B)
         self.distance_COM_projected = self.vector_COM_projected.norm() *10 # *10 to convert nm to angstrom
 
         
@@ -1861,7 +1876,7 @@ class aromatic_aromatic:
         elif angle <= 180:
             return 180 - angle
         elif angle <= 270:
-            return self.angle - 180
+            return angle - 180
         else:
             return 360 - angle
     
@@ -1981,9 +1996,17 @@ class arg_involved:
             res_index_B    Index of residue B
         
         OPTIONAL ARGUMENTS
-
             frame    Frame ID on which to perform the analysis.
                      Default value: 0
+            
+            MAX_distance    Distance between the CZ atom of the ARG and COM of and aromatic ring or CZ of another ARG.
+                            Default value: 6.0 Å
+
+            MIN_pi_angle    Minimum angle defining the Pi area (the maximum is 90˚).
+                            Default value: 60.0˚
+
+            MAX_quadrupole_angle    Maximum angle defining the quadrupole area (the maximum is 0˚).
+                                    Default value: 35.0˚
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
@@ -2138,7 +2161,7 @@ class arg_involved:
         elif angle <= 180:
             return 180 - angle
         elif angle <= 270:
-            return self.angle - 180
+            return angle - 180
         else:
             return 360 - angle
     
@@ -2189,6 +2212,358 @@ class arg_involved:
         """
         return self.distance
     
+    
+
+
+
+
+#=====================================================
+#===== Class for Pi-Hbond
+#=====================================================
+class pi_hbond:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MIN_angle=120.0, MAX_distance_X_COM=5.5, MAX_distance_H_COM=3.0, MAX_distance_Hp_COM=1.2):
+        """
+        INTERACTION TYPE    Stacking of two aromatic residues.
+        SUBTYPE(S)          
+
+        DESCRIPTION
+            Stacking of two aromatic rings.
+            Please note that protonated histidine are not taken in acount are not taken into account because they are involved in charge-aromatic interactions.
+
+            * COM is the center  of mass of the aromatic ring 
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+            frame    Frame ID on which to perform the analysis.
+                     Default value: 0
+
+            MIN_angle    Minimum angle of X-H...COM
+                         Default value: 120.0
+            
+            MAX_distance_X_COM    Maximum distance between H donnor (X) and COM
+                                  Default value: 5.5
+
+            MAX_distance_H_COM    Maximum distance between H and COM
+                                  Default value: 3.0
+
+            MAX_distance_Hp_COM   Maximum distance between H projected on aromatic plane and COM
+                                  Default value: 1.2
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.MIN_angle = MIN_angle
+        self.MAX_distance_X_COM = MAX_distance_X_COM
+        self.MAX_distance_H_COM = MAX_distance_H_COM
+        self.MAX_distance_Hp_COM = MAX_distance_Hp_COM 
+
+        
+        #===== Create dictionaries of aromatic ring and corresponding plans =====
+        #----- C carbon in aromatic ring -----
+        self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
+                                   "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "HIS": 'CG ND1 CD2 CE1 NE2',
+                                   "HID": 'CG ND1 CD2 CE1 NE2',
+                                   "HIE": 'CG ND1 CD2 CE1 NE2',
+                                   "HSD": 'CG ND1 CD2 CE1 NE2',
+                                   "HSE": 'CG ND1 CD2 CE1 NE2',
+                                  }
+        
+                   
+        self.dict_plane = {"TYR": ['CG',  'CE1', 'CE2'],
+                           "TRP": ['CD2', 'CZ2', 'CZ3'],
+                           "PHE": ['CG',  'CE1', 'CE2'],
+                           "HIS": ['CG',  'CE1', 'NE2'],
+                           "HID": ['CG',  'CE1', 'NE2'],
+                           "HIE": ['CG',  'CE1', 'NE2'],
+                           "HSE": ['CG',  'CE1', 'NE2'],
+                           "HSD": ['CG',  'CE1', 'NE2'],
+                          }
+        
+        #----- Ignored H: H in aromatic ring (due to aromatic-aromatic stacking how can involve H) & H in charged residue (due to the charge-aromatic interaction how can involve H) -----
+        self.dict_ignored_H = {"TYR": "HE1 HE2 HD1 HD2 HH",
+                               "TRP": "ND1 HE1 HZ2 HH2 HZ3 HE3",
+                               "PHE": "HE1 HE2 HD1 HD2 HZ",
+                               "HIS": "HE1 HE2 HD1 HD2",
+                               "HID": "HE1 HE2 HD1 HD2",
+                               "HIE": "HE1 HE2 HD1 HD2",
+                               "HSD": "HE1 HE2 HD1 HD2",
+                               "HSE": "HE1 HE2 HD1 HD2",
+                               "HIP": "HE1 HE2 HD1 HD2", # Protonated HIS
+                               "HSP": "HE1 HE2 HD1 HD2", # Protonated HIS in CHARMM
+                               "ARG": "HE HH11 HH12 HH21 HH22",
+                               "LYS": "HZ1 HZ2 HZ3",
+                               "ASP": "HD2",
+                               "GLU": "HE2",
+                              }
+ 
+
+        #===== initialise residue name and index =====
+        if self.top.residue(res_index_A).name not in self.dict_aromatic_ring and self.top.residue(res_index_B).name in self.dict_aromatic_ring:
+            self.res_R_index = res_index_A
+            self.res_R_name = self.top.residue(res_index_A).name
+            self.res_aromatic_index = res_index_B
+            self.res_aromatic_name = self.top.residue(res_index_B).name
+        
+        elif self.top.residue(res_index_B).name not in self.dict_aromatic_ring and self.top.residue(res_index_A).name in self.dict_aromatic_ring:
+            self.res_R_index = res_index_B
+            self.res_R_name = self.top.residue(res_index_B).name
+            self.res_aromatic_index = res_index_A
+            self.res_aromatic_name = self.top.residue(res_index_A).name 
+
+        
+        #===== COM and plane of aromatic ring =====
+        # Calculate the COM of the aromatic ring
+        self.COM_aromatic = md.compute_center_of_mass(self.traj, select=f"resid {self.res_aromatic_index} and name {self.dict_aromatic_ring[self.res_aromatic_name]}")[0]
+        
+        # Get position of atom making the aromatic plane
+        self.list_aromatic_atom_position = []
+        for self.atom in self.dict_plane[self.res_aromatic_name]:
+            self.atom_index = self.top.select(f"resid {self.res_aromatic_index} and name {self.atom}")[0]
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_atom_position.append(self.atom_position)
+        
+        # Create the plane
+        self.plane_aromatic = Plane.from_points(self.list_aromatic_atom_position[0], self.list_aromatic_atom_position[1], self.list_aromatic_atom_position[2])
+        
+        
+        
+        #===== Identify all Hbonds =====
+        self.checking = False
+        
+        #----- Get all H indices of X residue -----
+        if self.res_R_name not in self.dict_ignored_H:
+            self.hydrogen_indices = self.top.select(f"resid {self.res_R_index} and element H")
+        else:
+            self.hydrogen_indices = self.top.select(f"resid {self.res_R_index} and element H and not name {self.dict_ignored_H[self.res_R_name]}")
+        
+        #----- create list to store results -----
+        self.list_XH_indices = []
+        self.list_distances = []
+        self.list_angles = []
+        
+        #----- Identify posibles Hbonds using distances and angles -----
+        for self.H_index in self.hydrogen_indices:
+            #+++ 1. get position of the H atom  and it's atom in the topology
+            self.H_position = self.traj.xyz[0][self.H_index]
+            self.atom_H = self.traj.topology.atom(self.H_index)
+            
+            
+            #+++ 2. get distances COM-H and COM-Hp (Hp: H projected on the aromatic plane)
+            # create a vector between the COM and the H, and get it's norm
+            self.vector_H_COM = Vector.from_points(self.H_position, self.COM_aromatic)
+            self.distance_H_COM = self.vector_H_COM.norm() *10 # *10 to convert nm to angstrom
+                
+            # project H on the aromatic plane
+            self.H_projected_position = self.plane_aromatic.project_point(self.H_position)
+            
+            # create a vector between the COM and the H projected on the plane, and get it's norm
+            self.vector_COM_Hprojected = Vector.from_points(self.COM_aromatic, self.H_projected_position)
+            self.distance_COM_Hprojected = self.vector_COM_Hprojected.norm() *10 # *10 to convert nm to angstrom  
+            
+            
+            #+++ 3. identify X atom bonded to H and the distance X-COM
+            # get the covalent bond involving H
+            for self.bond in self.top.bonds:
+                if self.atom_H in self.bond:
+                    self.bond_XH = self.bond
+            
+            if self.bond_XH[0] != self.atom_H:
+                self.atom_X = self.bond_XH[0]
+            else:
+                self.atom_X = self.bond_XH[1]
+            
+            # get the position of the X atom
+            self.X_index = self.atom_X.index
+            self.X_position = self.traj.xyz[0][self.X_index]
+            
+            # Get the distance X-COM
+            self.vector_X_COM = Vector.from_points(self.X_position, self.COM_aromatic)
+            self.distance_X_COM = self.vector_X_COM.norm() *10 # *10 to convert nm to angstrom
+            
+            
+            #+++ 4. calculate the X-H-COM angle
+            self.vector_H_X = Vector.from_points(self.H_position, self.X_position)
+            self.angle = np.rad2deg( self.vector_H_X.angle_between(self.vector_H_COM) )
+            
+            
+            #+++ 5. select the bond using COM-H, COM-Hp, COM-X distances and the angle X-H-COM           
+            self.list_XH_indices.append([self.H_index, self.X_index])
+            self.list_distances.append([self.distance_H_COM, self.distance_COM_Hprojected, self.distance_X_COM])
+            self.list_angles.append([self.angle])
+            
+            if self.distance_H_COM <= self.MAX_distance_H_COM and self.distance_COM_Hprojected <= self.MAX_distance_Hp_COM \
+            and self.distance_X_COM <= self.MAX_distance_X_COM and self.MIN_angle <= self.angle:
+                self.checking = True
+                
+    
+    
+    #===== Return results =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if the amino group of GLN or ASN interact with an aromatic ring.
+        
+        RETURN
+            True     The interaction exist.
+            False    The interaction don't exist.
+        """
+        return self.checking
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return a list of atoms index involved in H-bond.
+                       X atom is the hydrogen donor.
+        RETURN         [[H_index, X_index],...]
+        """
+        return self.list_XH_indices        
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle betwee the N-COM and the normal of the aromatic ring
+        RETURN         [[angle],...]
+        UNIT           degree
+        """
+        return self.list_angles
+
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Distance between COM of aromatic ring and N of the amino group
+        RETURN         [[distance_H_COM, distance_COM_Hprojected, distance_X_COM],...]
+        UNIT           Angstrom
+        """
+        return self.list_distances           
+    
+
+
+
+
+#=====================================================
+#===== Class for n-->pi*
+#=====================================================
+class n_pi:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110.0 , angular_tolerance=5.0):
+        """
+        INTERACTION TYPE    n --> Pi*
+        SUBTYPE(S)          regular or reciprocal
+
+        DESCRIPTION
+            Interaction (C=O...C=O) between tow carbonyl groups
+            (C=O) of the backbone.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+        Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
+
+            ref_distance          Distance between O..C atoms.
+                                  Default value: 3.0 Å
+
+            distance_tolerance    The range of distance is ref_distance +/- N.
+                                  Default value of N: 0.25
+
+            ref_angle             Angle between O..C=O atoms.
+                                  Default value: 110.0
+
+            angular_tolerance     The range of angle is ref_angle +/- N.
+                                  Default value of N: 5.0
+
+            frame                 Frame ID on which to perform the analysis.
+                                  Default value: 0
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.res_A = res_index_A
+        self.res_B = res_index_B
+        self.ref_distance = ref_distance
+        self.distance_tolerance = distance_tolerance
+        self.angular_tolerance = angular_tolerance
+        self.ref_angle = ref_angle
+
+        #===== Get atoms index for residue A =====
+        self.atom_O_res_A = self.top.select(f"resid {self.res_A} and name O")[0]
+        self.atom_C_res_A = self.top.select(f"resid {self.res_A} and name C")[0]
+        
+        #===== Get atoms index for residue B =====
+        self.atom_O_res_B = self.top.select(f"resid {self.res_B} and name O")[0]
+        self.atom_C_res_B = self.top.select(f"resid {self.res_B} and name C")[0]
+        
+        #===== Compute O...C distances =====
+        # *10 is used to convert nm to angstrom
+        self.distance_O_res_A_C_res_B = md.compute_distances(self.traj, [[self.atom_O_res_A, self.atom_C_res_B]])[0][0] *10
+        self.distance_O_res_B_C_res_A = md.compute_distances(self.traj, [[self.atom_O_res_B, self.atom_C_res_A]])[0][0] *10
+        
+        #===== Compute O...C=O angles =====
+        self.angle_O_res_A_CO_res_B = np.rad2deg( md.compute_angles(self.traj, [[self.atom_O_res_A, self.atom_C_res_B, self.atom_O_res_B]])[0][0] )
+        self.angle_O_res_B_CO_res_A = np.rad2deg( md.compute_angles(self.traj, [[self.atom_O_res_B, self.atom_O_res_A, self.atom_C_res_A]])[0][0] )
+    
+    
+    
+    #===== Return results =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if the n --> Pi* interaction exist between tow residues.
+        
+        RETURN
+            If the interaction exist between the 2 residues:
+                True, reregular
+                True, reciprocal
+            
+            If the interaction don't exist between the 2 residues:
+                False, False
+        """
+        
+        # If the two distances are close to self.ref_distance and the two angles are close to self.ref_angle
+        # The interaction is reciprocal
+        if (np.isclose(self.distance_O_res_A_C_res_B, self.ref_distance, atol=self.distance_tolerance) and np.isclose(self.angle_O_res_A_CO_res_B, self.ref_angle, atol=self.angular_tolerance)) \
+        and (np.isclose(self.distance_O_res_B_C_res_A, self.ref_distance, atol=self.distance_tolerance) and np.isclose(self.angle_O_res_B_CO_res_A, self.ref_angle, atol=self.angular_tolerance)):
+            return True, 'reciprocal'
+        
+        # # If only one residue have a distance close to self.ref_distance and an angle close to 102.0
+        # The interaction is regular
+        elif (np.isclose(self.distance_O_res_A_C_res_B, self.ref_distance, atol=self.distance_tolerance) and np.isclose(self.angle_O_res_A_CO_res_B, self.ref_angle, atol=self.angular_tolerance)) \
+        or (np.isclose(self.distance_O_res_B_C_res_A, self.ref_distance, atol=self.distance_tolerance) and np.isclose(self.angle_O_res_B_CO_res_A, self.ref_angle, atol=self.angular_tolerance)):
+            return True, 'regular'
+        
+        # If the two distances are different to 3.0 and the two angles are different to 102.0
+        # The interaction don't exist.
+        else:
+            return False, False
+    
+    
+    
+    #===== Return geometrical properties =====
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Return the two O...C distances.
+        RETURN         distance_O_res_A_C_res_B, distance_O_res_B_C_res_A
+        """
+        return self.distance_O_res_A_C_res_B, self.distance_O_res_B_C_res_A
+    
+    
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Return the two O...C=O angles.
+        RETURN         angle_O_res_A_CO_res_B, angle_O_res_B_CO_res_A
+        """
+        return self.angle_O_res_A_CO_res_B, self.angle_O_res_B_CO_res_A
     
 
 

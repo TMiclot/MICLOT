@@ -789,6 +789,126 @@ print(interaction.get_angle)
 
 
 
+## 10. $\pi-$ hydrogen bond
+
+### 10.1. Simple usage
+
+**Code**
+
+```python
+pdb_file = 'Pi-HBond_5pti_clean.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = pi_hbond(traj, 0,1) 
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+True
+[[25, 21]]
+[[2.564013026833409, 0.25852438905004804, 3.5013544225541935]]
+[[149.20084404269872]]
+```
+
+### 10.2. Simple usage 2
+
+**Code**
+
+```python
+pdb_file = 'Pi-HBond_5pti_clean.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = pi_hbond(traj, 0,2) 
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+True
+[[40, 34]]
+[[2.728875808687735, 0.8294750133568008, 3.6191551379494107]]
+[[143.3766091706363]]
+```
+
+
+
+
+## 11. $n \rightarrow \pi^*$
+
+### 11.1. Simple usage
+
+**Code**
+
+```python
+pdb_file = 'n_pi_bond_1k4d_res75-79.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = n_pi(traj, 1,2) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'regular')
+(3.17790687084198, 4.110865294933319)
+(106.11885, 99.668915)
+```
+
+### 11.2. No interaction
+
+**Code**
+
+```python
+pdb_file = 'n_pi_bond_1k4d_res75-79.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = n_pi(traj, 0,1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(False, False)
+(3.051159381866455, 4.092892408370972)
+(116.220634, 96.67473)
+```
+
+
+### 11.3. Changing the angle_tolerance
+
+**Code**
+
+```python
+pdb_file = 'n_pi_bond_1k4d_res75-79.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = n_pi(traj, 0,1, angular_tolerance=7) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'regular')
+(3.051159381866455, 4.092892408370972)
+(116.220634, 96.67473)
+```
+
+
+
+
 
 <!--- TEMPLATE
 ## 4. Salt bridge
