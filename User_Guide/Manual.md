@@ -23,7 +23,7 @@ This part
 This part provide information about the classes and methods available in MICLOT.
 
 - [Installation guide](__installation.md)
-- [structure_preparation](__prepare_structure.md)
+- [Prepare a structure](__prepare_structure.md)
 - [Identify non-bonded interaction](__usage_identify_nonbonded_interactions.md)
 - [Identify Cys-Cys bridge](__usage_identify_CysCys_bridges.md)
 - [Calculate free energy of interacting residues or of a complex](__usage_calculate_free_energy.md)
