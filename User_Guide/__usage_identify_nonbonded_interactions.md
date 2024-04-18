@@ -7,12 +7,6 @@
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
 
-
-
-
-
-# Identify Non-Bonded interactions between two amino acids
-
 ## 1. C-bond
 
 **C_bond**(trajectory, res_index_A, res_index_B, *frame=0*)
@@ -23,7 +17,7 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -54,7 +48,7 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory        | integer | MDTraj trajectory.  | mandatory |
 | res_index         | integer | Index of the residue in MDTraj topology. | mandatory |
@@ -92,7 +86,7 @@ Identify interaction between tow hydrophobic residue or clash between hydrophili
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -135,7 +129,7 @@ Check if their is a clash or a repulsion interaction between the two residues.
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -177,7 +171,7 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -218,7 +212,7 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -250,7 +244,7 @@ Identify van der Waals interaction between two residues.
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -283,7 +277,7 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory   | integer | MDTraj trajectory.  | mandatory |
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -323,7 +317,7 @@ It identify 3 subtypes, where *charge* is cation or anion:
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory   | integer | MDTraj trajectory.  | mandatory |
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -357,7 +351,7 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -392,7 +386,7 @@ A specific class to precise the ARG-Aromatic and ARG-ARG interaction. It is poss
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -430,7 +424,7 @@ Please note that protonated histidine are not taken in acount are not taken into
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -469,7 +463,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -492,8 +486,8 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 
 
-<!--- TEMPLATE
-## 5. Salt bridge
+
+## 6. Salt bridge
 
 **command**(trajectory, res_index_A, res_index_B, ...)
 
@@ -504,7 +498,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
@@ -518,4 +512,4 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
 | .get_distance      | Distances between CA-CA atoms of the two residues. | float | Å |
--->
+
