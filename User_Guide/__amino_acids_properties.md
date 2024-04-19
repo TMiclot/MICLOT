@@ -200,7 +200,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | T    | Hydrogen bonded turn                         |
 | S    | Bend                                         |
 | C    | Loops and irregular elements                 |
-| NA   | "residue" in the topology which isn't actually a protein residue. |
+| N    | "residue" in the topology which isn't actually a protein residue. |
 
 ### 5.2. Simplified assignment code
 
@@ -209,7 +209,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | H    | Helix       | H, G, I                     |
 | E    | Strand      | E, B                        |
 | C    | Coil        | C, T, S                     |
-| NA   | "residue" in the topology which isn't actually a protein residue. | NA |
+| N    | "residue" in the topology which isn't actually a protein residue. | N  |
 
 ### 5.3. References
 
@@ -233,15 +233,15 @@ There's a subtlety to the residues in the rim. Since this is the interface bound
 
 ### 6.1. Structural definition of protein regions & interface types
 
-| Protein region     | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
-| ------------------ | ----------------------- | -------------------------- | ------------- |
-| Surface & Hydrated |                         | > 40%                      | = 0           |
-| Surface            |                         | 25% $\leq$ rASA $\leq$ 40% | = 0           |
-| Interior           |                         | < 25%                      | = 0           |
-| Rim & NIS          |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05 |
-| Rim & Interaction  |                         | > 25%                      | > 0.05 |
-| Support            | < 25%                   |                            | > 0    |
-| Core               | > 25%                   | < 25%                      | > 0    |
+| Protein region     | 1 letter code | Relative ASA in monomer | Relative ASA in complex    | $\Delta$ rASA |
+| ------------------ | ------------- | ----------------------- | -------------------------- | ------------- |
+| Surface & Hydrated | H             |                         | > 40%                      | = 0           |
+| Surface            | S             |                         | 25% $\leq$ rASA $\leq$ 40% | = 0           |
+| Interior           | I             |                         | < 25%                      | = 0           |
+| Rim & NIS          | N             |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05 |
+| Rim & Interaction  | R             |                         | > 25%                      | > 0.05 |
+| Support            | P             | < 25%                   |                            | > 0    |
+| Core               | C             | > 25%                   | < 25%                      | > 0    |
 
 
 ### 6.2. Equations used to calculate the relative ASA (rASA) and the $\Delta$ rASA

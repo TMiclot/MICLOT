@@ -17,6 +17,8 @@ This part
 - [Cysteine bridges: Cys-Cys](__CysCys_bridges.md)
 - [Canonical and non-canonical non-bonding interactions](__nonbonding_interactions.md)
 - [Free energy of residue pairs & Complex binding energy](__free_energy.md)
+- Surface shape analysis
+- Network analysis
 - [Glossary](__glossary.md)
 
 ## Usage
@@ -24,6 +26,10 @@ This part provide information about the classes and methods available in MICLOT.
 
 - [Installation guide](__installation.md)
 - [Prepare a structure](__usage_prepare_structure.md)
+- [Get structure properties](__usage_get_structure_properties.md)
+- [Identify residue pairs](__usage_identify_residue_pairs.md)
+- [Identify residue pairs with a specific property](__usage_identify_residue_pairs_with_property.md)
+- [Identify residue pairs with a specific property and a specific value](__usage_identify_residue_pairs_with_property_and_value.md)
 - [Identify non-bonded interaction](__usage_identify_nonbonded_interactions.md)
 - [Identify Cys-Cys bridge](__usage_identify_CysCys_bridges.md)
 - [Calculate free energy of interacting residues or of a complex](__usage_calculate_free_energy.md)

@@ -46,3 +46,18 @@ The command return two dictionnaries: *dict_chainID_2_chainName, dict_chainName_
 | dict_chainID_2_chainName | dictionnary | Convert MDTraj chainID to PDB chainName. |
 | dict_chainName_2_chainID | dictionnary | Convert PDB chainName to MDTraj chainID. |
 
+
+
+
+
+## x. Minimize structure using OpenMM
+
+> [!NOTE]
+> Minimization reporter come from [https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html](https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html)
+
+
+
+### Arguments
+
+> [!WARNING]
+> The minimization algorithm don't constrain heavy atoms and a long iteration can lead to structure deformation. 
