@@ -29,15 +29,12 @@ mindmap
             4-distance method
             Coulomb & Lennard-Jones
         id{{**Cys-Cys bridge**}}
-            Disulfide bridge
-            Diselenium bridge
-            Selenosulfide bridge
-        id{{**Interaction types**}}
-            Cannonicals
-            Non-Cannonicals
+            Disulfide (S-S)
+            Diselenium (Se-Se)
+            Selenosulfide (S-Se)
         id{{**Interaction network**}}
-            Protein complex
-            Protein folding
+            Protein complex & Protein folding
+            Cannonical & Non-Cannonical interaction types
         id{{**Database**}}
             Amino acids
             Atoms

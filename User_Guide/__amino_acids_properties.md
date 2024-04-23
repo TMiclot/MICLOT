@@ -238,8 +238,8 @@ There's a subtlety to the residues in the rim. Since this is the interface bound
 | Surface & Hydrated | H             |                         | > 40%                      | = 0           |
 | Surface            | S             |                         | 25% $\leq$ rASA $\leq$ 40% | = 0           |
 | Interior           | I             |                         | < 25%                      | = 0           |
-| Rim & NIS          | N             |                         | > 25%                      | 0 < $\Delta rASA \leq$ 0.05 |
-| Rim & Interaction  | R             |                         | > 25%                      | > 0.05 |
+| Rim & NIS          | N             |                         | > 25%                      | $\Delta rASA \leq$ 5% |
+| Rim & Interaction  | R             |                         | > 25%                      | > 5% |
 | Support            | P             | < 25%                   |                            | > 0    |
 | Core               | C             | > 25%                   | < 25%                      | > 0    |
 
