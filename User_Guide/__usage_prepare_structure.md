@@ -1,6 +1,6 @@
 [User Guide home](Manual.md)
 
-# Identify Non-Bonded interactions
+# Prepare a structure
 
 > [!NOTE]
 > Each non-bonded interaction type is designed to be a [Classes](https://docs.python.org/3/tutorial/classes.html).

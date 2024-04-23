@@ -22,19 +22,20 @@ MICLOT contains many tools. They are independent of each other, and each has its
 ```mermaid
 mindmap
     root)**MICLOT**(
-        id{{**Interface analysis**}}
+        id{{**Surface & Interface topology**}}
         id{{**Protein region**}}
         id{{**Energy calculation**}}
             Contacts-based method
             4-distance method
             Coulomb & Lennard-Jones
         id{{**Cys-Cys bridge**}}
-            Disulfide (S-S)
-            Diselenium (Se-Se)
-            Selenosulfide (S-Se)
+            Disulfide
+            Diselenium
+            Selenosulfide
         id{{**Interaction network**}}
             Protein complex & Protein folding
             Cannonical & Non-Cannonical interaction types
+            Residues and Pairs neighborhood
         id{{**Database**}}
             Amino acids
             Atoms

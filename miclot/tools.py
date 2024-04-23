@@ -329,14 +329,6 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 
 
 
-    #===== Generate output dictionnaries =====
-    # generate the dictionnary chainID --> sequence
-    dict_chainID_sequence = df_chain_sequence_ss.set_index('chainID')['sequence'].to_dict()
-
-    # generate the dictionnary chainID --> secondary structure
-    dict_chainID_ss = df_chain_sequence_ss.set_index('chainID')['secondary_structure'].to_dict()
-
-
 
     #===== Save output files =====
     if write_outfile == True:
@@ -348,6 +340,18 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 
         # Save the 
         df_chain_sequence_ss.to_csv(f'{file_path}_sequence_secondaryStructure.csv', index=False)
+
+
+
+
+
+    #===== Generate output dictionnaries =====
+    # generate the dictionnary chainID --> sequence
+    dict_chainID_sequence = df_chain_sequence_ss.set_index('chainID')['sequence'].to_dict()
+
+    # generate the dictionnary chainID --> secondary structure
+    dict_chainID_ss = df_chain_sequence_ss.set_index('chainID')['secondary_structure'].to_dict()
+
 
 
 
@@ -364,7 +368,7 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 
 #===== 1. Class to report minimisation steps =====
 # It is not designed to be used by user
-# Code come from: https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html
+# Code modified from: https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html
 
 # The class can have any name but it must subclass MinimizationReporter.
 class MyMinimizationReporter(MinimizationReporter):
@@ -478,6 +482,497 @@ def minimize_pdb(pdb_file_path, ff='amber', max_iterations=100):
 
 
 
+
+
+#=====================================================
+#===== Function to get protein region of each amino acid in a protein complex
+#=====================================================
+def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_outfile=True):
+    """
+    DESCRIPTION
+        A command to return the protein region of all amino acids involved in a protein complex.
+        It use 
+            - Thien et al. 2013 (https://doi.org/10.1371/journal.pone.0080635): Theoric
+            - ibid. : Empiric
+            - Miller et al. 1987 (https://doi.org/10.1016/0022-2836(87)90038-6)
+            - Rose et al. 1985 (https://doi.org/10.1126/science.4023714)
+            - Lins et al. 2003 (https://doi.org/10.1110/ps.0304803)
+            - Samanta et al. 2002 (https://doi.org/10.1093/protein/15.8.659): Gly-X-Gly
+            - ibid. : Ala-X-Ala
+            - NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+    
+    ARGUMENTS
+        pdb_file_path       Path of the PDB file.
+        chainID_receptor    MDTraj chain ID of the receptor.
+        chainID_ligand      MDTraj chain ID of the ligand.
+    
+    OPTIONAL ARGUMENTS
+    """
+    
+    #===== Define a dictionnary with all MaxASA value from bibliography =====
+    dict_MaxASA = {
+        # Thien et al. 2013 (https://doi.org/10.1371/journal.pone.0080635): Theoric
+        'Thien_theoric': {'ALA': 129,
+                          'ARG': 274,
+                          'ASN': 195,
+                          'ASP': 193,
+                          'CYS': 167,
+                          'GLU': 223,
+                          'GLN': 225,
+                          'GLY': 104,
+                          'HIS': 224,
+                          'ILE': 197,
+                          'LEU': 201,
+                          'LYS': 236,
+                          'MET': 224,
+                          'PHE': 240,
+                          'PRO': 159,
+                          'SER': 155,
+                          'THR': 172,
+                          'TRP': 285,
+                          'TYR': 263,
+                          'VAL': 174
+                         },
+
+        # Thien et al. 2013 (https://doi.org/10.1371/journal.pone.0080635): Empiric
+        'Thien_empiric': {'ALA': 121,
+                          'ARG': 265,
+                          'ASN': 187,
+                          'ASP': 187,
+                          'CYS': 148,
+                          'GLU': 214,
+                          'GLN': 214,
+                          'GLY': 97,
+                          'HIS': 216,
+                          'ILE': 195,
+                          'LEU': 191,
+                          'LYS': 230,
+                          'MET': 203,
+                          'PHE': 228,
+                          'PRO': 154,
+                          'SER': 143,
+                          'THR': 163,
+                          'TRP': 264,
+                          'TYR': 255,
+                          'VAL': 165
+                         },
+
+        # Miller et al. 1987 (https://doi.org/10.1016/0022-2836(87)90038-6): Empiric 
+        'Miller': {'ALA': 113,
+                   'ARG': 241,
+                   'ASN': 158,
+                   'ASP': 151,
+                   'CYS': 140,
+                   'GLU': 183,
+                   'GLN': 189,
+                   'GLY': 85,
+                   'HIS': 194,
+                   'ILE': 182,
+                   'LEU': 180,
+                   'LYS': 211,
+                   'MET': 204,
+                   'PHE': 218,
+                   'PRO': 143,
+                   'SER': 122,
+                   'THR': 146,
+                   'TRP': 259,
+                   'TYR': 229,
+                   'VAL': 160
+                  },
+
+        # Rose et al. 1985 (https://doi.org/10.1126/science.4023714): Empiric
+        'Rose': {'ALA': 118.1,
+                 'ARG': 256,
+                 'ASN': 165.5,
+                 'ASP': 158.7,
+                 'CYS': 146.1,
+                 'GLU': 186.2,
+                 'GLN': 193.2,
+                 'GLY': 88.1,
+                 'HIS': 202.5,
+                 'ILE': 181,
+                 'LEU': 193.1,
+                 'LYS': 225.8,
+                 'MET': 203.4,
+                 'PHE': 222.8,
+                 'PRO': 146.8,
+                 'SER': 129.8,
+                 'THR': 152.5,
+                 'TRP': 266.3,
+                 'TYR': 236.8,
+                 'VAL': 164.5
+                },
+
+        # Lins et al. 2003 (https://doi.org/10.1110/ps.0304803): Empiric
+        'Lins': {'ALA': 111,
+                 'ARG': 250,
+                 'ASN': 166,
+                 'ASP': 160,
+                 'CYS': 157,
+                 'GLN': 187,
+                 'GLU': 194,
+                 'GLY': 86,
+                 'HIS': 191,
+                 'ILE': 173,
+                 'LEU': 179,
+                 'LYS': 212,
+                 'MET': 201,
+                 'PHE': 208,
+                 'PRO': 135,
+                 'SER': 125,
+                 'THR': 144,
+                 'TRP': 249, 
+                 'TYR': 227,
+                 'VAL': 149
+                },
+
+        # Samanta et al. 2002 (https://doi.org/10.1093/protein/15.8.659): Empiric
+        #     In the set 'Samanta_ala' the value for GLY come frome 'Samanta_gly' because their ise no data availble for Ala-Gly-Ala in the paper.
+        'Samanta_gly': {'ALA': 116.4,
+                        'ARG': 249.26,
+                        'ASN': 168.87,
+                        'ASP': 155.37,
+                        'CYS': 141.48,
+                        'GLN': 189.17,
+                        'GLU': 187.16,
+                        'GLY': 83.91,
+                        'HIS': 198.51,
+                        'ILE': 189.95,
+                        'LEU': 197.99,
+                        'LYS': 207.49,
+                        'MET': 210.55,
+                        'PHE': 223.29,
+                        'PRO': 144.8,
+                        'SER': 125.68,
+                        'THR': 148.06,
+                        'TRP': 265.42,
+                        'TYR': 238.3,
+                        'VAL': 162.24
+                       },
+
+        'Samanta_ala': {'ALA': 55.4,
+                        'ARG': 190.24,
+                        'ASN': 109.92,
+                        'ASP': 97.8,
+                        'CYS': 82.07,
+                        'GLN': 129.68,
+                        'GLU': 132.53,
+                        'GLY': 83.91,
+                        'HIS': 141.27,
+                        'ILE': 130.71,
+                        'LEU': 141.52,
+                        'LYS': 147.99,
+                        'MET': 150.39,
+                        'PHE': 164.18,
+                        'PRO': 106.44,
+                        'SER': 69.08,
+                        'THR': 88.62,
+                        'TRP': 209.62,
+                        'TYR': 180.03,
+                        'VAL': 103.12
+                       },
+
+        # NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+        'NACCESS': {"ALA": 107.95,
+                    "CYS": 134.28,
+                    "ASP": 140.39,
+                    "GLU": 172.25,
+                    "PHE": 199.48,
+                    "GLY": 80.10,
+                    "HIS": 182.88,
+                    "ILE": 175.12,
+                    "LYS": 200.81,
+                    "LEU": 178.63,
+                    "MET": 194.15,
+                    "ASN": 143.94,
+                    "PRO": 136.13,
+                    "GLN": 178.50,
+                    "ARG": 238.76,
+                    "SER": 116.50,
+                    "THR": 139.27,
+                    "VAL": 151.44,
+                    "TRP": 249.36,
+                    "TYR": 212.76
+                    }    
+    } # end of MaxASA dictionnary
+
+    #===== read the PDB file with MDTraj=====
+    traj = md.load(pdb_file_path, top=pdb_file_path)
+    
+    
+    
+    #===== Convert chainIDs to text =====
+    # ensure chainID are string
+    chainID_receptor = [str(i) for i in chainID_receptor]
+    chainID_ligand = [str(i) for i in chainID_ligand]
+
+    # join list of chainID as sigle string
+    chainID_receptor = ' '.join(chainID_receptor)
+    chainID_ligand = ' '.join(chainID_ligand)
+
+
+
+    #===== Create traj of ligand, receptor =====
+    # Traj for the receptor
+    select_receptor = traj.topology.select(f"chainid {chainID_receptor} and protein") 
+    traj_receptor = traj.atom_slice(select_receptor)
+
+    # Traj for the ligand
+    select_ligand = traj.topology.select(f"chainid {chainID_ligand} and protein") 
+    traj_ligand = traj.atom_slice(select_ligand)
+
+    # Traj for the complex
+    select_complex = traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and protein") 
+    traj_complex = traj.atom_slice(select_complex)
+
+
+
+    #===== dictionnary create dictionary to corellate CA position <--> residue index =====
+    # dictionnary position --> original_resID
+    dict_position_initial_indices = {" ".join(map(str,traj.xyz[0, atom_index])):traj.topology.atom(atom_index).residue.index for atom_index in traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and name CA")}
+
+    # dictionnary position --> ID in traj_complex --> position
+    dict_complex_indices_positions = {" ".join(map(str,traj_complex.xyz[0, atom_index])):traj_complex.topology.atom(atom_index).residue.index for atom_index in traj_complex.topology.select(f"name CA")}
+
+    # dictionnary position --> ID in traj_receptor --> position
+    dict_receptor_indices_positions = {" ".join(map(str,traj_receptor.xyz[0, atom_index])):traj_receptor.topology.atom(atom_index).residue.index for atom_index in traj_receptor.topology.select(f"name CA")}
+
+    # dictionnary position --> ID in traj_ligand --> position
+    dict_ligand_indices_positions = {" ".join(map(str,traj_ligand.xyz[0, atom_index])):traj_ligand.topology.atom(atom_index).residue.index for atom_index in traj_ligand.topology.select(f"name CA")}
+
+
+
+    #===== compute SASA =====
+    # SASA of each residue in the traj_complex
+    SASA_complex = md.shrake_rupley(traj_complex, mode='residue', get_mapping=True)[0][0]
+    SASA_complex_resID = list( set(md.shrake_rupley(traj_complex, mode='residue', get_mapping=True)[1]) )
+
+    # SASA of each residue in the traj_receptor
+    SASA_receptor = md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True)[0][0]
+    SASA_receptor_resID = list( set(md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True)[1]) )
+
+    # SASA of each residue in the traj_ligand
+    SASA_ligand = md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True)[0][0]
+    SASA_ligand_resID = list( set(md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True)[1]) )
+
+
+
+    #===== Generate dictionaries to store resID --> SASA =====
+    # for the complex
+    dict_SASA_complex = {SASA_complex_resID[index]:SASA_complex[index] for index in range(len(SASA_complex_resID))}
+
+    # for the receptor
+    dict_SASA_receptor = {SASA_receptor_resID[index]:SASA_receptor[index] for index in range(len(SASA_receptor_resID))}
+
+    # for the ligand
+    dict_SASA_ligand = {SASA_ligand_resID[index]:SASA_ligand[index] for index in range(len(SASA_ligand_resID))}
+
+
+
+    #===== Get SASA od  residue when in complex or free (not in complex) =====
+    # create list to store resluts
+    list_chainID = []
+    list_index = []
+    list_name = []
+    list_SASA_complex = []
+    list_SASA_free = []
+    list_identity = []
+
+
+    # loop over all CA position fin the complex
+    for position in dict_complex_indices_positions:
+        #----- Get original ID, name and chainID infos -----
+        # use the CA position to get the original residue ID (from the traj)
+        index_original_traj = dict_position_initial_indices[position]
+
+        # get residue name from it's original index
+        resname = traj.topology.residue(index_original_traj).name
+
+        # get chainID from it's original index
+        chainID = traj.topology.residue(index_original_traj).chain.index
+
+
+        #----- Get SASA in complex -----
+        # use the CA position to resID into the traj_complex
+        index_complex_traj  = dict_complex_indices_positions[position]
+
+        # Get the SASA of the residdue in complex
+        SASA_in_complex = dict_SASA_complex[index_complex_traj]
+
+
+        #----- Get SASA free -----  
+        # use the CA position to resID into the traj_receptor (if in receptor) or traj_ligand (if in residue)
+        # and get the SASA when not in complex (free)
+
+        # try if in receptor
+        try:
+            index_receptor_traj = dict_receptor_indices_positions[position]
+            SASA_in_free = dict_SASA_receptor[index_receptor_traj]
+            identidy = "receptor"
+
+        # try if in ligand
+        except:    
+            index_ligand_traj = dict_ligand_indices_positions[position]
+            SASA_in_free = dict_SASA_ligand[index_ligand_traj]
+            identidy = "ligand"
+
+
+
+        #----- append lists with values -----
+        list_index.append(index_original_traj)
+        list_chainID.append(chainID)
+        list_name.append(resname)
+        list_SASA_complex.append(SASA_in_complex *100) # *100 to convert nm2 to A2
+        list_SASA_free.append(SASA_in_free *100) # *100 to convert nm2 to A2
+        list_identity.append(identidy)
+
+
+
+    #===== Create Pandas dataframe to store info =====
+    dataframe = pd.DataFrame({"identity": list_identity,
+                              "chainID":list_chainID,
+                              "resID":list_index,
+                              "name":list_name,
+                              "SASA_complex":list_SASA_complex,
+                              "SASA_free":list_SASA_free,
+                            })
+
+
+
+    #===== Calculate the protein region using all method in dict_dict_MaxASA & expamd the dataframe =====
+    for method in dict_MaxASA:
+        #----- calculate rASA and drASA -----
+        # calculate rSASA in complex or free using the MaxASA value for the method in dict_MaxASA
+        dataframe[f'{method}_rASA_complex'] = dataframe[f'SASA_complex'] / dataframe['name'].map(dict_MaxASA[method])
+        dataframe[f'{method}_rASA_free'] = dataframe[f'SASA_free'] / dataframe['name'].map(dict_MaxASA[method])
+
+        # calculate drASA = rASA_free - rASA_complex
+        dataframe[f'{method}_drASA'] = dataframe[f'{method}_rASA_free'] - dataframe[f'{method}_rASA_complex']
+
+        # Initialize 'protein_area' column with default value
+        dataframe[f'{method}_protein_region'] = np.nan
+
+        #----- Identify protein region -----
+        # surface & hydrated
+        dataframe.loc[(dataframe[f'{method}_drASA'] == 0) & (40/100.0 < dataframe[f'{method}_rASA_complex']), f'{method}_protein_region'] = 'surface_hydrated'
+
+        # surface
+        dataframe.loc[(dataframe[f'{method}_drASA'] == 0) & (25/100.0 < dataframe[f'{method}_rASA_complex']) & (dataframe[f'{method}_rASA_complex'] <= 40/100.0), f'{method}_protein_region'] = 'surface'
+
+        # interior
+        dataframe.loc[(dataframe[f'{method}_drASA'] == 0) & (dataframe[f'{method}_rASA_complex'] < 25/100.0), f'{method}_protein_region'] = 'interior'
+
+        # rim & NIS
+        dataframe.loc[(dataframe[f'{method}_drASA'] != 0) & (dataframe[f'{method}_drASA'] <= 5/100.0) & (25/100.0 < dataframe[f'{method}_rASA_complex']), f'{method}_protein_region'] = 'rim_nis'    
+
+        # rim & interaction
+        dataframe.loc[(5/100.0 < dataframe[f'{method}_drASA']) & (25/100.0 < dataframe[f'{method}_rASA_complex']), f'{method}_protein_region'] = 'rim_interaction'
+
+        # support
+        dataframe.loc[(0 < dataframe[f'{method}_drASA']) & (dataframe[f'{method}_rASA_free'] < 25/100.0), f'{method}_protein_region'] = 'support'
+
+        # core
+        dataframe.loc[(0 < dataframe[f'{method}_drASA']) & (dataframe[f'{method}_rASA_complex'] < 25/100.0) & (25/100.0 < dataframe[f'{method}_rASA_free']), f'{method}_protein_region'] = 'core'
+
+
+
+    #===== Create a dataframe with the total ASA of the complex, receptor, ligand and the area of the interface =====
+    # calculate ASA of the complex
+    ASA_total_complex = dataframe['SASA_complex'].sum()
+
+    # calculate ASA of the receptor or ligand by filtering using the column 'identity'
+    ASA_total_receptor = dataframe[dataframe['identity'] == 'receptor']['SASA_free'].sum()
+    ASA_total_ligand = dataframe[dataframe['identity'] == 'ligand']['SASA_free'].sum()
+
+    # calculate the interface
+    interface = (ASA_total_receptor + ASA_total_ligand) - ASA_total_complex
+
+    # create a dataframe with the results
+    df_ASA_total_interface = pd.DataFrame({'identity':["complex", "receptor", "ligand", "interface"],
+                                           'ASA':[ASA_total_complex, ASA_total_receptor, ASA_total_ligand, interface],
+                                         })
+
+
+
+    #===== Create dataframe to store protein region as sequence format =====
+    # Get columns containing 'protein' in their title
+    columns_protein_region = [col for col in dataframe.columns if 'protein_region' in col]
+
+    # Create a new dataframe with selected column
+    df_filtered_protein_region = dataframe[['identity', 'chainID'] + columns_protein_region]
+    # Create a copy of the DataFrame
+    df_filtered_protein_region = df_filtered_protein_region.copy()
+
+    # Convert protein_region to their 1-letter code by replacing all occurrences
+    df_filtered_protein_region.replace('surface_hydrated', 'H', inplace=True)
+    df_filtered_protein_region.replace('surface', 'S', inplace=True)
+    df_filtered_protein_region.replace('interior', 'I', inplace=True)
+    df_filtered_protein_region.replace('rim_nis', 'N', inplace=True)
+    df_filtered_protein_region.replace('rim_interaction', 'R', inplace=True)
+    df_filtered_protein_region.replace('support', 'P', inplace=True)
+    df_filtered_protein_region.replace('core', 'C', inplace=True)
+
+    # create lists containing only chainID an their identityt (receptor or ligand)
+    list_chainID = list(set(df_filtered_protein_region['chainID'].to_list()))
+    list_chainID_identity = list(set(df_filtered_protein_region['identity'].to_list()))
+
+    # initialise the new dataframe
+    df_sequence_protein_region = pd.DataFrame({'chainID':list_chainID,
+                                               'identity':list_chainID_identity,
+                                              })
+
+    # initialise a list to store all protein_region in sequence format
+    list_sequence_protein_region = []
+
+    # for each method (colum in the 'df_filtered_protein_region') convert get the
+    for method in columns_protein_region:
+        list_sequence = [] # (re)initialise the list for all method column
+
+        # append the list_sequence for each chainID
+        for ID in list_chainID:
+            # selecti only row with the ID in their chainID column, then select only the column 'method', then convert it to list, finally joint the list
+            sequece_protein_region = ''.join(df_filtered_protein_region[df_filtered_protein_region['chainID'] == ID][method].to_list())
+            list_sequence.append(sequece_protein_region)
+
+        # append the dataframe with a new colum corresponding to the method
+        df_sequence_protein_region[method] = list_sequence
+
+    
+    
+    #===== Save output files =====
+    if write_outfile == True:
+        # Get the output path with the original PDB name
+        file_path = pdb_file_path.replace('.pdb', '') # Replace '.pdb' with an empty string
+        
+        # Save the dataframe with residue SASA, rASA, drASA, and protein region informations
+        dataframe.to_csv(f'{file_path}_residues_protein_region.csv', index=False)
+        
+        # Save dataframe with area information of complex, free receptor, free ligand, and the interface receptor-ligand
+        df_ASA_total_interface.to_csv(f'{file_path}_ASA_complex_receptor_ligand_and_interface.csv', index=False)
+        
+        # 
+        df_sequence_protein_region.to_csv(f'{file_path}_chainID_protein_region_sequence_format.csv', index=False)
+    
+                            
+        
+    #===== Generate output dictionnaries =====
+    # generate the dictionnary chainID --> sequence
+    dict_ASA_total_interface = df_ASA_total_interface.set_index('identity')['ASA'].to_dict()
+
+    # generate the dictionnary chainID --> secondary structure
+    dict_sequence_protein_region = df_sequence_protein_region.set_index('chainID').to_dict()
+                           
+        
+        
+    #===== Return results =====
+    return dict_ASA_total_interface, dict_sequence_protein_region
+    
+
+
+
+
+
 #=====================================================
 #===== Import modules
 #=====================================================
+
