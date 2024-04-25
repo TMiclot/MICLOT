@@ -41,10 +41,10 @@
 - [ ] physico chemical properties (pI, aromaticity, etc) [https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html](https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html)
 
 
-## Tools
+## Utilities
 - [x] MDTraj chain ID <--> PDB chain name
 - [x] Minimization (openMM)
-- [ ] preparation (PDB2PQR)
+- [x] preparation (PDB2PQR)
 
 
 ## Neighbors
@@ -59,7 +59,8 @@ Steps:
 
 - [ ] protein to mesh
 - [ ] mesh to matrix
-- [ ] matrix analysis
+- [x] matrix analysis
+- [ ] signal (of the matrix) analysis
 
 
 ***

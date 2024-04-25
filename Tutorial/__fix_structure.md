@@ -21,7 +21,6 @@ It can be easly (and graphically) done using the PDB2PQR server: [https://server
 
 
 
-
 ## 2. Correlate PDB file with MDTraj topology
 
 **Code**
@@ -47,3 +46,16 @@ The command also output 3 CSV files:
 
 
 ## 3. Minimize the structure
+
+**Code**
+
+```python
+minimize_pdb('3v16.pdb')
+```
+
+**Result**
+
+The command also output 2 files:
+
+- 3v16_minimized.pdb
+- minimization_out.csv

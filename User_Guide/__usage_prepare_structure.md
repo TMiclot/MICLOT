@@ -7,6 +7,16 @@
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
 
+## x. Add missing atoms & renam residues by their protonated state
+**pbd2pqr_parse**(pdb_file_path, *force_field='AMBER', ph=7.0, write_logfile=True*)
+
+### Description
+
+### Arguments
+
+### Returns
+
+
 
 ## x. Correlate PDB wth MDTraj topology
 
@@ -52,12 +62,31 @@ The command return two dictionnaries: *dict_chainID_2_chainName, dict_chainName_
 
 ## x. Minimize structure using OpenMM
 
+### Description
+
 > [!NOTE]
 > Minimization reporter come from [https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html](https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/report_minimization.html)
 
+This command is a parser to minimize a structure using [openMM](https://openmm.org/). It generate a PDB file and an output file in CSV format containing the energy of the structure at each step of the minimization:
 
+- system energy: the current potential energy of the system
+- restraint energy: the energy of the harmonic restraints
+- restraint strength: the force constant of the restraints (in kJ/mol/nm^2)
+- max constraint error: the maximum relative error in the length of any constraint
 
-### Arguments
+For more details, the options: `nonbondedMethod=NoCutoff, constraints=HBonds` are used. The first ensure all Coulomb and Lennar-Jones force a re calculated without cutoff, the second ensure *the lengths of all bonds that involve a hydrogen atom are constrained*.
 
 > [!WARNING]
-> The minimization algorithm don't constrain heavy atoms and a long iteration can lead to structure deformation. 
+> The minimization algorithm don't constrain heavy atoms and a long minimization can lead to structure deformation.
+
+### Arguments 
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| pdb_file_path | string  | Path to the PDB file. | mandatory |
+| ff | string | Force field to use. Values are 'amber' or 'charmm'. <br/> Default value: 'amber' | optional |
+| max_iterations | integer | Maximum number of iterations. <br/> Default value: 100 | optional |
+
+### Returns
+
+The command return a minimization log file, in CSV format, and the minimized structure in PDB format.

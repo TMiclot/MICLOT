@@ -30,6 +30,7 @@ __version__ = "Version: 1.0 -- jj/mm/2024"
 #=====================================================
 
 import os
+import subprocess
 #
 import numpy as np
 import mdtraj as md
@@ -417,11 +418,19 @@ class MyMinimizationReporter(MinimizationReporter):
 
 
 #===== 2. Function to mnimize structure ===== 
-def minimize_pdb(pdb_file_path, ff='amber', max_iterations=100):
+def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
     """
-    
-    
-    ! constraints method Hbonds lead to a multiple run of x iteration of minimisation in the output file. But conserve Hbond.
+    DESCRIPTION
+        This command is a parser to minimize a structure using openMM.
+        It generate a PDB file and an output file in CSV format containing
+        the energy of the structure at each step of the minimization.
+
+    ARGUMENTS
+        pdb_file_path    Path of the pDB file.
+        force_field      Force field 'amber' or 'charmm'.
+                         Default value: 'amber'
+        max_iterations   Maximum number of iteration. Too hight number can lead to structure deformation.
+                         Default value: 100
     """
     #==== 
     #----- Clear existing output file and minimized pdb -----
@@ -447,9 +456,9 @@ def minimize_pdb(pdb_file_path, ff='amber', max_iterations=100):
     pdb = PDBFile(pdb_file_path)
     
     # get the forcefield
-    if ff == 'amber':
+    if force_field == 'amber':
         forcefield = ForceField('amber14/protein.ff14SB.xml')
-    elif ff == 'charmm':
+    elif force_field == 'charmm':
         forcefield = ForceField('charmm36.xml')
     else:
         raise ValueError('Forcefield value must be "amber" or "charmm"')
@@ -485,13 +494,191 @@ def minimize_pdb(pdb_file_path, ff='amber', max_iterations=100):
 
 
 #=====================================================
+#===== Function to get SASA of resisues when bound or free in a complex
+#=====================================================
+def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, noH=False, dict_radii=None):
+    """
+    DESCRIPTION
+        Return the SASA of each residue in a protein complex when they are bonded or free.
+
+    ARGUMENTS
+        pdb_file_path       path of the PDB file
+        chainID_receptor    list of MDTraj chainID of the receptor
+        chainID_ligand      list of MDTraj chainID of the receptor
+
+    OPTIONAL ARGUMENTS
+        noH                 (True/False) Avoid hydrogen in SASA calculation.
+                            Default vaule: False
+        dict_radii          (False/dictionnary) Use customatom radii.
+                            Default value: None.
+                            More info: https://mdtraj.org/1.9.7/api/generated/mdtraj.shrake_rupley.html
+    """
+    #===== read the PDB file with MDTraj=====
+    traj = md.load(pdb_file_path, top=pdb_file_path)
+    
+    
+    #===== Convert chainIDs to text =====
+    # ensure chainID are string
+    chainID_receptor = [str(i) for i in chainID_receptor]
+    chainID_ligand = [str(i) for i in chainID_ligand]
+
+    # join list of chainID as sigle string
+    chainID_receptor = ' '.join(chainID_receptor)
+    chainID_ligand = ' '.join(chainID_ligand)
+
+
+
+    #===== Create traj of ligand, receptor =====
+    # Remove or keep hydrogens atoms in the selections
+    if noH == False:
+        if_hydrogens = ''
+    elif noH == True:
+        if_hydrogens = 'and not element H'
+    
+    # Traj for the receptor
+    select_receptor = traj.topology.select(f"chainid {chainID_receptor} and protein {if_hydrogens}") 
+    traj_receptor = traj.atom_slice(select_receptor)
+
+    # Traj for the ligand
+    select_ligand = traj.topology.select(f"chainid {chainID_ligand} and protein {if_hydrogens}") 
+    traj_ligand = traj.atom_slice(select_ligand)
+
+    # Traj for the complex
+    select_complex = traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and protein {if_hydrogens}") 
+    traj_complex = traj.atom_slice(select_complex)
+
+
+
+    #===== dictionnary create dictionary to corellate CA position <--> residue index =====
+    # dictionnary position --> original_resID
+    dict_position_initial_indices = {" ".join(map(str,traj.xyz[0, atom_index])):traj.topology.atom(atom_index).residue.index for atom_index in traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and name CA")}
+
+    # dictionnary position --> ID in traj_complex --> position
+    dict_complex_indices_positions = {" ".join(map(str,traj_complex.xyz[0, atom_index])):traj_complex.topology.atom(atom_index).residue.index for atom_index in traj_complex.topology.select(f"name CA")}
+
+    # dictionnary position --> ID in traj_receptor --> position
+    dict_receptor_indices_positions = {" ".join(map(str,traj_receptor.xyz[0, atom_index])):traj_receptor.topology.atom(atom_index).residue.index for atom_index in traj_receptor.topology.select(f"name CA")}
+
+    # dictionnary position --> ID in traj_ligand --> position
+    dict_ligand_indices_positions = {" ".join(map(str,traj_ligand.xyz[0, atom_index])):traj_ligand.topology.atom(atom_index).residue.index for atom_index in traj_ligand.topology.select(f"name CA")}
+
+
+
+    #===== compute SASA =====
+    # SASA of each residue in the traj_complex
+    shrake_rupley_bound = md.shrake_rupley(traj_complex, mode='residue', get_mapping=True, change_radii=dict_radii)
+    SASA_bound = shrake_rupley_bound[0][0]
+    SASA_bound_resID = list( set(shrake_rupley_bound[1]) )
+
+    # SASA of each residue in the traj_receptor
+    shrake_rupley_receptor = md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True, change_radii=dict_radii)
+    SASA_receptor = shrake_rupley_receptor[0][0]
+    SASA_receptor_resID = list( set(shrake_rupley_receptor[1]) )
+
+    # SASA of each residue in the traj_ligand
+    shrake_rupley_ligand = md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True, change_radii=dict_radii)
+    SASA_ligand = shrake_rupley_ligand[0][0]
+    SASA_ligand_resID = list( set(shrake_rupley_ligand[1]) )
+
+
+
+    #===== Generate dictionaries to store resID --> SASA =====
+    # for the complex
+    dict_SASA_bound = {SASA_bound_resID[index]:SASA_bound[index] for index in range(len(SASA_bound_resID))}
+
+    # for the receptor
+    dict_SASA_receptor = {SASA_receptor_resID[index]:SASA_receptor[index] for index in range(len(SASA_receptor_resID))}
+
+    # for the ligand
+    dict_SASA_ligand = {SASA_ligand_resID[index]:SASA_ligand[index] for index in range(len(SASA_ligand_resID))}
+
+
+
+    #===== Get SASA od  residue when in complex or free (not in complex) =====
+    # create list to store resluts
+    list_chainID = []
+    list_index = []
+    list_name = []
+    list_SASA_bound = []
+    list_SASA_free = []
+    list_identity = []
+
+
+    # loop over all CA position fin the complex
+    for position in dict_complex_indices_positions:
+        #----- Get original ID, name and chainID infos -----
+        # use the CA position to get the original residue ID (from the traj)
+        index_original_traj = dict_position_initial_indices[position]
+
+        # get residue name from it's original index
+        resname = traj.topology.residue(index_original_traj).name
+
+        # get chainID from it's original index
+        chainID = traj.topology.residue(index_original_traj).chain.index
+
+
+        #----- Get SASA in complex -----
+        # use the CA position to resID into the traj_complex
+        index_complex_traj  = dict_complex_indices_positions[position]
+
+        # Get the SASA of the residdue in complex
+        SASA_bound = dict_SASA_bound[index_complex_traj]
+
+
+        #----- Get SASA free -----  
+        # use the CA position to resID into the traj_receptor (if in receptor) or traj_ligand (if in residue)
+        # and get the SASA when not in complex (free)
+
+        # try if in receptor
+        try:
+            index_receptor_traj = dict_receptor_indices_positions[position]
+            SASA_free = dict_SASA_receptor[index_receptor_traj]
+            identidy = "receptor"
+
+        # try if in ligand
+        except:    
+            index_ligand_traj = dict_ligand_indices_positions[position]
+            SASA_free = dict_SASA_ligand[index_ligand_traj]
+            identidy = "ligand"
+
+
+
+        #----- append lists with values -----
+        list_index.append(index_original_traj)
+        list_chainID.append(chainID)
+        list_name.append(resname)
+        list_SASA_bound.append(SASA_bound *100) # *100 to convert nm2 to A2
+        list_SASA_free.append(SASA_free *100) # *100 to convert nm2 to A2
+        list_identity.append(identidy)
+
+
+
+    #===== Create Pandas dataframe to store info =====
+    dataframe = pd.DataFrame({"identity": list_identity,
+                              "chainID":list_chainID,
+                              "resID":list_index,
+                              "name":list_name,
+                              "SASA_bound":list_SASA_bound,
+                              "SASA_free":list_SASA_free,
+                            })
+    
+    
+    #===== Return results =====
+    return dataframe
+
+
+
+
+
+
+#=====================================================
 #===== Function to get protein region of each amino acid in a protein complex
 #=====================================================
 def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_outfile=True):
     """
     DESCRIPTION
         A command to return the protein region of all amino acids involved in a protein complex.
-        It use 
+        It use diffrent maximum ASA values:
             - Thien et al. 2013 (https://doi.org/10.1371/journal.pone.0080635): Theoric
             - ibid. : Empiric
             - Miller et al. 1987 (https://doi.org/10.1016/0022-2836(87)90038-6)
@@ -500,13 +687,15 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
             - Samanta et al. 2002 (https://doi.org/10.1093/protein/15.8.659): Gly-X-Gly
             - ibid. : Ala-X-Ala
             - NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+
     
     ARGUMENTS
         pdb_file_path       Path of the PDB file.
-        chainID_receptor    MDTraj chain ID of the receptor.
-        chainID_ligand      MDTraj chain ID of the ligand.
+        chainID_receptor    list of MDTraj chain ID of the receptor.
+        chainID_ligand      list of MDTraj chain ID of the ligand.
     
     OPTIONAL ARGUMENTS
+        write_outfile       write the output CSV files.
     """
     
     #===== Define a dictionnary with all MaxASA value from bibliography =====
@@ -673,6 +862,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
                        },
 
         # NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+        # Ala-X-Ala
         'NACCESS': {"ALA": 107.95,
                     "CYS": 134.28,
                     "ASP": 140.39,
@@ -696,146 +886,9 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
                     }    
     } # end of MaxASA dictionnary
 
-    #===== read the PDB file with MDTraj=====
-    traj = md.load(pdb_file_path, top=pdb_file_path)
-    
-    
-    
-    #===== Convert chainIDs to text =====
-    # ensure chainID are string
-    chainID_receptor = [str(i) for i in chainID_receptor]
-    chainID_ligand = [str(i) for i in chainID_ligand]
+    #===== =====
+    dataframe = get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand)
 
-    # join list of chainID as sigle string
-    chainID_receptor = ' '.join(chainID_receptor)
-    chainID_ligand = ' '.join(chainID_ligand)
-
-
-
-    #===== Create traj of ligand, receptor =====
-    # Traj for the receptor
-    select_receptor = traj.topology.select(f"chainid {chainID_receptor} and protein") 
-    traj_receptor = traj.atom_slice(select_receptor)
-
-    # Traj for the ligand
-    select_ligand = traj.topology.select(f"chainid {chainID_ligand} and protein") 
-    traj_ligand = traj.atom_slice(select_ligand)
-
-    # Traj for the complex
-    select_complex = traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and protein") 
-    traj_complex = traj.atom_slice(select_complex)
-
-
-
-    #===== dictionnary create dictionary to corellate CA position <--> residue index =====
-    # dictionnary position --> original_resID
-    dict_position_initial_indices = {" ".join(map(str,traj.xyz[0, atom_index])):traj.topology.atom(atom_index).residue.index for atom_index in traj.topology.select(f"chainid {chainID_ligand} {chainID_receptor} and name CA")}
-
-    # dictionnary position --> ID in traj_complex --> position
-    dict_complex_indices_positions = {" ".join(map(str,traj_complex.xyz[0, atom_index])):traj_complex.topology.atom(atom_index).residue.index for atom_index in traj_complex.topology.select(f"name CA")}
-
-    # dictionnary position --> ID in traj_receptor --> position
-    dict_receptor_indices_positions = {" ".join(map(str,traj_receptor.xyz[0, atom_index])):traj_receptor.topology.atom(atom_index).residue.index for atom_index in traj_receptor.topology.select(f"name CA")}
-
-    # dictionnary position --> ID in traj_ligand --> position
-    dict_ligand_indices_positions = {" ".join(map(str,traj_ligand.xyz[0, atom_index])):traj_ligand.topology.atom(atom_index).residue.index for atom_index in traj_ligand.topology.select(f"name CA")}
-
-
-
-    #===== compute SASA =====
-    # SASA of each residue in the traj_complex
-    SASA_complex = md.shrake_rupley(traj_complex, mode='residue', get_mapping=True)[0][0]
-    SASA_complex_resID = list( set(md.shrake_rupley(traj_complex, mode='residue', get_mapping=True)[1]) )
-
-    # SASA of each residue in the traj_receptor
-    SASA_receptor = md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True)[0][0]
-    SASA_receptor_resID = list( set(md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True)[1]) )
-
-    # SASA of each residue in the traj_ligand
-    SASA_ligand = md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True)[0][0]
-    SASA_ligand_resID = list( set(md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True)[1]) )
-
-
-
-    #===== Generate dictionaries to store resID --> SASA =====
-    # for the complex
-    dict_SASA_complex = {SASA_complex_resID[index]:SASA_complex[index] for index in range(len(SASA_complex_resID))}
-
-    # for the receptor
-    dict_SASA_receptor = {SASA_receptor_resID[index]:SASA_receptor[index] for index in range(len(SASA_receptor_resID))}
-
-    # for the ligand
-    dict_SASA_ligand = {SASA_ligand_resID[index]:SASA_ligand[index] for index in range(len(SASA_ligand_resID))}
-
-
-
-    #===== Get SASA od  residue when in complex or free (not in complex) =====
-    # create list to store resluts
-    list_chainID = []
-    list_index = []
-    list_name = []
-    list_SASA_complex = []
-    list_SASA_free = []
-    list_identity = []
-
-
-    # loop over all CA position fin the complex
-    for position in dict_complex_indices_positions:
-        #----- Get original ID, name and chainID infos -----
-        # use the CA position to get the original residue ID (from the traj)
-        index_original_traj = dict_position_initial_indices[position]
-
-        # get residue name from it's original index
-        resname = traj.topology.residue(index_original_traj).name
-
-        # get chainID from it's original index
-        chainID = traj.topology.residue(index_original_traj).chain.index
-
-
-        #----- Get SASA in complex -----
-        # use the CA position to resID into the traj_complex
-        index_complex_traj  = dict_complex_indices_positions[position]
-
-        # Get the SASA of the residdue in complex
-        SASA_in_complex = dict_SASA_complex[index_complex_traj]
-
-
-        #----- Get SASA free -----  
-        # use the CA position to resID into the traj_receptor (if in receptor) or traj_ligand (if in residue)
-        # and get the SASA when not in complex (free)
-
-        # try if in receptor
-        try:
-            index_receptor_traj = dict_receptor_indices_positions[position]
-            SASA_in_free = dict_SASA_receptor[index_receptor_traj]
-            identidy = "receptor"
-
-        # try if in ligand
-        except:    
-            index_ligand_traj = dict_ligand_indices_positions[position]
-            SASA_in_free = dict_SASA_ligand[index_ligand_traj]
-            identidy = "ligand"
-
-
-
-        #----- append lists with values -----
-        list_index.append(index_original_traj)
-        list_chainID.append(chainID)
-        list_name.append(resname)
-        list_SASA_complex.append(SASA_in_complex *100) # *100 to convert nm2 to A2
-        list_SASA_free.append(SASA_in_free *100) # *100 to convert nm2 to A2
-        list_identity.append(identidy)
-
-
-
-    #===== Create Pandas dataframe to store info =====
-    dataframe = pd.DataFrame({"identity": list_identity,
-                              "chainID":list_chainID,
-                              "resID":list_index,
-                              "name":list_name,
-                              "SASA_complex":list_SASA_complex,
-                              "SASA_free":list_SASA_free,
-                            })
 
 
 
@@ -843,7 +896,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
     for method in dict_MaxASA:
         #----- calculate rASA and drASA -----
         # calculate rSASA in complex or free using the MaxASA value for the method in dict_MaxASA
-        dataframe[f'{method}_rASA_complex'] = dataframe[f'SASA_complex'] / dataframe['name'].map(dict_MaxASA[method])
+        dataframe[f'{method}_rASA_complex'] = dataframe[f'SASA_bound'] / dataframe['name'].map(dict_MaxASA[method])
         dataframe[f'{method}_rASA_free'] = dataframe[f'SASA_free'] / dataframe['name'].map(dict_MaxASA[method])
 
         # calculate drASA = rASA_free - rASA_complex
@@ -878,7 +931,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
 
     #===== Create a dataframe with the total ASA of the complex, receptor, ligand and the area of the interface =====
     # calculate ASA of the complex
-    ASA_total_complex = dataframe['SASA_complex'].sum()
+    ASA_total_complex = dataframe['SASA_bound'].sum()
 
     # calculate ASA of the receptor or ligand by filtering using the column 'identity'
     ASA_total_receptor = dataframe[dataframe['identity'] == 'receptor']['SASA_free'].sum()
@@ -965,7 +1018,47 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
         
         
     #===== Return results =====
-    return dict_ASA_total_interface, dict_sequence_protein_region
+    return dict_ASA_total_interface, dict_sequence_protein_region    
+    
+
+
+
+
+
+#=====================================================
+#===== Function to prepare the structure using PDB2PQR
+#=====================================================
+def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True):
+    """
+    DESCRITPTION
+
+    ARGUMENTS
+
+    OPTIONAL ARGUMENTS
+    """
+    # check force field
+    if force_field not in ['AMBER','CHARMM']:
+        raise ValueError('Force field must be AMBER or CHARMM')
+        
+    # Get the output path with the original PDB name
+    file_path = pdb_file_path.replace('.pdb', '') # Replace '.pdb' with an empty string
+    
+    # Create output files as PQR and PDB format
+    output_pqr_file = f"{file_path}.pqr"
+    output_pdb_file = f"{file_path}_prq.pdb"
+        
+    # Run pdb2pqr as subprocess
+    # Because << The [python] API is still changing and there is currently no guarantee that it will remain stable between minor releases. >>
+    output = subprocess.run(['pdb2pqr', '--ff', force_field, '--ffout', force_field, '--titration-state-method', 'propka', '--with-ph', str(ph), '--drop-water', \
+                    '--pdb-output', output_pdb_file, pdb_file_path, output_pqr_file], capture_output=True, text=True)
+    
+    
+    # Save PDB2PQR log file
+    if write_logfile == True:
+        with open(f"{file_path}_pdb2pqr.log", "w") as file:
+            file.write(output.stderr)
+            file.write("="*100)
+            file.write(output.stdout)
     
 
 
@@ -975,4 +1068,3 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
 #=====================================================
 #===== Import modules
 #=====================================================
-
