@@ -495,8 +495,9 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
 
 #=====================================================
 #===== Function to get SASA of resisues when bound or free in a complex
+# Use in other functions. Not interesting to use as it by user.
 #=====================================================
-def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, noH=False, dict_radii=None):
+def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, ignore_hydrogen=False, dict_radii=None, probe_radius_angstrom=1.4, number_sphere_points=960):
     """
     DESCRIPTION
         Return the SASA of each residue in a protein complex when they are bonded or free.
@@ -507,11 +508,19 @@ def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, no
         chainID_ligand      list of MDTraj chainID of the receptor
 
     OPTIONAL ARGUMENTS
-        noH                 (True/False) Avoid hydrogen in SASA calculation.
+        ignore_hydrogen     (True/False) Avoid hydrogen in SASA calculation.
                             Default vaule: False
+
         dict_radii          (False/dictionnary) Use customatom radii.
                             Default value: None.
                             More info: https://mdtraj.org/1.9.7/api/generated/mdtraj.shrake_rupley.html
+
+        probe_radius_angstrom    Probe radius in angstrom.
+                                 Default value: 1.4 
+
+        number_sphere_points     number of points representing the surface of each atom
+                                 Default value: 960                         
+
     """
     #===== read the PDB file with MDTraj=====
     traj = md.load(pdb_file_path, top=pdb_file_path)
@@ -530,9 +539,9 @@ def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, no
 
     #===== Create traj of ligand, receptor =====
     # Remove or keep hydrogens atoms in the selections
-    if noH == False:
+    if ignore_hydrogen == False:
         if_hydrogens = ''
-    elif noH == True:
+    elif ignore_hydrogen == True:
         if_hydrogens = 'and not element H'
     
     # Traj for the receptor
@@ -565,18 +574,21 @@ def get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand, no
 
 
     #===== compute SASA =====
+    # Convert probe_radius_angstrom in angstrom to nm
+    probe_radius_angstrom = probe_radius_angstrom /10 
+
     # SASA of each residue in the traj_complex
-    shrake_rupley_bound = md.shrake_rupley(traj_complex, mode='residue', get_mapping=True, change_radii=dict_radii)
+    shrake_rupley_bound = md.shrake_rupley(traj_complex, mode='residue', get_mapping=True, change_radii=dict_radii, probe_radius=probe_radius_angstrom, n_sphere_points=number_sphere_points)
     SASA_bound = shrake_rupley_bound[0][0]
     SASA_bound_resID = list( set(shrake_rupley_bound[1]) )
 
     # SASA of each residue in the traj_receptor
-    shrake_rupley_receptor = md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True, change_radii=dict_radii)
+    shrake_rupley_receptor = md.shrake_rupley(traj_receptor, mode='residue', get_mapping=True, change_radii=dict_radii, probe_radius=probe_radius_angstrom, n_sphere_points=number_sphere_points)
     SASA_receptor = shrake_rupley_receptor[0][0]
     SASA_receptor_resID = list( set(shrake_rupley_receptor[1]) )
 
     # SASA of each residue in the traj_ligand
-    shrake_rupley_ligand = md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True, change_radii=dict_radii)
+    shrake_rupley_ligand = md.shrake_rupley(traj_ligand, mode='residue', get_mapping=True, change_radii=dict_radii, probe_radius=probe_radius_angstrom, n_sphere_points=number_sphere_points)
     SASA_ligand = shrake_rupley_ligand[0][0]
     SASA_ligand_resID = list( set(shrake_rupley_ligand[1]) )
 
@@ -686,7 +698,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
             - Lins et al. 2003 (https://doi.org/10.1110/ps.0304803)
             - Samanta et al. 2002 (https://doi.org/10.1093/protein/15.8.659): Gly-X-Gly
             - ibid. : Ala-X-Ala
-            - NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+            - NACCESS software (http://www.ncbi.nlm.nih.gov/pubmed/994183, http://www.bioinf.manchester.ac.uk/naccess/)
 
     
     ARGUMENTS
@@ -861,7 +873,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
                         'VAL': 103.12
                        },
 
-        # NACCESS software (http://www.bioinf.manchester.ac.uk/naccess/)
+        # NACCESS software (http://www.ncbi.nlm.nih.gov/pubmed/994183, http://www.bioinf.manchester.ac.uk/naccess/)
         # Ala-X-Ala
         'NACCESS': {"ALA": 107.95,
                     "CYS": 134.28,
@@ -902,7 +914,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
         # calculate drASA = rASA_free - rASA_complex
         dataframe[f'{method}_drASA'] = dataframe[f'{method}_rASA_free'] - dataframe[f'{method}_rASA_complex']
 
-        # Initialize 'protein_area' column with default value
+        # Initialize 'protein_region' column with default value
         dataframe[f'{method}_protein_region'] = np.nan
 
         #----- Identify protein region -----
@@ -1053,7 +1065,7 @@ def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True
                     '--pdb-output', output_pdb_file, pdb_file_path, output_pqr_file], capture_output=True, text=True)
     
     
-    # Save PDB2PQR log file
+    # Save PDB2PQR output into log file
     if write_logfile == True:
         with open(f"{file_path}_pdb2pqr.log", "w") as file:
             file.write(output.stderr)
