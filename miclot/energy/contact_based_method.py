@@ -30,7 +30,7 @@ from ../utilities import pdb2pandas, mdtraj_chainID_2_chainName
 #=====================================================
 #===== Fucntion to calculate contact & identify contact types between residues
 #====================================================
-def identify_contacts(pdb_file_path, chainName_receptor, chainName_ligand, write_logfile=True):
+def identify_contacts(pdb_file_path, chainName_receptor, chainName_ligand, write_outfile=True):
     """
     DESCRIPTION
         Use MDTraj to calculate contacts types between residues, based on their closest heavy atom distance.
@@ -364,7 +364,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 #=====================================================
 #===== Function to make report on 
 #====================================================
-def compute_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celcius=25, write_outfile=True):
+def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celcius=25, write_outfile=True):
     """
     DESCRIPTION
         Compute DeltaG and kd, then return a final report containing all contacts and NIS informations.
@@ -463,7 +463,7 @@ def compute_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperat
         file_path = pdb_file_path.replace('.pdb', '') # Replace '.pdb' with an empty string
 
         # save the concatenate dataframe to a file
-        df_report.to_csv(f'{file_path}_residue_NIS_types.csv', index=False)
+        df_report.to_csv(f'{file_path}_report_interaction.csv', index=False)
     
 
     #===== Return the final dataframe =====

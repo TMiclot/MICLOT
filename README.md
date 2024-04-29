@@ -33,7 +33,6 @@ mindmap
             Diselenium
             Selenosulfide
         id{{**Interaction network**}}
-            Protein complex & Protein folding
             Cannonical & Non-Cannonical interaction types
             Residues and Pairs neighborhood
         id{{**Database**}}
