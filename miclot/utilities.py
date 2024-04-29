@@ -35,10 +35,52 @@ import subprocess
 import numpy as np
 import mdtraj as md
 import pandas as pd
+pd.options.mode.copy_on_write = True
 # openMM
 from openmm.app import *
 from openmm import *
 from openmm.unit import *
+
+
+
+#=====================================================
+#===== Function to convert chainID of MDTraj topology to chainName of PDB file
+#=====================================================
+def pdb2pandas(pdb_file_path):
+    """
+    DESCRIPTION
+        Read a PDB file (containing only one model) and convert it into a Pandas dataframe.
+    
+    ARGUMENTS
+        pdb_file_path    Path to the pdb file (string format)
+    """
+    #===== Initialise column delimitation and names in PDB file for Pandas =====
+    # PDB column delimitation 
+    # Columns: 12(11), 21(20), 28-30(27-29), 67-72(66-71) are empty in PDB format
+    # SegmentID 73-75(72, 75) is not taked in account
+    PDB_format_columns = [(0, 6), (6, 11), (12, 16), (16, 17), (17, 20), (21, 22), (22, 26),
+                         (26, 27), (30, 38), (38, 46), (46, 54), (54, 60), (60, 66), (72, 76),
+                         (76, 78), (78, 80)]
+    
+    # PDB column names 
+    PDB_format_contents = ['record', 'serial', 'name', 'alt_location', 'resName', 'chainName', 'resSeq',
+                           'insertion', 'X_coordinates', 'Y_coordinates', 'Z_coordinates', 'occupancy', 'B_factor',
+                           'segmentID', 'element', 'charge']
+    
+    #===== Read the PDB file with Pandas and get a Dataframe =====
+    # Read a table of fixed-width formatted lines into DataFrame.
+    df_pdb_file = pd.read_fwf(pdb_file_path, names=PDB_format_contents, colspecs=PDB_format_columns)
+
+    # Get only ATOM and HETATM & only the 'alternative location' of 'A' or empty
+    df_pdb_file_clean = df_pdb_file[(df_pdb_file['record'].isin(['ATOM', 'HETATM'])) & (df_pdb_file['alt_location'].isin(['A', np.NaN]))]
+    
+    # Reindex the dataframe
+    df_pdb_file_clean.reset_index(drop=True, inplace=True)
+
+    # Convers all values in the dataframe to string
+    df_pdb_file_clean_string = df_pdb_file_clean.astype(str)
+    
+    return df_pdb_file_clean_string
 
 
 
@@ -77,32 +119,8 @@ def mdtraj_chainID_2_chainName(pdb_file_path, write_outfile=True):
         write_outfile    (True/False) Write the output files.   
     """
     #===== Initialise column delimitation and names in PDB file for Pandas =====
-    #----- PDB column delimitation -----
-    # Columns: 12(11), 21(20), 28-30(27-29), 67-72(66-71) are empty in PDB format
-    # SegmentID 73-75(72, 75) is not taked in account
-    PDB_format_columns = [(0, 6), (6, 11), (12, 16), (16, 17), (17, 20), (21, 22), (22, 26),
-                         (26, 27), (30, 38), (38, 46), (46, 54), (54, 60), (60, 66), (72, 76),
-                         (76, 78), (78, 80)]
-    
-    #----- PDB column names -----
-    PDB_format_contents = ['record', 'serial', 'name', 'alt_location', 'resName', 'chainName', 'resSeq',
-                           'insertion', 'x_coord', 'y_coord', 'z_coord', 'occupancy', 'B_factor',
-                           'segmentID', 'element', 'charge']
-    
-    
-    
-    #===== Read the PDB file with Pandas and get a Dataframe =====
-    # Read a table of fixed-width formatted lines into DataFrame.
-    df_pdb_file = pd.read_fwf(pdb_file_path, names=PDB_format_contents, colspecs=PDB_format_columns)
-
-    # Get only ATOM and HETATM & only the 'alternative location' of 'A' or empty
-    df_pdb_file_clean = df_pdb_file[(df_pdb_file['record'].isin(['ATOM', 'HETATM'])) & (df_pdb_file['alt_location'].isin(['A', np.NaN]))]
-    
-    # Reindex the dataframe
-    df_pdb_file_clean.reset_index(drop=True, inplace=True)
-
-    # Convers all values in the dataframe to string
-    df_pdb_file_clean_string = df_pdb_file_clean.astype(str)
+    # Us ethe previously define function 'PBD2PANDAS' 
+    df_pdb_file = pdb2pandas(pdb_file_path)
     
     
     
@@ -119,8 +137,8 @@ def mdtraj_chainID_2_chainName(pdb_file_path, write_outfile=True):
     
     
     #===== Concatenate the MDTraj and PDB dataframes into one and save it as CSV =====
-    # create a new dataframe with column of the 'df_pdb_file_clean_string' to keep and add to 'df_mdtraj_residues_string'
-    extracted_columns = df_pdb_file_clean_string[['record', 'chainName', 'insertion', 'x_coord', 'y_coord', 'z_coord', 'occupancy', 'B_factor', 'charge']]
+    # create a new dataframe with column of the 'df_pdb_file' to keep and add to 'df_mdtraj_residues_string'
+    extracted_columns = df_pdb_file[['record', 'chainName', 'insertion', 'x_coord', 'y_coord', 'z_coord', 'occupancy', 'B_factor', 'charge']]
     
     # concatenate the mdtraj topology dataframe with selected column from the PDB dataframe
     df_concat_mdtraj_pdb = pd.concat([df_mdtraj_residues_string, extracted_columns], axis=1)
@@ -707,7 +725,8 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
         chainID_ligand      list of MDTraj chain ID of the ligand.
     
     OPTIONAL ARGUMENTS
-        write_outfile       write the output CSV files.
+        write_outfile       (True/False) write the output CSV files.
+                            Default vaule: True
     """
     
     #===== Define a dictionnary with all MaxASA value from bibliography =====
@@ -898,7 +917,8 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
                     }    
     } # end of MaxASA dictionnary
 
-    #===== =====
+    #===== Get SASA of each residues when bound (in complex) and free =====
+    # it use the function 'get_SASA_residue_complex' define before.
     dataframe = get_SASA_residue_complex(pdb_file_path, chainID_receptor, chainID_ligand)
 
 

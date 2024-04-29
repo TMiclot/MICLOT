@@ -19,6 +19,7 @@ __version__ = "Version: 1.0 -- jj/mm/2024"
 import numpy as np
 import mdtraj as md
 import pandas as pd
+pd.options.mode.copy_on_write = True
 from tqdm import tqdm
 
 
