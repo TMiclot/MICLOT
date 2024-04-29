@@ -138,7 +138,7 @@ def mdtraj_chainID_2_chainName(pdb_file_path, write_outfile=True):
     
     #===== Concatenate the MDTraj and PDB dataframes into one and save it as CSV =====
     # create a new dataframe with column of the 'df_pdb_file' to keep and add to 'df_mdtraj_residues_string'
-    extracted_columns = df_pdb_file[['record', 'chainName', 'insertion', 'x_coord', 'y_coord', 'z_coord', 'occupancy', 'B_factor', 'charge']]
+    extracted_columns = df_pdb_file[['record', 'chainName', 'insertion', 'X_coordinates', 'Y_coordinates', 'Z_coordinates', 'occupancy', 'B_factor', 'charge']]
     
     # concatenate the mdtraj topology dataframe with selected column from the PDB dataframe
     df_concat_mdtraj_pdb = pd.concat([df_mdtraj_residues_string, extracted_columns], axis=1)

@@ -30,7 +30,7 @@
 ## Energy
 
 - [x] Coulomb & LJ
-- [ ] "PRODIGY"
+- [x] "PRODIGY"
 - [ ] "HUNTER"
 
 
