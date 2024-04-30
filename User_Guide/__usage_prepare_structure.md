@@ -2,9 +2,7 @@
 
 # Prepare a structure
 
-> [!NOTE]
-> Each non-bonded interaction type is designed to be a [Classes](https://docs.python.org/3/tutorial/classes.html).
-> For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
+A set of functions present in the *utilities* used to prepare a structure for analysis.
 
 
 ## x. Add missing atoms & renam residues by their protonated state
@@ -12,13 +10,39 @@
 
 ### Description
 
+It is use to prepare structure for analysis. It is able to add missing atoms and find protonation state of redidues.
+
+The function is a parser to PDB2PQR. It return the corresponding PQR file of the structure and a PDB file corresponding to the PQR file
+(thank to the option --pdb-output). Future analysis must be done on this PDB output file.
+
+Option used are: titration method is [PROPKA](https://github.com/jensengroup/propka), it keep chain IDs in the PQR file and remove water molecules.
+
+> [!NOTE]
+> The command use 'subsystem' insted of the Python API, because as mentioned in the documentation:
+> > The API is still changing and there is currently no guarantee that it will remain stable between minor releases.
+
 ### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| pdb_file_path | string  | Path to the PDB file. | mandatory |
+| write_logfile | boolean | If you want to write the log of PDB2PQR into a text file. | optional |
+| force_field   | string  | Force field to use 'AMBER' or 'CHARMM'. <br/> Default value: 'AMBER' | optional |
+| ph            | float   | pH value use to identify protonation state. <br/> Default value: 7.0 | optional |
 
 ### Returns
 
+The command return 3 files:
+
+| Name   | Description |
+| ------ | --- |
+| *PDBname*_pdb2pqr.log | Log file of PDB2PQR |
+| *PDBname*_pqr.pdb | Output PDB file with the protonated state names. |
+| *PDBname*.pqr     | Output PRQ file. |
 
 
-## x. Correlate PDB wth MDTraj topology
+
+## x. Correlate PDB with MDTraj topology
 
 **mdtraj_chainID_2_chainName**(pdb_file_path, *write_outfile=True*)
 

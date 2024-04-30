@@ -191,9 +191,6 @@ $$
 
 ## 2. Protein binding: *4-distance description* method
 
-> "You should enjoy the little detours to the fullest. Because that's where you'll find things more important than what you want."
-> Ging Freecs, *Hunter X Hunter*
-
 *Hunter* method from [Potapov *et al.* (2010)](https://doi.org/10.1186/1471-2105-11-374) and [Cohen *et al.* (2009)](https://doi.org/10.1371/journal.pcbi.1000470) ****
 
 > The favourable energies were accumulated in the $E_{lja}$ term and the repulsive ones in the $E_{ljr}$ term. To avoid excessive repulsion due to close placement of atoms during side chain optimization, the repulsive term $E_{ljr}$ was linearized at a cutoff distance $d_{ij}$ < 0.89 [46].
@@ -249,32 +246,92 @@ And the terms of the equations are defined as:
 ## 3. Protein binding: *Contacts-based* method
 
 > [!IMPORTANT]  
-> This is an implementation, from scratch, of the contacts-based method by [Vangone *et al.* (2015)](https://doi.org/10.7554/eLife.07454). This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/). Also this code use the SASA calculation method from [MDTraj](https://mdtraj.org/1.9.4/examples/solvent-accessible-surface-area.html) instead of [FreeSASA](https://freesasa.github.io/).
+> This is an implementation of the contacts-based method by [Vangone *et al.* (2015)](https://doi.org/10.7554/eLife.07454). This code is different and is not related to the one from [PRODIGY on GitHub](https://github.com/haddocking/prodigy/).
 
 
-***IC-NIS* model** is calculated as follow:
+### 3.1. IC-NIS model
 
-$$
-\begin{equation}
-	\Delta G = (- 0.09459 \times IC_{charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{polar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) -15.9433
-\end{equation}
-$$
-
-
-***NIS* model** is calculated as follow:
+The IC-NIS model is based on the following equation:
 
 $$
 \begin{equation}
-	- \log (K_d) =  (0.0857 \times NIS_{polar}^{\\%}) - (0.0685 \times NIS_{charged}^{\\%}) + (0.0262 \times N_{atoms \space in \space interface}) + 3.0125
+	\Delta G = (- 0.09459 \times IC_{charged/charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{apolar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) - 15.9433
 \end{equation}
 $$
+
+$$
+\begin{equation}
+	kd = e^{\frac{\Delta G}{RT}}
+\end{equation}
+$$
+
 
 And the terms of the equations are defined as:
-| Term                     | Calculated as                              | Definition |
-| ------------------------ | ------------------------------------------ | ---------- |
+| Term                   | Definition | Unit |
+| ---------------------- | ---------- | ---- |
+| $\Delta G$             | Binding affinity. | kcal/mol |
+| $IC_{charged/charged}$ | Number of contacts between two charged residues. |  |
+| $IC_{charged/apolar}$  | Number of contacts between charged and apolar residues. |  |
+| $IC_{polar/polar}$     | Number of contacts between two polar residues. |  |
+| $NIS_{apolar}^{\\%}$    | % of apolar residue in the NIS (see 3.3.) | % |
+| $NIS_{charged}^{\\%}$  | % of charged residue in the NIS (see 3.3.) | % |
+| kd                     |  | M |
+| R                      | Ideal gas constant. <br/> Value: 0.0019858775 | kcal/mol |
+| T                      | Temperature | Kelvin |
 
 
-### References
+### 3.2. Compute contacts
+
+The contacts are computed using the [mdtraj.compute_contacts](https://mdtraj.org/1.9.4/api/generated/mdtraj.compute_contacts.html) command. It return the closest distance between any two heavy atoms in the residues pair.
+
+
+### 3.3. NIS-Interface identification
+
+To be able to reproduce the same values as returned by prodigy this code use [FreeSASA](https://freesasa.github.io/).
+Because their is diffrences with [MDTraj](https://www.mdtraj.org/1.9.7/index.html) (used to calculate SASA in other functions).
+
+1. Freesasa use Lee-Richards algorithm, but MDTraj use Shrake-Rupley algorithm.
+2. Freesasa use the atom radii from [NACCESS](http://www.bioinf.manchester.ac.uk/naccess/) based on their atom name. On the contrary MDTRaj use raddi based on the element.
+
+This two diffrences lead to minor changes in the ASA of the residues. But this changes drastically modify the final results.
+
+> [!WARNING]
+> Based on the code of the function [analyse_nis](https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/predict_IC.py), filtering is done only on the relative SASA (also named *rASA*) of the complex (bound form) and take value equal or greater than 5%. This filtering din't seem to correspond to the NIS definition by [Kastritis *et al.*](https://doi.org/10.1016/j.jmb.2014.04.017), where the NIS is defined when the difference between the relative SASA of the bonded and unbonded forms is lower than 5%: <br/> 
+> $\Delta rASA = rASA_{in \space monomer} - rASA_{in \space complex}$
+> 
+> Here, the relative SASA is the ASA of a residue divided by the maximum ASA of the residue as refered in NACCESS: <br/>
+> $rASA = \frac{ASA_{residue \space in \space complex}}{MaxASA_{NACCESS}}$
+
+
+### 3.4. Amino acid properties use to identify contact type and NIS-interface properties
+
+Amino acid properties are use to identify contact type and NIS-interface properties. Please note that their is diffrences for: Cys, His, Trp and Tyr.
+
+| Amino acid | Contact | Interface-NIS | Difference |
+| ---------- | ------- | ------------- | --------- |
+| ALA        | apolar  | apolar        |   |
+| CYS        | apolar  | polar         | x |
+| GLU        | charged | charged       |   |
+| ASP        | charged | charged       |   |
+| GLY        | apolar  | apolar        |   |
+| PHE        | apolar  | apolar        |   |
+| ILE        | apolar  | apolar        |   |
+| HIS        | charged | polar         | x |
+| LYS        | charged | charged       |   |
+| MET        | apolar  | apolar        |   |
+| LEU        | apolar  | apolar        |   |
+| ASN        | polar   | polar         |   |
+| GLN        | polar   | polar         |   |
+| PRO        | apolar  | apolar        |   |
+| SER        | polar   | polar         |   |
+| ARG        | charged | charged       |   |
+| THR        | polar   | polar         |   |
+| TRP        | apolar  | polar         | x |
+| VAL        | apolar  | apolar        |   |
+| TYR        | apolar  | polar         | x |
+
+
+### 3.5. References
 
 - Vangone, A. & Bonvin, A. M. Contacts-based prediction of binding affinity in protein–protein complexes. *eLife* 4, e07454 (2015). [https://doi.org/10.7554/eLife.07454](https://doi.org/10.7554/eLife.07454)
 - Kastritis, P. L., Rodrigues, J. P. G. L. M., Folkers, G. E., Boelens, R. & Bonvin, A. M. J. J. Proteins Feel More Than They See: Fine-Tuning of Binding Affinity by Properties of the Non-Interacting Surface. *Journal of Molecular Biology* 426, 2632–2652 (2014).

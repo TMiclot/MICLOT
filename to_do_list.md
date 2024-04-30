@@ -1,8 +1,11 @@
 # To do list
 
-## Interaction types
+## Software
 
 - [ ] Write documentation on structural parameters
+- [ ] Create GUI as jupyter notebook dashbord, with pywigget and voila
+
+## Interaction types
 
 - [x] C-bonds 
 - [x] C5 H-bond 
@@ -57,7 +60,9 @@
 
 Steps:
 
-- [ ] protein to mesh
+- [ ] protein to mesh . see https://doi.org/10.1093/bioinformatics/btad196
+                            https://ccsb.scripps.edu/msms/ & https://anaconda.org/conda-forge/msms
+                            https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7855953/
 - [ ] mesh to matrix
 - [x] matrix analysis
 - [ ] signal (of the matrix) analysis
@@ -66,6 +71,10 @@ Steps:
 ***
 
 # outputs for clened data (NOT brut data!)
+
+- [ ] propency of interaction type
+- [ ] propency of aa and ss in protein region 
+...
 
 ```
 ====================

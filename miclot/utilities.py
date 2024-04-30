@@ -1063,10 +1063,25 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
 def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True):
     """
     DESCRITPTION
+        The function is a parser to PDB2PQR.
+        It is use to prepare structure for analysis. It is able to add missing atoms and find protonation state of redidues.
+        The function return the corresponding PQR file of the structure and a PDB file corresponding to the PQR file
+        (thank to the option --pdb-output). Future analysis must be done on this PDB output file.
+
+        Option used are: titration method is 'propka', it keep chain IDs in the PQR file and remove water molecules.
 
     ARGUMENTS
-
+        pdb_file_path   Path od the PDB file to use.
+    
     OPTIONAL ARGUMENTS
+        force_field     'AMBER' or 'CHARMM'
+                        Default value: 'AMBER'
+
+        ph              pH value use to identify protonation state
+                        Default value: 7.0
+
+        write_logfile   Write the log of PDB2PQR into a text file.
+                        Default value: True
     """
     # check force field
     if force_field not in ['AMBER','CHARMM']:
@@ -1081,8 +1096,8 @@ def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True
         
     # Run pdb2pqr as subprocess
     # Because << The [python] API is still changing and there is currently no guarantee that it will remain stable between minor releases. >>
-    output = subprocess.run(['pdb2pqr', '--ff', force_field, '--ffout', force_field, '--titration-state-method', 'propka', '--with-ph', str(ph), '--drop-water', \
-                    '--pdb-output', output_pdb_file, pdb_file_path, output_pqr_file], capture_output=True, text=True)
+    output = subprocess.run(['pdb2pqr', '--ff', force_field, '--ffout', force_field, '--titration-state-method', 'propka', '--with-ph', str(ph), \
+                             '--drop-water', '--keep-chain', '--pdb-output', output_pdb_file, pdb_file_path, output_pqr_file], capture_output=True, text=True)
     
     
     # Save PDB2PQR output into log file

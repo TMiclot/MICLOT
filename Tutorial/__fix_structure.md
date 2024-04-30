@@ -12,12 +12,16 @@ It can be easly (and graphically) done using the PDB2PQR server: [https://server
 **Code**
 
 ```python
+pbd2pqr_parse('2bn3.pdb')
 ```
 
 **Result**
 
-```
-```
+Output files are :
+
+- 2bn3_pdb2pqr.log
+- 2bn3_pqr.pdb
+- 2bn3.pqr
 
 
 

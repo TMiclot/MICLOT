@@ -73,6 +73,14 @@ It also write 3 output files in CSV format:
     - Same as dictionnary: chainID, of ligand and receptor, with their corresponding protein region for all amino acids (in "sequence" format).
     - Details information for each residues: SASA in complex and when free, rASA and drASA for each reference, then the protein region found.
 
+The interface is calculated as follow:
+
+$$
+\begin{equation}
+I = ( {SASA}_{receptor} + {SASA}_{ligand} ) - {SASA}_{complex}
+\end{equation}
+$$
+
 ### Arguments
 
 | Argument | Format | Description | Requirement |
