@@ -50,13 +50,7 @@
 - [x] preparation (PDB2PQR)
 
 
-## Neighbors
-
-- [ ] AA
-- [ ] AA pairs
-
-
-## Surface / interface shape
+## Surface / interface shape  -- NOT
 
 Steps:
 
@@ -74,6 +68,8 @@ Steps:
 
 - [ ] propency of interaction type
 - [ ] propency of aa and ss in protein region 
+- [ ] Neighbors AA
+- [ ] Neighbors AA pairs
 ...
 
 ```

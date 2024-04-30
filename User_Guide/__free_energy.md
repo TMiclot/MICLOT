@@ -254,15 +254,11 @@ And the terms of the equations are defined as:
 The IC-NIS model is based on the following equation:
 
 $$
-\begin{equation}
-	\Delta G = (- 0.09459 \times IC_{charged/charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{apolar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) - 15.9433
-\end{equation}
-$$
+\begin{align}
+	\Delta G & = (- 0.09459 \times IC_{charged/charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{apolar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) - 15.9433
 
-$$
-\begin{equation}
-	kd = e^{\frac{\Delta G}{RT}}
-\end{equation}
+	Kd & = e^{\frac{\Delta G}{RT}}
+\end{align}
 $$
 
 
@@ -275,7 +271,7 @@ And the terms of the equations are defined as:
 | $IC_{polar/polar}$     | Number of contacts between two polar residues. |  |
 | $NIS_{apolar}^{\\%}$    | % of apolar residue in the NIS (see 3.3.) | % |
 | $NIS_{charged}^{\\%}$  | % of charged residue in the NIS (see 3.3.) | % |
-| kd                     |  | M |
+| Kd                     | Dissociation constant. | M |
 | R                      | Ideal gas constant. <br/> Value: 0.0019858775 | kcal/mol |
 | T                      | Temperature | Kelvin |
 
@@ -291,12 +287,12 @@ To be able to reproduce the same values as returned by prodigy this code use [Fr
 Because their is diffrences with [MDTraj](https://www.mdtraj.org/1.9.7/index.html) (used to calculate SASA in other functions).
 
 1. Freesasa use Lee-Richards algorithm, but MDTraj use Shrake-Rupley algorithm.
-2. Freesasa use the atom radii from [NACCESS](http://www.bioinf.manchester.ac.uk/naccess/) based on their atom name. On the contrary MDTRaj use raddi based on the element.
+2. Freesasa use the atom radii from [NACCESS](http://www.bioinf.manchester.ac.uk/naccess/) based on their atom name. On the contrary MDTRaj use radii based on the element.
 
 This two diffrences lead to minor changes in the ASA of the residues. But this changes drastically modify the final results.
 
 > [!WARNING]
-> Based on the code of the function [analyse_nis](https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/predict_IC.py), filtering is done only on the relative SASA (also named *rASA*) of the complex (bound form) and take value equal or greater than 5%. This filtering din't seem to correspond to the NIS definition by [Kastritis *et al.*](https://doi.org/10.1016/j.jmb.2014.04.017), where the NIS is defined when the difference between the relative SASA of the bonded and unbonded forms is lower than 5%: <br/> 
+> Based on the code of the function [analyse_nis](https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/predict_IC.py), filtering is done only on the relative SASA (also named *rASA*) of the complex (bound form) and take value equal or greater than 5%. This filtering din't seem to correspond to the NIS definition by [Kastritis *et al.*](https://doi.org/10.1016/j.jmb.2014.04.017), where the NIS is defined when the difference between the relative SASA of the bonded and unbonded forms is lower than 5% and, greater than 5% for the interface: <br/> 
 > $\Delta rASA = rASA_{in \space monomer} - rASA_{in \space complex}$
 > 
 > Here, the relative SASA is the ASA of a residue divided by the maximum ASA of the residue as refered in NACCESS: <br/>

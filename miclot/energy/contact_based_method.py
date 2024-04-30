@@ -367,7 +367,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celcius=25, write_outfile=True):
     """
     DESCRIPTION
-        Compute DeltaG and kd, then return a final report containing all contacts and NIS informations.
+        Compute DeltaG and Kd, then return a final report containing all contacts and NIS informations.
     
     ARGUMENTS
     """

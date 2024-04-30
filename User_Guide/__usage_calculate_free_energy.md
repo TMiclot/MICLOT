@@ -49,3 +49,9 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 > [!TIP]
 > The commands give the same values as [OpenMM](https://openmm.github.io/openmm-cookbook/latest/notebooks/cookbook/Computing%20Interaction%20Energies.html). Differences are lost in decimals.
+
+
+
+## 2. Binding energy using the *contact based method*
+
+**compute_binding_energy**(pdb_file_path, chainName_receptor, chainName_ligand, *temperature_celcius=25, write_outfile=True*)
