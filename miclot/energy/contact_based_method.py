@@ -364,7 +364,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 #=====================================================
 #===== Function to make report on 
 #====================================================
-def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celcius=25, write_outfile=True):
+def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celsius=25, write_outfile=True):
     """
     DESCRIPTION
         Compute DeltaG and Kd, then return a final report containing all contacts and NIS informations.
@@ -403,8 +403,8 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     # Renames indeces
     new_indices = {'polar': 'NIS_polar',
-                'apolar': 'NIS_apolar',
-                'charged': 'NIS_charged'}
+                   'apolar': 'NIS_apolar',
+                   'charged': 'NIS_charged'}
     series_SASA_types = series_SASA_types.rename(index=new_indices)
 
     # Get the sum of all residue types
@@ -415,8 +415,8 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     # Renames indeces
     new_indices = {'polar': 'NIS_polar(%)',
-                'apolar': 'NIS_apolar(%)',
-                'charged': 'NIS_charged(%)'}
+                   'apolar': 'NIS_apolar(%)',
+                   'charged': 'NIS_charged(%)'}
     series_SASA_types_percentages = series_SASA_types_percentages.rename(index=new_indices)
 
 
@@ -427,7 +427,7 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     #===== compute DeltaG and kd =====
     #----- Setup initial parameters -----
-    temperature_kelvin  = temperature_celcius + 273.15
+    temperature_kelvin  = temperature_celsius + 273.15
     R = 0.0019858775 # ideal gas constant in kcal/mol
 
     #----- Calculate GeltaG using IC-NIS model -----
@@ -444,10 +444,10 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
 
     #===== Add final informations on the report =====
-    report['temperature(C)'] = temperature_celcius
+    report['temperature(C)'] = temperature_celsius
     report['temperature(K)'] = temperature_kelvin
     report['DeltaG(kcal/mol)'] = Delat_G
-    report[f'dissociation_constant_(M)_at_{temperature_celcius}(C)'] = float(kd)
+    report[f'dissociation_constant_(M)_at_{temperature_celsius}(C)'] = float(kd)
     report['PDB_file'] = pdb_file_path
     report['chains_receptor'] = ' '.join(chainName_receptor)
     report['chains_ligand'] = ' '.join(chainName_ligand)

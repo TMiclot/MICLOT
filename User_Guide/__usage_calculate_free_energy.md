@@ -54,4 +54,21 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 ## 2. Binding energy using the *contact based method*
 
-**compute_binding_energy**(pdb_file_path, chainName_receptor, chainName_ligand, *temperature_celcius=25, write_outfile=True*)
+**compute_binding_energy**(pdb_file_path, chainName_receptor, chainName_ligand, *temperature_celsius=25, write_outfile=True*)
+
+### Description
+
+Calculate the binding energy of a protein-protein complex using the [contact-based method]( https://doi.org/10.7554/eLife.07454).
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| -------- | --- | --- | --- |
+| pdb_file_path       | string  | Path to the PDB file. | mandatory |
+| chainName_receptor  | string  | List of chain names of the receptor. | mandatory |
+| chainName_ligand    | string  | List of chain names of the receptor.   | mandatory |
+| temperature_celsius | integer | Temperature in °C.          | mandatory |
+
+### Returns
+
+Return a Pandas Dataframe

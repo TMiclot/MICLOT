@@ -34,14 +34,13 @@
 
 - [x] Coulomb & LJ
 - [x] "PRODIGY"
-- [ ] "HUNTER"
+- [ ] ~~"HUNTER"~~
 
 
 ## Structure properties
 
 - [x] Sequence & Secondary structure
 - [x] Protein region
-- [ ] physico chemical properties (pI, aromaticity, etc) [https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html](https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html)
 
 
 ## Utilities
@@ -50,17 +49,22 @@
 - [x] preparation (PDB2PQR)
 
 
-## Surface / interface shape  -- NOT
 
-Steps:
+***
+# Final, after analysis statc, etc
+- [ ] physico chemical properties (pI, aromaticity, etc) [https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html](https://biopython.org/docs/1.75/api/Bio.SeqUtils.ProtParam.html)
+- [ ] Prediction tool : Gale shapely / pathfinding / gradient descendant
+- [ ] Surface shape analysis:
 
-- [ ] protein to mesh . see https://doi.org/10.1093/bioinformatics/btad196
-                            https://ccsb.scripps.edu/msms/ & https://anaconda.org/conda-forge/msms
-                            https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7855953/
-- [ ] mesh to matrix
-- [x] matrix analysis
-- [ ] signal (of the matrix) analysis
-
+    - [ ] protein to mesh . see https://doi.org/10.1093/bioinformatics/btad196
+                                https://ccsb.scripps.edu/msms/ & https://anaconda.org/conda-forge/msms
+                                https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7855953/
+                                https://proteomesci.biomedcentral.com/articles/10.1186/1477-5956-10-S1-S1
+                                https://doi.org/10.1016/j.csbj.2023.12.002
+                                (Pas utilie mais pour ref: https://bmcstructbiol.biomedcentral.com/articles/10.1186/1472-6807-8-45)
+    - [ ] mesh to matrix
+    - [x] matrix analysis
+    - [ ] signal (of the matrix) analysis
 
 ***
 
@@ -69,7 +73,7 @@ Steps:
 - [ ] propency of interaction type
 - [ ] propency of aa and ss in protein region 
 - [ ] Neighbors AA
-- [ ] Neighbors AA pairs
+- [ ] Neighbors AA pairs ?
 ...
 
 ```

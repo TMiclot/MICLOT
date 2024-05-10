@@ -100,16 +100,18 @@ This command is a parser to minimize a structure using [openMM](https://openmm.o
 
 For more details, the options: `nonbondedMethod=NoCutoff, constraints=HBonds` are used. The first ensure all Coulomb and Lennar-Jones force a re calculated without cutoff, the second ensure *the lengths of all bonds that involve a hydrogen atom are constrained*.
 
-> [!WARNING]
-> The minimization algorithm don't constrain heavy atoms and a long minimization can lead to structure deformation.
+**def minimize_pdb**(pdb_file_path, *force_field='amber', max_iterations=100, restrain_heavy_atoms=True, constant=1.0e+5*)
 
 ### Arguments 
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | pdb_file_path | string  | Path to the PDB file. | mandatory |
-| ff | string | Force field to use. Values are 'amber' or 'charmm'. <br/> Default value: 'amber' | optional |
+| force_field | string | Force field to use. Values are 'amber' or 'charmm'. <br/> Default value: 'amber' | optional |
 | max_iterations | integer | Maximum number of iterations. <br/> Default value: 100 | optional |
+| restrain_heavy_atoms | Apply restain force to heavy atom to avoid them moving too far from their initial position. It's possible to change the constant force value with the argument 'constant'. <br/> Default value: True | optional |
+| constant | Constant force value (in kJ/nm) for the force used to restrain heavy atoms. <br/> Default value: 1.0e+5 | optional |
+
 
 ### Returns
 

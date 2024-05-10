@@ -436,19 +436,31 @@ class MyMinimizationReporter(MinimizationReporter):
 
 
 #===== 2. Function to mnimize structure ===== 
-def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
+def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrain_heavy_atoms=True, constant=1.0e+5):
     """
     DESCRIPTION
         This command is a parser to minimize a structure using openMM.
         It generate a PDB file and an output file in CSV format containing
         the energy of the structure at each step of the minimization.
 
+        
     ARGUMENTS
         pdb_file_path    Path of the pDB file.
+
+        
+    OPTIONAL ARGUMENTS
         force_field      Force field 'amber' or 'charmm'.
-                         Default value: 'amber'
+                         Default value: 'amber'   
+
         max_iterations   Maximum number of iteration. Too hight number can lead to structure deformation.
                          Default value: 100
+
+        restrain_heavy_atoms    Apply restain force to heavy atom to avoid them moving too far from their
+                                initial position. It's possible to change the constant force value with the
+                                argument 'constant'.
+                                Default value: True
+        constant                Constant force value (in kJ/nm) for the force used to restrain heavy atoms
+                                Default value: 1.0e+5
     """
     #==== 
     #----- Clear existing output file and minimized pdb -----
@@ -474,7 +486,7 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
     pdb = PDBFile(pdb_file_path)
     
     # get the forcefield
-    if force_field == 'amber':
+    if ff == 'amber':
         forcefield = ForceField('amber14/protein.ff14SB.xml')
     elif force_field == 'charmm':
         forcefield = ForceField('charmm36.xml')
@@ -483,9 +495,22 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
     
     
     #===== Set simulation parameter and minimize the structure =====
-    # create the system
+    # create the system with implicit solvent and salt, and with cionstraints on HBonds
     system = forcefield.createSystem(pdb.topology, nonbondedMethod=NoCutoff, constraints=HBonds)
 
+    # Restrain all heavy atoms (not H)
+    # code come from the CookBook:  https://openmm.github.io/openmm-cookbook/latest/notebooks/cookbook/Restraining%20Atom%20Positions.html
+    if restrain_heavy_atoms == True:
+        restraint = CustomExternalForce('k*periodicdistance(x, y, z, x0, y0, z0)^2')
+        system.addForce(restraint)
+        restraint.addGlobalParameter('k', constant*kilojoules_per_mole/nanometer)
+        restraint.addPerParticleParameter('x0')
+        restraint.addPerParticleParameter('y0')
+        restraint.addPerParticleParameter('z0')
+        for atom in pdb.topology.atoms():
+            # apply the restrain to every particle that is not hydrogen (H) to 0
+            if atom.element.symbol != 'H':
+                restraint.addParticle(atom.index, pdb.positions[atom.index])
     
     # specify integrator
     # paramters set are: temperature, friction coefficient, timestep
@@ -502,7 +527,7 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100):
     simulation.minimizeEnergy(maxIterations=max_iterations, reporter=reporter)
     
     
-    #===== Export minimized structure =====    
+    #===== Export minimized structure =====
     # write the PDB file
     positions = simulation.context.getState(getPositions=True).getPositions()
     PDBFile.writeFile(simulation.topology, positions, open(f'{file_path}_minimized.pdb', 'w'))
