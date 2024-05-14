@@ -41,7 +41,7 @@ from openmm.app import *
 from openmm import *
 from openmm.unit import *
 
-
+__all__ = ['']
 
 #=====================================================
 #===== Function to convert chainID of MDTraj topology to chainName of PDB file

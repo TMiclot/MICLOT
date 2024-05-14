@@ -21,7 +21,7 @@ import mdtraj as md
 import numpy as np
 
 
-
+__all__ = ['']
 
 #=====================================================
 #===== Class for atom names conversion

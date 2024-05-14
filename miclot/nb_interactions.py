@@ -43,7 +43,7 @@ import mdtraj as md
 
 
 
-
+__all__ = ['']
 
 #=====================================================
 #===== Class for C5 hydrogen bonds

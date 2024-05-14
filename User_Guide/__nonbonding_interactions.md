@@ -2,6 +2,30 @@
 
 # Canonical & Non-canonical non-bonding interactions
 
+> [!WARNING]
+> If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files.
+> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file d'ont containt the information about connectivity between atoms.
+>
+> It is also necessary to have hydrogens atoms.
+
+
+## Canonical non-bonding interactions
+
+- Hydrogen bonds
+- Salt bridges
+- Ionic interactions
+- Metal coordination
+- Water bridges
+- Disulphide bonds
+- Disordered interactions
+
+## Non-canonical non-bonding interactions
+
+- Van der Waals interactions
+- Pi-cation interactions
+- Pi-stacking interactions
+- Pi-cation-stacking interactions
+
 
 ## References - *Interaction types and subtypes*
 
@@ -117,6 +141,7 @@
 - Kong, X., Zhou, P. & Wang, Y. Chalcogen⋅⋅⋅π Bonding Catalysis. *Angewandte Chemie* 133, 9481–9486 (2021). [https://doi.org/10.1002/ange.202101140](https://doi.org/10.1002/ange.202101140)
 - Carugo, O., Resnati, G. & Metrangolo, P. Chalcogen Bonds Involving Selenium in Protein Structures. *ACS Chem. Biol.*  16, 1622–1627 (2021). [https://doi.org/10.1021/acschembio.1c00441](https://doi.org/10.1021/acschembio.1c00441)
 - Scheiner, S. Participation of S and Se in hydrogen and chalcogen bonds. *CrystEngComm* 23, 6821–6837 (2021). [https://doi.org/10.1039/D1CE01046H](https://doi.org/10.1039/D1CE01046H)
+- Adhav, V. A., Shelke, S. S., Balanarayan, P. & Saikrishnan, K. Sulfur-mediated chalcogen versus hydrogen bonds in proteins: a see-saw effect in the conformational space. *QRB Discovery* 4, e5 (2023). [https://doi.org/10.1017/qrd.2023.3 ](https://doi.org/10.1017/qrd.2023.3 )
 
 ### R.7. Hydrophobic interaction
 

@@ -24,7 +24,7 @@ from ../utilities import pdb2pandas, mdtraj_chainID_2_chainName
 
 
 
-
+__all__ = ['']
 
 
 #=====================================================
