@@ -2570,5 +2570,257 @@ class n_pi:
 
 
 #=====================================================
+#===== Class for Chalcogen bond & S/Se mediated H-bond
+#=====================================================
+class SSe_hydrogen_chalcogen_bond:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, \
+                  MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0):
+        """
+        INTERACTION TYPE    Chalcogen bond or S/Se mediated H-bond
+        SUBTYPE(S)          no
+
+        DESCRIPTION
+            Chalogen bond: sigma-hole interaction between S/Se and N/O.
+            
+            S/Se mediated H-bond: Hydrogen bond for which S/Se is acceptor or donnor.
+       
+        REMARKS
+            1) Analysis don't take in account the presence of hydrogen.
+            2) 'IndexError: list index out of range' Always happend when bonded atoms are missing.
+               Ensure to have CONNECT section in your PDB, with the correct bonds.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS
+            frame                 Frame ID on which to perform the analysis.
+                                  Default value: 0
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.res_A = res_index_A
+        self.res_B = res_index_B
+        self.MAX_distance_SX = MAX_distance_SX
+        self.MAX_angle_dihedral_chalcogen = MAX_angle_dihedral_chalcogen
+        self.MIN_angle_phi_chalcogen = MIN_angle_phi_chalcogen
+        self.MAX_angle_phi_chalcogen = MAX_angle_phi_chalcogen
+        self.MIN_angle_theta_chalcogen = MIN_angle_theta_chalcogen
+        self.MIN_angle_csx_chalcogen = MIN_angle_csx_chalcogen
+        self.MAX_angle_csx_chalcogen = MAX_angle_csx_chalcogen
+        self.MAX_angle_csx_hbond = MAX_angle_csx_hbond
+        
+        #===== Create list to store results =====
+        self.list_chalcogen = []
+        self.list_chalcogen_distance = []
+        self.list_chalcogen_angle = []
+        self.list_hbond = []
+        self.list_hbond_distance = []
+        self.list_hbond_angle = []
+        
+        
+        #===== Get all S/Se atoms =====
+        self.list_index_atom_SSE = self.top.select(f"resid {self.res_A} {self.res_B} and element S Se")
+        
+        
+        #===== For all S/Se atoms get geometric parameters =====
+        #----- Get Points P1 and P2 to create the plane ----- 
+        # 
+        for self.index_atom_SSE in self.list_index_atom_SSE:
+            
+            # Get the atom S/SE in topology
+            self.atom_SSE = self.top.atom(self.index_atom_SSE) 
+            
+            # create a list to store atom covalent to S/Se
+            self.list_atom_bonded_to_SSE = []
+            
+            # Search bonded atoms to S/Se of the residue
+            for self.bond in self.traj.topology.bonds:
+                # Check if bonded to S/Se atom an append the list_atom_bonded_to_SSE
+                if self.atom_SSE in self.bond:
+                    if self.atom_SSE != self.bond[0]: #if bond[0] is not the S/Se atom, append the list
+                        self.list_atom_bonded_to_SSE.append(self.bond[0])
+                        
+                    elif self.atom_SSE != self.bond[1]: #else if bond[1] is not the S/Se atom, append the list
+                        self.list_atom_bonded_to_SSE.append(self.bond[1])                
+            
+            # remove duplicate in the list
+            self.list_atom_bonded_to_SSE = list(set(self.list_atom_bonded_to_SSE))
+        
+        
+            #----- Get atom coordinates -----
+            self.coordinates_atom_P1 = self.traj.xyz[0, self.list_atom_bonded_to_SSE[0].index]
+            self.coordinates_atom_SSE = self.traj.xyz[0, self.index_atom_SSE]
+            self.coordinates_atom_P2 = self.traj.xyz[0, self.list_atom_bonded_to_SSE[1].index]
+            
+            #----- Get the centorid and make the plane of P1-SSE-P2 -----
+            self.centroid = Points([self.coordinates_atom_P1, self.coordinates_atom_SSE, self.coordinates_atom_P2]).centroid()
+            self.plane = Plane.from_points(self.coordinates_atom_SSE, self.coordinates_atom_P1, self.coordinates_atom_P2)
+            
+            #----- Create vectors -----
+            self.vec_centroid_SSE = Vector.from_points(self.centroid, self.coordinates_atom_SSE)
+            self.vec_SSE_centroid = Vector.from_points(self.coordinates_atom_SSE, self.centroid) # vector with opposit direction of vec_centroid_SSE
+            
+            #----- Get neighbors atom N,O (not H) -----
+            # Get the residue (residue_opposit) that don't contain the atom_SSE
+            if self.atom_SSE.residue.index != self.res_A:
+                self.residue_opposit = self.top.residue(self.res_A)
+            
+            elif self.atom_SSE.residue.index != self.res_B:
+                self.residue_opposit = self.top.residue(self.res_B)
+            
+            # For all N and O in residue_opposit, measure the distance with the atom S/Se
+            self.list_atoms_close_to_SSE = []
+            self.list_distances_atoms_close_to_SSE = []
+            
+            for self.atom_X in self.residue_opposit.atoms:
+                if self.atom_X.element.symbol in ['N','O']:
+                    self.distance = md.compute_distances(self.traj, [[self.index_atom_SSE, self.atom_X.index]])[0][0] *10
+                    
+                    # Keep only atoms with distance <= MAX_distance_SX to S/Se atom
+                    if self.distance <= self.MAX_distance_SX:
+                        
+                        # Append results list with distance and atom index
+                        self.list_atoms_close_to_SSE.append(self.atom_X.index)
+                        self.list_distances_atoms_close_to_SSE.append(self.distance)
+                        
+                        # Get coordiante of atom_X and it's projection on the plane P1-SSE-P2
+                        self.coordinates_atom_X = self.traj.xyz[0, self.atom_X.index]
+                        self.coordinates_projection_atom_X = self.plane.project_point(self.coordinates_atom_X)
+                        
+                        # Creates vectors
+                        self.vec_SSE_atom_X = Vector.from_points(self.coordinates_atom_SSE, self.coordinates_atom_X)
+                        self.vec_SSE_projection_atom_X = Vector.from_points(self.coordinates_atom_SSE, self.coordinates_projection_atom_X)
+                        
+                        # Compute angles, and convert then into degreee, then in range 0-180 with the command self.convert_angle_180()
+                        #..... angle between the normal of the plan and the vector SSE --> atom_X
+                        self.angle_theta = self.convert_angle_180(np.rad2deg( self.plane.normal.angle_between(self.vec_SSE_atom_X) ))
+                        
+                        #..... angle between the vector centroid-->SSE and vector SSE-->projected_atom_X
+                        self.angle_phi = self.convert_angle_180(np.rad2deg( self.vec_centroid_SSE.angle_between(self.vec_SSE_projection_atom_X) ))
+                        
+                        #..... angle between vectors centroid-->SSE and vector SSE-->atom_X
+                        self.angle_CSX = self.convert_angle_180(np.rad2deg( self.vec_SSE_centroid.angle_between(self.vec_SSE_atom_X) ))
+                       
+                        #..... identify carbon atom (P) bonded to S/Se and make the plane P-centroid-SSE
+                        #      and create vector SSE-->P
+                        if self.list_atom_bonded_to_SSE[0].name in ['CB', 'CG']:
+                            self.plane_P = Plane.from_points(self.coordinates_atom_P1, self.centroid, self.coordinates_atom_SSE)
+                        
+                        elif self.list_atom_bonded_to_SSE[1].name in ['CB', 'CG']:
+                            self.plane_P = Plane.from_points(self.coordinates_atom_P2, self.centroid, self.coordinates_atom_SSE)
+                    
+                        #..... dihedral angle P--centroid--SSE--atom_X
+                        # create plane: centroid-SSE-atom_X
+                        self.plane_CSX = Plane.from_points(self.centroid, self.coordinates_atom_SSE, self.coordinates_atom_X)
+                        
+                        # compute dihedral angles = 180 - angle between the normals, then ensure they are in range 0-180
+                        self.angle_dihedral = self.convert_angle_180(180 - np.rad2deg( self.plane_P.normal.angle_between( self.plane_CSX.normal )))
+                        
+                        # Check chalcogen bond
+                        if self.angle_dihedral <= self.MAX_angle_dihedral_chalcogen and self.MIN_angle_theta_chalcogen < self.angle_theta \
+                        and (self.MIN_angle_phi_chalcogen <= self.angle_phi <= self.MAX_angle_phi_chalcogen) \
+                        and (self.MIN_angle_csx_chalcogen <= self.angle_CSX <= self.MAX_angle_csx_chalcogen):
+                            
+                            # append list of atom indices
+                            self.list_chalcogen.append([self.index_atom_SSE, self.atom_X.index])
+                            # append list of distances
+                            self.list_chalcogen_distance.append(self.distance)
+                            #append list of angle
+                            self.list_chalcogen_angle.append([self.angle_theta, self.angle_phi, self.angle_CSX, self.angle_dihedral])
+                        
+                        # Check hydrogen bond if no hydrogens
+                        elif self.MAX_angle_dihedral_chalcogen < self.angle_dihedral and self.angle_CSX <= self.MAX_angle_csx_hbond:
+                           
+                            # append list of atom indices
+                            self.list_hbond.append([self.index_atom_SSE, self.atom_X.index])
+                            # append list of distances
+                            self.list_hbond_distance.append(self.distance)
+                            #append list of angle
+                            self.list_hbond_angle.append([self.angle_theta, self.angle_phi, self.angle_CSX, self.angle_dihedral])
+
+
+
+            
+    #===== Functions =====
+    #-----
+    def convert_angle_180(self, angle):
+        """
+        Take angle in degree, in the range 0-360, and convert it to an equavalent range 0-180.
+        """
+        if angle <= 180:
+            return angle
+        else:
+            return 180 - (angle - 180)
+
+    
+    
+    #===== Return properties =====    
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if the chalcogen or H-bond, mediated by S/Se, exist between the two residues.
+        
+        RETURN
+            True, 'chalcogen and h-bond'    interaction exist and their is both chalcogen and H-bond
+                                            (happend only if the two residue are Cys and/or Met).
+            True, 'chalcogen'               interaction exist and is chalcogen.
+            True, 'h-bond'                  interaction exists and is H-bond.
+            False                           no interaction.
+        """
+        if 0 < len(self.list_chalcogen) and 0 < len(self.list_hbond):
+            return True, 'chalcogen and h-bond'
+        
+        elif 0 < len(self.list_chalcogen):
+            return True, 'chalcogen'
+        
+        elif 0 < len(self.list_hbond):
+            return True, 'h-bond'
+        
+        else:
+            return False
+        
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return list of atoms index involved in chalogen bond
+                       and another list of atoms index involved in H-bond
+        RETURN         2 List of list: [[index_S/Se,index_N/O],...] , [[index_S/Se,index_N/O],...]
+        """
+        return self.list_chalcogen, self.list_hbond
+    
+    
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION
+            Return a list of angles for chalcogen bonds and another for H-bonds
+            
+        RETURN
+            2 List: [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...], [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...]
+            
+        UNIT
+            degree
+        """
+        return self.list_chalcogen_angle, self.list_hbond_angle
+        
+    
+    @property    
+    def get_distance(self):
+        """
+        DESCRIPTION    Return a list of distance  for chalcogen bonds and another for H-bonds
+        RETURN         2 List of list: [distance,...] , [distance,...]
+        UNIT           Angstrom
+        """
+        return self.list_chalcogen_distance, self.list_hbond_distance
+        
+
+
+
+#=====================================================
 #===== Class for 
 #=====================================================
+

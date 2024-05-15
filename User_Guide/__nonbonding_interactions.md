@@ -2,12 +2,6 @@
 
 # Canonical & Non-canonical non-bonding interactions
 
-> [!WARNING]
-> If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files.
-> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file d'ont containt the information about connectivity between atoms.
->
-> It is also necessary to have hydrogens atoms.
-
 
 ## Canonical non-bonding interactions
 
@@ -57,7 +51,7 @@
 
 - Wang, J. & Yao, L. Dissecting C−H∙∙∙π and N−H∙∙∙π Interactions in Two Proteins Using a Combined Experimental and Computational Approach. *Sci Rep* 9, 20149 (2019). [https://doi.org/10.1038/s41598-019-56607-4](https://doi.org/10.1038/s41598-019-56607-4)
 
-#### R.2.3. Sulfur and Selenium mediated H-bong
+#### R.2.3. Sulfur and Selenium mediated H-bond
 
 - Antonijević, I. S., Janjić, Goran. V., Milčić, M. K. & Zarić, S. D. Preferred Geometries and Energies of Sulfur–Sulfur Interactions in Crystal Structures. *Crystal Growth & Design* 16, 632–639 (2016). [https://doi.org/10.1021/acs.cgd.5b01058](https://doi.org/10.1021/acs.cgd.5b01058)
 - Gregoret, L. M., Rader, S. D., Fletterick, R. J. & Cohen, F. E. Hydrogen bonds involving sulfur atoms in proteins. *Proteins* 9, 99–107 (1991). [https://doi.org/10.1002/prot.340090204](https://doi.org/10.1002/prot.340090204)
@@ -146,3 +140,10 @@
 ### R.7. Hydrophobic interaction
 
 - Onofrio, A. et al. Distance-dependent hydrophobic–hydrophobic contacts in protein folding simulations. *Phys. Chem. Chem. Phys.* 16, 18907–18917 (2014). [https://doi.org/10.1039/C4CP01131G](https://doi.org/10.1039/C4CP01131G)
+
+### R.8. Sulfur/Selenium - Aromatic interaction
+
+- Pal, D. & Chakrabarti, P. Non-hydrogen Bond Interactions Involving the Methionine Sulfur Atom. *Journal of Biomolecular Structure and Dynamics* 19, 115–128 (2001). [https://doi.org/10.1080/07391102.2001.10506725](https://doi.org/10.1080/07391102.2001.10506725)
+- Senćanski, M., Djordjević, I. & Grubišić, S. Assessing the dispersive and electrostatic components of the selenium–aromatic interaction energy by DFT. *J Mol Model* 23, 162 (2017). [https://doi.org/10.1007/s00894-017-3330-z](https://doi.org/10.1007/s00894-017-3330-z)
+- Hartman, I., Raia, C. A. & Zauhar, R. J. Evidence for a strong selenium–aromatic interaction derived from crystallographic data and ab initio quantum chemical calculations. *Biopolymers* 83, 595–613 (2006). [https://doi.org/10.1002/bip.20592]( https://doi.org/10.1002/bip.20592)
+

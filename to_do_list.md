@@ -21,6 +21,7 @@
 - [x] Pi H-bond (if not involve in amino-PI or charge-aromatic !)
 - [x] N--> $\pi$*
 - [ ] S/Se H-bond & S/Se chalogen bond
+- [ ] Sulfure/Selenium -- Aromatic
 
 
 ## Cys-Cys

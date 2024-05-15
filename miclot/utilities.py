@@ -1117,7 +1117,7 @@ def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True
     
     # Create output files as PQR and PDB format
     output_pqr_file = f"{file_path}.pqr"
-    output_pdb_file = f"{file_path}_prq.pdb"
+    output_pdb_file = f"{file_path}_pqr.pdb"
         
     # Run pdb2pqr as subprocess
     # Because << The [python] API is still changing and there is currently no guarantee that it will remain stable between minor releases. >>

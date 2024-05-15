@@ -6,6 +6,11 @@
 > Each non-bonded interaction type is designed to be a [Classes](https://docs.python.org/3/tutorial/classes.html).
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
+> [!WARNING]
+> If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files.
+> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file d'ont containt the information about connectivity between atoms.
+>
+> It is also necessary to have hydrogens atoms.
 
 ## 1. C-bond
 
@@ -487,29 +492,40 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 
 
-## 6. Salt bridge
+## 14. Chalcogen bond & S/Se mediated H-bond
 
-**command**(trajectory, res_index_A, res_index_B, ...)
+**SSe_hydrogen_chalcogen_bond**(self, trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0*):    
 
 ### Description
 
-> [!IMPORTANT]
-> - The structure, or a trajectory must contain hydrogens.
+Identify chalcogen bond or S/Se mediated H-bond. The analysis don't take in account the presence (or abscence) of hydrogens
+
+> [!WARNING]
+> The error `IndexError: list index out of range` Always happend when bonded atoms are missing. Ensure to have CONNECT section in your PDB, with the correct bonds.
 
 ### Arguments
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| trajectory  | mdtraj  | MDTraj trajectory.  | mandatory |
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
-
+| MAX_distance_SX              | integer | Cut-off distance between S/Se and the N/O to identify the interaction. <br/> Default value: 3.6 <br/> Unit: Angstrom | optional |
+| MAX_angle_dihedral_chalcogen | integer | Maximum dihedral angle to identify chalcogen interaction. <br/> Default value: 50.0 <br/> Unit: degree | optional |
+| MIN_angle_phi_chalcogen      | integer | Minimum phi angle to identify chalcogen interaction. <br/> Default value: 30.0 <br/> Unit: degree | optional |
+| MAX_angle_phi_chalcogen      | integer | Maximum phi angle to identify chalcogen interaction. <br/> Default value: 60.0 <br/> Unit: degree | optional |
+| MIN_angle_theta_chalcogen    | integer | Maximum theta angle to identify chalcogen interaction. <br/> Default value: 50.0 <br/> Unit: degree | optional |
+| MIN_angle_csx_chalcogen      | integer | Minimum centroid-S/Se-N/O (CSX) angle to identify chalcogen interaction. <br/> Default value: 115.0 <br/> Unit: degree | optional |
+| MAX_angle_csx_chalcogen      | integer | Maximum CSX angle to identify chalcogen interaction. <br/> Default value: 155.0 <br/> Unit: degree | optional |
+| MAX_angle_csx_hbond          | integer | Maximum CSX angle to identify H-bond interaction. <br/> Default value: 145.0 <br/> Unit: degree | optional |
 
 ### Properties
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
-| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
-| .get_distance      | Distances between CA-CA atoms of the two residues. | float | Å |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) , string |  |
+| .get_atoms      | Return list of atoms index involved in chalogen bond and another list of atoms index involved in H-bond. | List, List <br/> Format: [[index_S/Se,index_N/O],...] , [[index_S/Se,index_N/O],...] | MDTraj indices |
+| .get_angle      | Return a list of angles for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...], [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...] | Å |
+| .get_distance   | Return a list of distance  for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [distance,...] , [distance,...] | degree |
 

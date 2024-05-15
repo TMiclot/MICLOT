@@ -910,6 +910,128 @@ print(interaction.get_angle)
 
 
 
+## 12. Salt bridge
+
+### 12.1. Chalcogen bond with Se
+
+**Code**
+
+```python
+pdb_file = 'chalcogen_SE_2gtq_withCONNECT.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'chalcogen')
+([[15, 7]], [])
+([3.1346604228019714], [])
+([[92.7476430482533, 57.253210049674934, 122.70444577007973, 3.2657869555555123]], [])
+```
+
+### 12.2. Chalcogen bond with S
+
+**Code**
+
+```python
+pdb_file = 'chalcogen_S_1uwc.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'chalcogen')
+([[13, 5]], [])
+([3.257075250148773], [])
+([[87.4338907021319, 50.28551360663397, 129.6667818270496, 3.334484671896547]], [])
+```
+
+### 3.1. H-bond
+
+**Code**
+
+```python
+pdb_file = 'hbond_S_1f9z.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'h-bond')
+([], [[6, 13]])
+([], [3.206118941307068])
+([], [[12.765337911253035, 164.40883574237162, 77.71173636759816, 93.4844791253299]])
+```
+
+### 12.4. H-bond, changing the `MAX_angle_csx_hbond` parameter
+
+**Code**
+
+```python
+pdb_file = 'hbond_S_2vh3_wConnect.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1, MAX_angle_csx_hbond=150.0)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'h-bond')
+([], [[11, 5]])
+([], [3.2067063450813293])
+([], [[59.74052254307601, 3.1638450710847406, 149.59121339210552, 84.59585658972038]])
+```
+
+### 12.5. Error due to bad reconstruction of hydrogen positions
+
+PDB2PQR is used to reconstruct hydogens in the PDb file. But in this case the H of the Cys is not reconstructed at the correct position. This leads to an error of analysis: the command return 'chalcogen' insted of 'h-bond'. This error occure because the dihedral angle is 3.26°, which proves hydrogen's incorrect position.
+
+**Code**
+
+```python
+pdb_file = 'hbond_S_2vh3_wConnect.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+print(interaction.check_interaction)
+print(interaction.get_atoms)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'chalcogen')
+([[15, 7]], [])
+([3.1346604228019714], [])
+([[92.7476430482533, 57.253210049674934, 122.70444577007973, 3.2657869555555123]], [])
+```
+
+
+
+
 <!--- TEMPLATE
 ## 4. Salt bridge
 
