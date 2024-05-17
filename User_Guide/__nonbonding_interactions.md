@@ -1,27 +1,15 @@
 [User Guide home](Manual.md)
 
-# Canonical & Non-canonical non-bonding interactions
+# Non-bonding interactions
 
 
 ## Canonical non-bonding interactions
 
-- Hydrogen bonds
-- Salt bridges
-- Ionic interactions
-- Metal coordination
-- Water bridges
-- Disulphide bonds
-- Disordered interactions
-
-## Non-canonical non-bonding interactions
-
-- Van der Waals interactions
-- Pi-cation interactions
-- Pi-stacking interactions
-- Pi-cation-stacking interactions
 
 
-## References - *Interaction types and subtypes*
+
+
+## References
 
 ### R.1. General
 
@@ -51,16 +39,7 @@
 
 - Wang, J. & Yao, L. Dissecting C−H∙∙∙π and N−H∙∙∙π Interactions in Two Proteins Using a Combined Experimental and Computational Approach. *Sci Rep* 9, 20149 (2019). [https://doi.org/10.1038/s41598-019-56607-4](https://doi.org/10.1038/s41598-019-56607-4)
 
-#### R.2.3. Sulfur and Selenium mediated H-bond
-
-- Antonijević, I. S., Janjić, Goran. V., Milčić, M. K. & Zarić, S. D. Preferred Geometries and Energies of Sulfur–Sulfur Interactions in Crystal Structures. *Crystal Growth & Design* 16, 632–639 (2016). [https://doi.org/10.1021/acs.cgd.5b01058](https://doi.org/10.1021/acs.cgd.5b01058)
-- Gregoret, L. M., Rader, S. D., Fletterick, R. J. & Cohen, F. E. Hydrogen bonds involving sulfur atoms in proteins. *Proteins* 9, 99–107 (1991). [https://doi.org/10.1002/prot.340090204](https://doi.org/10.1002/prot.340090204)
-- Mishra, K. K., Singh, S. K., Ghosh, P., Ghosh, D. & Das, A. The nature of selenium hydrogen bonding: gas phase spectroscopy and quantum chemistry calculations. *Phys. Chem. Chem. Phys.* 19, 24179–24187 (2017). [https://doi.org/10.1039/C7CP05265K ](https://doi.org/10.1039/C7CP05265K)
-- Chand, A., Sahoo, D. K., Rana, A., Jena, S. & Biswal, H. S. The Prodigious Hydrogen Bonds with Sulfur and Selenium in Molecular Assemblies, Structural Biology, and Functional Materials. *Acc. Chem. Res.* 53, 1580–1592 (2020). [https://doi.org/10.1021/acs.accounts.0c00289](https://doi.org/10.1021/acs.accounts.0c00289)
-- Mishra, K. K. et al. Water-Mediated Selenium Hydrogen-Bonding in Proteins: PDB Analysis and Gas-Phase Spectroscopy of Model Complexes. *J. Phys. Chem. A* 123, 5995–6002 (2019). [https://doi.org/10.1021/acs.jpca.9b04159](https://doi.org/10.1021/acs.jpca.9b04159)
-- Wilds, C. J., Pattanayek, R., Pan, C., Wawrzak, Z. & Egli, M. Selenium-Assisted Nucleic Acid Crystallography: Use of Phosphoroselenoates for MAD Phasing of a DNA Structure. *J. Am. Chem. Soc.* 124, 14910–14916 (2002). [https://doi.org/10.1021/ja021058b](https://doi.org/10.1021/ja021058b)
-
-#### R.2.4. C5 H-bond
+#### R.2.3. C5 H-bond
 
 - Mundlapati, V. R. et al. N–H⋯X interactions stabilize intra-residue C5 hydrogen bonded conformations in heterocyclic α-amino acid derivatives. *Chem. Sci.* 12, 14826–14832 (2021). [https://doi.org/10.1039/D1SC05014A ](https://doi.org/10.1039/D1SC05014A )
 - Kumar, S. et al. Observation of a weak intra-residue C5 hydrogen-bond in a dipeptide containing Gly-Pro sequence. *The Journal of Chemical Physics* 151, 104309 (2019). [https://doi.org/10.1063/1.5115040](https://doi.org/10.1063/1.5115040)
@@ -137,13 +116,28 @@
 - Scheiner, S. Participation of S and Se in hydrogen and chalcogen bonds. *CrystEngComm* 23, 6821–6837 (2021). [https://doi.org/10.1039/D1CE01046H](https://doi.org/10.1039/D1CE01046H)
 - Adhav, V. A., Shelke, S. S., Balanarayan, P. & Saikrishnan, K. Sulfur-mediated chalcogen versus hydrogen bonds in proteins: a see-saw effect in the conformational space. *QRB Discovery* 4, e5 (2023). [https://doi.org/10.1017/qrd.2023.3 ](https://doi.org/10.1017/qrd.2023.3 )
 
+
 ### R.7. Hydrophobic interaction
 
 - Onofrio, A. et al. Distance-dependent hydrophobic–hydrophobic contacts in protein folding simulations. *Phys. Chem. Chem. Phys.* 16, 18907–18917 (2014). [https://doi.org/10.1039/C4CP01131G](https://doi.org/10.1039/C4CP01131G)
 
-### R.8. Sulfur/Selenium - Aromatic interaction
 
+### R.8. Non-bonding involving Sulfur and Selenium
+
+- Kojasoy, V. & Tantillo, D. J. Impacts of noncovalent interactions involving sulfur atoms on protein stability, structure, folding, and bioactivity. *Org. Biomol. Chem.* 21, 11–23 (2023). [https://doi.org/10.1039/D2OB01602H](https://doi.org/10.1039/D2OB01602H)
+
+#### R.8.1 Sulfur/Selenium - Aromatic
+
+- Ringer, A. L., Senenko, A. & Sherrill, C. D. Models of S/π interactions in protein structures: Comparison of the H 2 S–benzene complex with PDB data. *Protein Science* 16, 2216–2223 (2007). [https://doi.org/10.1110/ps.073002307](https://doi.org/10.1110/ps.073002307)
 - Pal, D. & Chakrabarti, P. Non-hydrogen Bond Interactions Involving the Methionine Sulfur Atom. *Journal of Biomolecular Structure and Dynamics* 19, 115–128 (2001). [https://doi.org/10.1080/07391102.2001.10506725](https://doi.org/10.1080/07391102.2001.10506725)
 - Senćanski, M., Djordjević, I. & Grubišić, S. Assessing the dispersive and electrostatic components of the selenium–aromatic interaction energy by DFT. *J Mol Model* 23, 162 (2017). [https://doi.org/10.1007/s00894-017-3330-z](https://doi.org/10.1007/s00894-017-3330-z)
 - Hartman, I., Raia, C. A. & Zauhar, R. J. Evidence for a strong selenium–aromatic interaction derived from crystallographic data and ab initio quantum chemical calculations. *Biopolymers* 83, 595–613 (2006). [https://doi.org/10.1002/bip.20592]( https://doi.org/10.1002/bip.20592)
 
+#### R.8.2. Sulfur/Selenium mediated H-bond
+
+- Antonijević, I. S., Janjić, Goran. V., Milčić, M. K. & Zarić, S. D. Preferred Geometries and Energies of Sulfur–Sulfur Interactions in Crystal Structures. *Crystal Growth & Design* 16, 632–639 (2016). [https://doi.org/10.1021/acs.cgd.5b01058](https://doi.org/10.1021/acs.cgd.5b01058)
+- Gregoret, L. M., Rader, S. D., Fletterick, R. J. & Cohen, F. E. Hydrogen bonds involving sulfur atoms in proteins. *Proteins* 9, 99–107 (1991). [https://doi.org/10.1002/prot.340090204](https://doi.org/10.1002/prot.340090204)
+- Mishra, K. K., Singh, S. K., Ghosh, P., Ghosh, D. & Das, A. The nature of selenium hydrogen bonding: gas phase spectroscopy and quantum chemistry calculations. *Phys. Chem. Chem. Phys.* 19, 24179–24187 (2017). [https://doi.org/10.1039/C7CP05265K ](https://doi.org/10.1039/C7CP05265K)
+- Chand, A., Sahoo, D. K., Rana, A., Jena, S. & Biswal, H. S. The Prodigious Hydrogen Bonds with Sulfur and Selenium in Molecular Assemblies, Structural Biology, and Functional Materials. *Acc. Chem. Res.* 53, 1580–1592 (2020). [https://doi.org/10.1021/acs.accounts.0c00289](https://doi.org/10.1021/acs.accounts.0c00289)
+- Mishra, K. K. et al. Water-Mediated Selenium Hydrogen-Bonding in Proteins: PDB Analysis and Gas-Phase Spectroscopy of Model Complexes. *J. Phys. Chem. A* 123, 5995–6002 (2019). [https://doi.org/10.1021/acs.jpca.9b04159](https://doi.org/10.1021/acs.jpca.9b04159)
+- Wilds, C. J., Pattanayek, R., Pan, C., Wawrzak, Z. & Egli, M. Selenium-Assisted Nucleic Acid Crystallography: Use of Phosphoroselenoates for MAD Phasing of a DNA Structure. *J. Am. Chem. Soc.* 124, 14910–14916 (2002). [https://doi.org/10.1021/ja021058b](https://doi.org/10.1021/ja021058b)

@@ -1006,12 +1006,12 @@ print(interaction.get_angle)
 
 ### 12.5. Error due to bad reconstruction of hydrogen positions
 
-PDB2PQR is used to reconstruct hydogens in the PDb file. But in this case the H of the Cys is not reconstructed at the correct position. This leads to an error of analysis: the command return 'chalcogen' insted of 'h-bond'. This error occure because the dihedral angle is 3.26°, which proves hydrogen's incorrect position.
+PDB2PQR is used to reconstruct hydogens in the PDb file. But in this case the H of the Cys is not reconstructed at the correct position. This leads to an error of analysis: the command return 'False' insted of 'h-bond'
 
 **Code**
 
 ```python
-pdb_file = 'hbond_S_2vh3_wConnect.pdb'
+pdb_file = 'hbond_S_5cpv_prq.pdb'
 traj = md.load(pdb_file, top=pdb_file)
 interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
 print(interaction.check_interaction)
@@ -1023,10 +1023,10 @@ print(interaction.get_angle)
 **Result**
 
 ```
-(True, 'chalcogen')
-([[15, 7]], [])
-([3.1346604228019714], [])
-([[92.7476430482533, 57.253210049674934, 122.70444577007973, 3.2657869555555123]], [])
+False
+([], [])
+([], [])
+([], [])
 ```
 
 

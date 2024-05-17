@@ -20,8 +20,8 @@
 - [x] ARG-ARG stacking
 - [x] Pi H-bond (if not involve in amino-PI or charge-aromatic !)
 - [x] N--> $\pi$*
-- [ ] S/Se H-bond & S/Se chalogen bond
-- [ ] Sulfure/Selenium -- Aromatic
+- [x] S/Se H-bond & S/Se chalogen bond
+- [x] Sulfure/Selenium -- Aromatic
 
 
 ## Cys-Cys
@@ -48,6 +48,7 @@
 - [x] MDTraj chain ID <--> PDB chain name
 - [x] Minimization (openMM)
 - [x] preparation (PDB2PQR)
+- [ ] MDTraj bonds
 
 
 

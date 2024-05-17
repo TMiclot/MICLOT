@@ -383,7 +383,7 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 
 ## 11. ARG involved
 
-**command**(trajectory, res_index_A, res_index_B, ...)
+**arg_involved**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=6.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0*)
 
 ### Description
 

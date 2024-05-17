@@ -1311,7 +1311,7 @@ class amino_pi:
         
         OPTIONAL ARGUMENTS
         Set an absolute tolerance parameter N. See documentation concerning. 'numpy.isclose'.
-
+        
             MAX_distance          Maximum distance between COM of aromatic ring and the N of the amino group
                                   Default value: 5.5
 
@@ -1319,17 +1319,18 @@ class amino_pi:
                                   Default value of N: 30.0
 
             frame                 Frame ID on which to perform the analysis.
-                                  Default value: 0
+                                  Default value: 0: 0
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
         self.top = self.traj.topology
         self.MAX_distance = MAX_distance
         self.angular_tolerance = angular_tolerance
-
+        self.res_index_A = res_index_A
+        self.res_index_B = res_index_B
         
         
-        #===== Create dictionaries of ring and their plans =====
+        #===== Create dictionaries to  =====
         self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
                                    "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
                                    "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
@@ -1339,7 +1340,8 @@ class amino_pi:
                                    "HSD": 'CG ND1 CD2 CE1 NE2',
                                    "HSE": 'CG ND1 CD2 CE1 NE2',
                                   }
-           
+        
+        
         self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
                            "TRP": ['CD2', 'CZ2',  'CZ3'],
                            "PHE": ['CG',  'CE1',  'CE2'],
@@ -1354,12 +1356,12 @@ class amino_pi:
         
         #===== Identify residues and get their names =====
         # Identify the aromatic and the amino AA
-        if self.top.residue(res_index_A).name in self.dict_aromatic_ring and self.top.residue(res_index_B).name in ["ASN", "GLN"]:
-            self.res_amino = res_index_B
-            self.res_aromatic = res_index_A
-        elif self.top.residue(res_index_B).name in self.dict_aromatic_ring and self.top.residue(res_index_A).name in ["ASN", "GLN"]:
-            self.res_amino = res_index_A
-            self.res_aromatic = res_index_B
+        if self.top.residue(self.res_index_A).name in self.dict_aromatic_ring and self.top.residue(self.res_index_B).name in ["ASN", "GLN"]:
+            self.res_amino = self.res_index_B
+            self.res_aromatic = self.res_index_A
+        elif self.top.residue(self.res_index_B).name in self.dict_aromatic_ring and self.top.residue(self.res_index_A).name in ["ASN", "GLN"]:
+            self.res_amino = self.res_index_A
+            self.res_aromatic = self.res_index_B
         else:
             raise ValueError('Residues are not TYR TRP PHE HIS / ASN GLN')
             
@@ -1413,31 +1415,23 @@ class amino_pi:
         
         # The angle is before is between the normal vector of the plan and the vector COM --> N
         # But the normal vector is perpendicular to the plan and geometric criteria are for the angle between the plan and the vector COM --> N.
-        #
-        #    Pn                Pn is the normal vector to Plane.
-        #    |   v             We calculate the angle between Pn and v.
-        #    |  /              We need the angle between V and Plane. 
-        #    | /
-        # ___|/_____ Plane
-        #
         # So angle is converted to correspond to be the one betwen the plan and the vector COM --> N.
         self.angle = 90 - self.angle
-        
-        
-        
+    
+    
     #===== Return results =====
     @property
     def check_interaction(self):
         """
         DESCRIPTION
-            Check if the amino group of GLN or ASN interact with an aromatic ring.
+            Check if the C5 H-bond interaction exist for the residue.
         
         RETURN
             True     The interaction exist.
             False    The interaction don't exist.
         """
         # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
-        if self.distance <= self.MAX_distance and np.isclose(abs(self.angle), 90.0, atol=self.angular_tolerance):
+        if self.distance <= self.MAX_distance and np.isclose(self.angle, 90.0, atol=self.angular_tolerance):
             return True
         else:
             return False
@@ -1445,7 +1439,7 @@ class amino_pi:
     @property
     def get_angle(self):
         """
-        DESCRIPTION    Angle betwee the N-COM and the normal of the aromatic ring
+        DESCRIPTION    Angle betwee the N-COM and the normal of the amino plane
         RETURN         angle_planes
         UNIT           degree
         """
@@ -1459,6 +1453,7 @@ class amino_pi:
         UNIT           Angstrom
         """
         return self.distance
+    
     
 
 
@@ -2766,7 +2761,7 @@ class SSe_hydrogen_chalcogen_bond:
         
         RETURN
             True, 'chalcogen and h-bond'    interaction exist and their is both chalcogen and H-bond
-                                            (happend only if the two residue are Cys and/or Met).
+                                            (happend only if the two residues contain S/Se).
             True, 'chalcogen'               interaction exist and is chalcogen.
             True, 'h-bond'                  interaction exists and is H-bond.
             False                           no interaction.
@@ -2821,6 +2816,175 @@ class SSe_hydrogen_chalcogen_bond:
 
 
 #=====================================================
-#===== Class for 
+#===== Class for S/Se -- Pi interaction
 #=====================================================
+class sse_aromatic:
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0):
+        """
+        INTERACTION TYPE    S/Se - aromatic
+        SUBTYPE(S)          no
 
+        DESCRIPTION
+            Interaction an S, or Se, atom and an aromatic rings.
+            
+        ARGUMENTS
+            trajectory     MDTraj trajectory
+            res_index_A    Index of residue A
+            res_index_B    Index of residue B
+        
+        OPTIONAL ARGUMENTS        
+            MAX_distance          Maximum distance between COM of aromatic ring and the S/Se
+                                  Default value: 5.5
+
+            frame                 Frame ID on which to perform the analysis.
+                                  Default value: 0: 0
+                                  
+            MIN_pi_angle            Minimum angle defining the Pi area (the maximum is 90˚).
+                                    Default value: 60.0˚
+                                    
+            MAX_quadrupole_angle    Maximum angle defining the quadrupole area (the maximum is 0˚).
+                                    Default value: 35.0˚
+        """
+        #===== Initialise variable =====
+        self.traj = trajectory[frame]
+        self.top = self.traj.topology
+        self.MAX_distance = MAX_distance
+        self.res_index_A = res_index_A
+        self.res_index_B = res_index_B
+        self.MIN_pi_angle = MIN_pi_angle
+        self.MAX_quadrupole_angle = MAX_quadrupole_angle
+
+        
+        
+        #===== Create dictionaries to  =====
+        self.dict_aromatic_ring = {"TYR": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "TRP": 'CD2 CE2 CE3 CZ2 CZ3 CH2',
+                                   "PHE": 'CG CD1 CD2 CE1 CE2 CZ',
+                                   "HIS": 'CG ND1 CD2 CE1 NE2',
+                                   "HID": 'CG ND1 CD2 CE1 NE2',
+                                   "HIE": 'CG ND1 CD2 CE1 NE2',
+                                   "HSD": 'CG ND1 CD2 CE1 NE2',
+                                   "HSE": 'CG ND1 CD2 CE1 NE2',
+                                  }
+        
+        
+        self.dict_plane = {"TYR": ['CG',  'CE1',  'CE2'],
+                           "TRP": ['CD2', 'CZ2',  'CZ3'],
+                           "PHE": ['CG',  'CE1',  'CE2'],
+                           "HIS": ['CG',  'CE1',  'NE2'],
+                           "HID": ['CG',  'CE1',  'NE2'],
+                           "HIE": ['CG',  'CE1',  'NE2'],
+                           "HSE": ['CG',  'CE1',  'NE2'],
+                           "HSD": ['CG',  'CE1',  'NE2'],
+                          }
+
+        
+        
+        #===== Identify aromatic residue and get it's name =====        
+        # Identify the aromatic and the amino AA
+        if self.top.residue(self.res_index_A).name in self.dict_aromatic_ring:
+            self.res_aromatic = self.res_index_A
+        elif self.top.residue(self.res_index_B).name in self.dict_aromatic_ring:
+            self.res_aromatic = self.res_index_B
+        else:
+            raise ValueError('Residues are not TYR TRP PHE HIS')
+            
+        # Get residues names
+        self.res_aromatic_name = self.top.residue(self.res_aromatic).name
+
+        
+        #===== Distance between COM of aromatic and S/Se =====
+        # Compute COM of aromatic ring
+        self.COM_aromatic = md.compute_center_of_mass(self.traj, select=f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}")[0]
+        
+        # Identify S/Se atom and it's position 
+        self.index_atom_SSE = self.top.select(f"resid {self.res_index_A} {self.res_index_B} and element S Se")[0]
+        self.coordinate_atom_SSE = self.traj.xyz[0, self.index_atom_SSE]
+        
+        # create a vector between aromatic COM and SSE & measure it's norm
+        self.vector_COM_SSE = Vector.from_points(self.COM_aromatic, self.coordinate_atom_SSE)
+        self.distance = self.vector_COM_SSE.norm() *10 # *10 to convert nm to angstrom
+        
+        
+        #===== Create planes and get it's normal vector =====
+        # Get position of all atom in aromatic plane
+        self.list_aromatic_atom_position = []
+        #
+        for self.atom in self.dict_plane[self.res_aromatic_name]:
+            self.atom_index = self.top.residue(self.res_aromatic).atom(self.atom).index
+            self.atom_position = self.traj.xyz[0][self.atom_index]
+            self.list_aromatic_atom_position.append(self.atom_position)
+        
+        # create aromatic plane
+        self.plane_aromatic = Plane.from_points(self.list_aromatic_atom_position[0], self.list_aromatic_atom_position[1], self.list_aromatic_atom_position[2])
+        
+        # Get normal vector od the aromatic plane
+        self.vector_normal_plane_aromatic = self.plane_aromatic.normal
+        
+         
+        # ===== Measure angle between the normal vector of aromatic plane and the vector COM --> S/Se =====
+        # calculate the angle and convert it to degree
+        self.angle = np.rad2deg( self.vector_normal_plane_aromatic.angle_between(self.vector_COM_SSE) )
+        
+        # Convert the angle to a range of values from 0 to 90 degrees
+        if self.angle <= 90:
+            None # the angle is already in the range 0 to 90 degrees
+        elif self.angle <= 180:
+            self.angle = 180 - self.angle
+        elif self.angle <= 270:
+            self.angle = self.angle - 180
+        else:
+            self.angle = 360 - self.angle
+        
+        # The angle is before is between the normal vector of the plan and the vector COM --> S/Se
+        # But the normal vector is perpendicular to the plan and geometric criteria are for the angle between the plan and the vector COM --> S/Se.
+        # So angle is converted to correspond to be the one betwen the plan and the vector COM --> S/Se.
+        self.angle = 90 - self.angle
+    
+    
+    #===== Return results =====
+    @property
+    def check_interaction(self):
+        """
+        DESCRIPTION
+            Check if a S/Se interact with an aromatic ring.
+        
+        RETURN  
+            When True, 'S/Se' is replaced by cation or anion.
+            True, 'S/Se'-Pi              The interaction exist.
+            True, 'S/Se'-intermediate    The interaction exist.
+            True, 'S/Se'-quadrupole      The interaction exist.
+            
+            False, False                   The interaction don't exist.
+        """
+        # get S/Se atom symbol
+        symbol = self.top.atom(self.index_atom_SSE).element.symbol
+        
+        # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
+        if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle <= 90.0:
+            return True, f"{symbol}-Pi"
+        elif self.distance <= self.MAX_distance and self.MAX_quadrupole_angle < self.angle < self.MIN_pi_angle:
+            return True, f"{symbol}-intermediate"
+        elif self.distance <= self.MAX_distance and 0 <= self.angle <= self.MAX_quadrupole_angle:
+            return True, f"{symbol}-quadrupole"
+        else:
+            return False, False
+        
+    @property
+    def get_angle(self):
+        """
+        DESCRIPTION    Angle between the S/Se-COM and the normal of the amino plane
+        RETURN         angle_planes
+        UNIT           degree
+        """
+        return abs(self.angle)
+
+    @property
+    def get_distance(self):
+        """
+        DESCRIPTION    Distance between COM of aromatic ring and S/Se of the amino group
+        RETURN         distance
+        UNIT           Angstrom
+        """
+        return self.distance
+    

@@ -26,7 +26,6 @@ mindmap
         id{{**Protein region**}}
         id{{**Energy calculation**}}
             Contacts-based method
-            4-distance method
             Coulomb & Lennard-Jones
         id{{**Cys-Cys bridge**}}
             Disulfide
