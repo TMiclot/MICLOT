@@ -1,28 +1,8 @@
 #!/usr/bin/env python3
 
 """
-  ___      ___   __     ______   ___        ______  ___________  
- |"  \    /"  | |" \   /" _  "\ |"  |      /    " \("     _   ") 
-  \   \  //   | ||  | (: ( \___)||  |     // ____  \)__/  \\__/  
-  /\\  \/.    | |:  |  \/ \     |:  |    /  /    ) :)  \\_ /     
- |: \.        | |.  |  //  \ _   \  |___(: (____/ //   |.  |     
- |.  \    /:  | /\  |\(:   _) \ ( \_|:  \\        /    \:  |     
- |___|\__/|___|(__\_|_)\_______) \_______)\"_____/      \__|
+This module is provide function to compute the non-bonding interactions between two residues.
 
- Molecular InteraCtion anaLysis tOolkiTs
- _______________________________________
- 
- This module is provide function to compute the non-bonding interactions between two residues.
- 
- The non-bonding interactions are:
-    - C5 H-bond
-    - C-bond
-    - Hydrophobic & Repulsion hydrophobe/hydrophile
-    - Charges clash & charges repulsion
-    - Salt bridges
-    - Hydrogen bond
-    - van der Waals
-    - 
 """
 
 __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'
@@ -30,6 +10,9 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
+__all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion', 'salt_bridge', \
+           'hydrogen_bond', 'van_der_waals', 'amino_pi', 'charge_aromatic', 'aromatic_aromatic', \
+           'arg_involved', 'pi_hbond', 'n_pi', 'SSe_hydrogen_chalcogen_bond', 'sse_aromatic']
 
 
 
@@ -43,7 +26,7 @@ import mdtraj as md
 
 
 
-__all__ = ['']
+
 
 #=====================================================
 #===== Class for C5 hydrogen bonds
@@ -2567,7 +2550,7 @@ class n_pi:
 #=====================================================
 #===== Class for Chalcogen bond & S/Se mediated H-bond
 #=====================================================
-class SSe_hydrogen_chalcogen_bond:
+class sse_hydrogen_chalcogen_bond:
     def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, \
                   MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0):
         """
@@ -2987,4 +2970,13 @@ class sse_aromatic:
         UNIT           Angstrom
         """
         return self.distance
-    
+
+
+
+
+
+#=====================================================
+#===== END
+#=====================================================
+if __name__ == "__main__":
+    main()

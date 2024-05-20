@@ -9,6 +9,7 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
+__all__ = ['cys_bridge', 'cys_bridges_inPDB']
 
 
 
@@ -23,7 +24,6 @@ pd.options.mode.copy_on_write = True
 from tqdm import tqdm
 
 
-__all__ = ['']
 
 
 #=====================================================
@@ -529,7 +529,7 @@ class cys_bridge:
 #===== Function to check bridge into an entire PDB file
 #=====================================================
 
-def check_cys_bridges(pdb_file, outfile=True, logfile=True):
+def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True):
     """
     DESCRIPTION
         This command check a PDB structure to identify all CYS-CYS bridges.

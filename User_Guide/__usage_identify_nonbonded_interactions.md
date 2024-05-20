@@ -494,7 +494,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 ## 14. Chalcogen bond & S/Se mediated H-bond
 
-**SSe_hydrogen_chalcogen_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0*)   
+**sse_hydrogen_chalcogen_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0*)   
 
 ### Description
 
@@ -535,7 +535,7 @@ Identify chalcogen bond or S/Se mediated H-bond. The analysis don't take in acco
 
 ## 15. S/Se - Aromatic
 
-**SSe_hydrogen_chalcogen_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0*)
+**sse_aromatic**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0*)
 
 ### Description
 

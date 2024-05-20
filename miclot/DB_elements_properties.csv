@@ -1,0 +1,7 @@
+element,symbol,atomic_weight,van_der_waals_radii,covalent_radii,spin,mag_moment,I_Ground_state_ionization_energy,II_Ground_state_ionization_energy
+carbon,C,12.011,1.70,0.75,0,None,11.26030,24.3833
+hydrogen,H,1.008,1.10,0.32,1/2,2.79284,13.598433,None
+nitrogen,N,14.007,1.55,0.71,1,0.40376,14.5341,29.6013
+oxygen,O,15.999,1.52,0.64,0,None,13.61805,35.1211
+selenium,Se,78.971,1.90,1.18,0,None,9.75239,21.19
+sulfure,S,32.076,1.80,1.04,0,None,10.36001,23.33788

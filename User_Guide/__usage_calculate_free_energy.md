@@ -66,8 +66,8 @@ Calculate the binding energy of a protein-protein complex using the [contact-bas
 | -------- | --- | --- | --- |
 | pdb_file_path       | string  | Path to the PDB file. | mandatory |
 | chainName_receptor  | string  | List of chain names of the receptor. | mandatory |
-| chainName_ligand    | string  | List of chain names of the receptor.   | mandatory |
-| temperature_celsius | integer | Temperature in °C.          | mandatory |
+| chainName_ligand    | string  | List of chain names of the ligand.   | mandatory |
+| temperature_celsius | integer | Temperature in °C.          | optional |
 
 ### Returns
 

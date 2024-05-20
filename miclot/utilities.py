@@ -22,7 +22,8 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
-
+__all__ = ['pdb2pandas','mdtraj_chainID_2_chainName', 'get_sequence_secstruct', \
+           'minimize_pdb', 'get_protein_region', 'pbd2pqr_parse', 'fix_topology_bonds']
 
 
 #=====================================================
@@ -41,7 +42,6 @@ from openmm.app import *
 from openmm import *
 from openmm.unit import *
 
-__all__ = ['']
 
 #=====================================================
 #===== Function to convert chainID of MDTraj topology to chainName of PDB file
@@ -1137,7 +1137,7 @@ def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True
 
 
 #=====================================================
-#===== Import modules
+#===== Function to dentify missing bonds and add them to the topology 
 #=====================================================
 #===== 1. Function to identify =====
 # It is not designed to be used by user
@@ -1313,3 +1313,14 @@ def fix_topology_bonds(pdb_file_path, check_clash=False, save_pdb=True, factor_m
         
     #===== Return correcteed traj & list of bonded atom pairs =====
     return traj, list_atoms_to_link
+
+
+
+
+
+
+
+#====================================================
+#=====| Module end |=====
+if __name__ == "__main__":
+    main()

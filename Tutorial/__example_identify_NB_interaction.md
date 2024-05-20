@@ -919,7 +919,7 @@ print(interaction.get_angle)
 ```python
 pdb_file = 'chalcogen_SE_2gtq_withCONNECT.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+interaction = sse_hydrogen_chalcogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_distance)
@@ -942,7 +942,7 @@ print(interaction.get_angle)
 ```python
 pdb_file = 'chalcogen_S_1uwc.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+interaction = sse_hydrogen_chalcogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_distance)
@@ -965,7 +965,7 @@ print(interaction.get_angle)
 ```python
 pdb_file = 'hbond_S_1f9z.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+interaction = sse_hydrogen_chalcogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_distance)
@@ -988,7 +988,7 @@ print(interaction.get_angle)
 ```python
 pdb_file = 'hbond_S_2vh3_wConnect.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1, MAX_angle_csx_hbond=150.0)
+interaction = sse_hydrogen_chalcogen_bond(traj, 0,1, MAX_angle_csx_hbond=150.0)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_distance)
@@ -1013,7 +1013,7 @@ PDB2PQR is used to reconstruct hydogens in the PDb file. But in this case the H 
 ```python
 pdb_file = 'hbond_S_5cpv_prq.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = SSe_hydrogen_chalcogen_bond(traj, 0,1)
+interaction = sse_hydrogen_chalcogen_bond(traj, 0,1)
 print(interaction.check_interaction)
 print(interaction.get_atoms)
 print(interaction.get_distance)

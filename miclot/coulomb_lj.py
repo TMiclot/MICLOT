@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-This script is part of MICLOT ...
+This script is part of MICLOT and is use to calculate Coulomb and Lennard-Jones energies
+between residues.
 """
 
 __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'
@@ -9,7 +10,7 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
-
+__all__ = ['coulomb_lj']
 
 
 #=====================================================
@@ -21,7 +22,6 @@ import mdtraj as md
 import numpy as np
 
 
-__all__ = ['']
 
 #=====================================================
 #===== Class for atom names conversion

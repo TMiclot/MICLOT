@@ -32,7 +32,7 @@ mindmap
             Diselenium
             Selenosulfide
         id{{**Interaction network**}}
-            Cannonical & Non-Cannonical interaction types
+            Non-bonded interaction types
             Residues and Pairs neighborhood
         id{{**Database**}}
             Amino acids

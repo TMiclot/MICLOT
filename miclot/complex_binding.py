@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 
 """
-This script is part of MICLOT ...
+This script is part of MICLOT it calculate binding affinity, following the method of
+ the contacts-based method by [Vangone *et al.* (2015)](https://doi.org/10.7554/eLife.07454).
+ This code is different and is not related to the one from
+ [PRODIGY on GitHub](https://github.com/haddocking/prodigy/).
 """
 
 __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'
 __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
+
+__all__ = ['identify_contacts','identify_NIS_residues_SASA','compute_binding_energy']
 
 
 #=====================================================
@@ -20,11 +25,8 @@ import freesasa
 from Bio.PDB import PDBParser, Polypeptide
 
 # Import module from MICLOT
-from ../utilities import pdb2pandas, mdtraj_chainID_2_chainName
+from miclot.utilities import pdb2pandas, mdtraj_chainID_2_chainName
 
-
-
-__all__ = ['']
 
 
 #=====================================================
@@ -361,7 +363,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 
 
 
-#=====================================================
+#====================================================
 #===== Function to make report on 
 #====================================================
 def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, temperature_celsius=25, write_outfile=True):
@@ -370,6 +372,14 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
         Compute DeltaG and Kd, then return a final report containing all contacts and NIS informations.
     
     ARGUMENTS
+        pdb_file_path         Path to the PDB file.
+        chainName_receptor    List of chain names of the receptor.
+        chainName_ligand      List of chain names of the ligand.
+
+    OPTIONAL ARGUMENTS
+        temperature_celsius    Temperature in Celsius.
+                               Default value: 25.0
+
     """
     #===== Identify residues and their contacts =====
     df_contact = identify_contacts(pdb_file_path, chainName_receptor, chainName_ligand, write_outfile=write_outfile)
@@ -468,3 +478,11 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     #===== Return the final dataframe =====
     return df_report
+
+
+
+
+#====================================================
+#=====| Module end |=====
+if __name__ == "__main__":
+    main()

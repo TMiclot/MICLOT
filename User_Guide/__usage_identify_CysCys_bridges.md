@@ -10,7 +10,7 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ## 1. Checking bridges between two Cys
 
-**cys_bridge**(trajectory, trajectory, residue_index_A, residue_index_B, *frame=0, MAX_distance_XX=None, MAX_distance_CA=7.5, MIN_distance_CA=3.0, MAX_distance_CB=5.5, method=None, MAX_energy=75.0, MIN_energy=0.0*)
+**cys_bridge**(trajectory, residue_index_A, residue_index_B, *frame=0, MAX_distance_XX=None, MAX_distance_CA=7.5, MIN_distance_CA=3.0, MAX_distance_CB=5.5, method=None, MAX_energy=75.0, MIN_energy=0.0*)
 
 ### Description
 
@@ -58,7 +58,7 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ## 2. Checking Cys-Cys bridges over a PDB structure
 
-**check_cys_bridges**(pdb_file, *outfile=True, logfile=True*)
+**cys_bridges_inPDB**(pdb_file, *outfile=True, logfile=True*)
 
 ### Description
 

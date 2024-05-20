@@ -117,7 +117,7 @@ None
 **Code**
 
 ```python
-check_cys_bridges('5azz.pdb')
+cys_bridges_inPDB('5azz.pdb')
 ```
 
 **Result**
@@ -126,7 +126,7 @@ check_cys_bridges('5azz.pdb')
 Cys-Cys Bridge - Progress: 100%|█| 36/36 [00:00<0
 ```
 
-Now you must have two new files *5azz_se-se_CYS_bridges.pdb* and *5azz_log.csv*. The first is the structure file in PDB format with renamed cysteines.
+Now you must have two new files *5azz_se-se_cys_bridges_inPDB.pdb* and *5azz_log.csv*. The first is the structure file in PDB format with renamed cysteines.
 The other is the log file in CSV format. This table contains the sucessive pairs tested by the algorithm. When a pair is detected as bridging, the name of the two cysteines is changed accordingly: CYX or XSE.
 
 
@@ -135,7 +135,7 @@ The other is the log file in CSV format. This table contains the sucessive pairs
 **Code**
 
 ```python
-check_cys_bridges('5azz.pdb', logfile=False)
+cys_bridges_inPDB('5azz.pdb', logfile=False)
 ```
 
 **Result**
@@ -162,7 +162,7 @@ Cys-Cys Bridge - Progress: 100%|█| 36/36 [00:00<0
 **Code**
 
 ```python
-check_cys_bridges('5azz.pdb', outfile=False)
+cys_bridges_inPDB('5azz.pdb', outfile=False)
 ```
 
 **Result**
