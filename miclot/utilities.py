@@ -462,7 +462,6 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrai
         constant                Constant force value (in kJ/nm) for the force used to restrain heavy atoms
                                 Default value: 1.0e+5
     """
-    #==== 
     #----- Clear existing output file and minimized pdb -----
     # remove the minimization output file if it exist
     if os.path.exists("minimization_out.csv"):
@@ -1140,3 +1139,177 @@ def pbd2pqr_parse(pdb_file_path, force_field='AMBER', ph=7.0, write_logfile=True
 #=====================================================
 #===== Import modules
 #=====================================================
+#===== 1. Function to identify =====
+# It is not designed to be used by user
+def identiy_unbondeed_atoms_and_clash(trajectory, list_atom_indices, list_bonds_to_add, check_clash, factor_max_distance, factor_min_distance):
+    """
+    DESCRIPTION
+        This function identify if a pair of atoms is altready bonded in the topology, or not.
+        If not, check if the distance between the two atoms is lower than: C*(vwd_1 + vdw_2).
+        
+        The functin is also able to identify clash, when two atoms are too close from each other.
+        It, can check if the distance between the two atoms is lower than: C'*(covalent_1 + covalent_2)
+        
+    ARGUMENTS
+        trajectory             MDtraj trajectory.
+        list_atom_indices      List of all atoms indices to be looped for pair control. 
+        list_bonds_to_add      List of all atom pair that must be added in the topology.
+        check_clash            Performe the clash check, or not (True/False)
+        factor_max_distance    C constant for the bond distance.
+        factor_min_distance    C' constant for the clash distance.
+    """
+    #===== Create dictionarries of atoms radii =====
+    # van der waals radii
+    dict_radii_vdw = {
+            "C":  1.70,
+            "H":  1.10,
+            "N":  1.55,
+            "O":  1.52,
+            "Se": 1.90, 
+            "S":  1.80 
+        }
+
+    # covalent radii
+    dict_radii_covalent = {
+            "C":  0.75,
+            "H":  0.32,
+            "N":  0.71,
+            "O":  0.64,
+            "Se": 1.18, 
+            "S":  1.04 
+        }
+    
+    
+    
+    #===== Get all the bonds as tuples of atom indices =====
+    bonds = set()
+    
+    for bond in trajectory.topology.bonds:
+        bonds.add(tuple(sorted([bond[0].index, bond[1].index])))
+        
+        
+    #===== Iniitalize =====
+    has_bond = False
+        
+        
+    #===== Check if any pair of atoms in the residue forms a bond =====
+    # loop over all atom pairs
+    for atom_1 in list_atom_indices:
+        for atom_2 in list_atom_indices:
+            
+            #----- if the bond exist, has_bond become True, then break the atom_2 loop -----
+            if atom_1 != atom_2 and tuple(sorted([atom_1, atom_2])) in bonds:
+                has_bond = True
+                break
+            
+            #----- if the atoms bond dont't exist, check their distance and determime if they must be linked or not -----
+            elif atom_1 != atom_2:
+                # Measure the distance between the two atoms
+                distance = md.compute_distances(trajectory, [[atom_1, atom_2]])[0] *10
+                
+                # Get element symbol of atom_1 and atom_2
+                element_atom_1 = trajectory.topology.atom(atom_1).element.symbol
+                element_atom_2 = trajectory.topology.atom(atom_2).element.symbol
+                
+                # Calculate max_distance and min_distance for the bound between the atom_2 and atom_2
+                max_distance = factor_max_distance * ( dict_radii_vdw[element_atom_1] + dict_radii_vdw[element_atom_2] )
+                min_distance = factor_min_distance * dict_radii_covalent[element_atom_1] + dict_radii_covalent[element_atom_2]
+                
+                # check if the distance is between the min (clash) distance and the max distance fto identify a bond
+                if min_distance <= distance <= max_distance:
+                    # append the list with this atom pair
+                    list_bonds_to_add.append(sorted([atom_1, atom_2]))
+                    # Use a list comprehention to remove duplicate
+                    list_bonds_to_add = list(set(map(tuple, list_bonds_to_add)))
+                
+                # if the distance is below the min (clash) distance, raise an error
+                elif distance < min_distance and check_clash == True:
+                    raise ValueError(f"Clash contact between atoms: {atom_1} and {atom_2}")
+                    
+        #----- if 'has_bond' is True, break the atom_1 loop -----
+        if has_bond:
+            break
+            
+            
+    #===== Return the list =====
+    return list_bonds_to_add
+
+
+
+
+
+#===== 2. Function to loop over all residues and Cys-Cys, then search if bond between atoms are in the topology =====
+def fix_topology_bonds(pdb_file_path, check_clash=False, save_pdb=True, factor_max_distance=0.6, factor_min_distance=1.0):
+    """
+    DESCRIPTION
+        Read a PDB file and return a MDTraj trajectory with corrected topology.
+        All missing bond will be added to the topology, based only on atoms distance.
+        It reconstruct resdidue and Cys-Cys bridge: S-S, Se-Se, S-Se.
+        
+    ARGUMENTS
+        pdb_file_path     Path of the PDB file
+        
+    OPTIONAL ARGUMENT
+        save_pdb               Save a PDB file with added bonds into the CONECT section.
+                               Default: True
+        check_clash            Check if tow atoms are clashing in the same residue, or in Cys-Cys bridge.
+                               Default: False
+        factor_max_distance    Factor to multiply the sum of the two atom radii to get the max distance between two atoms.
+                               Default: 0.6
+        factor_min_distance    Factor to multiply the atom covalent radius to get the min (clash) distance between two atoms.
+                               Default: 1.0
+        
+    """
+    #===== Initialise trajectory and topology =====
+    traj = md.load(pdb_file_path, top=pdb_file_path)
+    
+    
+    #===== Create bond for all standard residues & for disulfide (based on proximity) =====
+    # see https://mdtraj.org/1.9.7/api/generated/mdtraj.Topology.html
+    traj.topology.create_standard_bonds
+    
+    
+    #===== Check internal bonds for each residues =====
+    for residue in traj.topology.residues:
+        #-----  -----
+        has_bond = False
+
+        #----- Create a list to store all atom pairs that must be linked -----
+        list_atoms_to_link = []
+
+        # Check if the residue has at least two atoms
+        if len(list(residue.atoms)) >= 2:
+            list_residues_atoms_indices = [i.index for i in residue.atoms]
+            list_atoms_to_link = identiy_unbondeed_atoms_and_clash(trajectory, list_residues_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
+        
+
+    #===== Check for S/Se-S/Se bonds =====
+    # use the standard command of MDTraj, for disulfide bonds
+    # see https://mdtraj.org/1.9.7/api/generated/mdtraj.Topology.html
+    traj.topology.create_disulfide_bonds
+    
+    # Get all S/Se atom indices
+    list_SSE_atoms_indices = traj.topology.select("element S Se")
+    
+    # Add disulfide, diselenide, selenosulfide bonds to the list, if anny
+    list_atoms_to_link = identiy_unbondeed_atoms_and_clash(trajectory, list_SSE_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
+     
+    
+    #===== Add new bond to the topology =====
+    if 0 < len(list_atoms_to_link):
+        for pair in list_atoms_to_link:
+            atom_1 = traj.topology.atom(pair[0])
+            atom_2 = traj.topology.atom(pair[1])
+            traj.topology.add_bond(atom_1,atom_2)
+    else:
+        print("No bonds to add.")
+
+
+    #===== Save PDB file with added bonds into CONNECT =====
+    if save_pdb == True:
+        file_path = pdb_file_path.replace('.pdb', '')
+        traj.save_pdb(f'{file_path}_corrected_bonds.pdb')
+        
+        
+    #===== Return correcteed traj & list of bonded atom pairs =====
+    return traj, list_atoms_to_link

@@ -910,7 +910,7 @@ print(interaction.get_angle)
 
 
 
-## 12. Salt bridge
+## 12. Chalcogen bond & S/Se mediated H-bond
 
 ### 12.1. Chalcogen bond with Se
 
@@ -958,7 +958,7 @@ print(interaction.get_angle)
 ([[87.4338907021319, 50.28551360663397, 129.6667818270496, 3.334484671896547]], [])
 ```
 
-### 3.1. H-bond
+### 12.3. H-bond
 
 **Code**
 
@@ -1030,6 +1030,27 @@ False
 ```
 
 
+
+## 13. S/Se - Aromatic
+
+**Code**
+
+```python
+pdb_file = 'aromatic_S_1azu.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = sse_aromatic(traj, 7,18) #HIS46 MET121
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'S-intermediate')
+3.7583552070390196
+51.534096128380675
+```
 
 
 <!--- TEMPLATE

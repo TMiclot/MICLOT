@@ -5,7 +5,7 @@
 A set of functions present in the *utilities* used to prepare a structure for analysis.
 
 
-## x. Add missing atoms & renam residues by their protonated state
+## 1. Add missing atoms & Rename residues by their protonated state
 **pbd2pqr_parse**(pdb_file_path, *force_field='AMBER', ph=7.0, write_logfile=True*)
 
 ### Description
@@ -42,7 +42,40 @@ The command return 3 files:
 
 
 
-## x. Correlate PDB with MDTraj topology
+## 2. Create a trajectory with correct bonds in the topology
+
+**fix_topology_bonds**(pdb_file_path, *check_clash=None, factor_max_distance=0.6, factor_min_distance=1.0*)
+
+### Description
+
+Sometime, for non-standard residues, the topology of the structure is not complete. This function is used to add missing bonds to the topology.
+
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| pdb_file_path | string  | Path to the PDB file. | mandatory |
+| save_pdb | Save a PDB file with added bonds into the CONECT section. <br/> Default: True | optional |
+| check_clash   | boolean | If you want to check if the new bonds do not create a clash.  <br/> Default: False | optional |
+| factor_max_distance | integer | Factor to multiply the sum of the two atom radii to get the max distance between two atoms. It use vdw radii. <br/> $C \times ( vdw_{atom1} +  vdw_{atom2} )$ <br/> Default: 0.6 | optional |
+| factor_min_distance | integer | Factor to multiply the atom covalent radius to get the min (clash) distance between two atoms. It use covalent radii. <br/> $C' \times ( covalent_{atom1} +  covalent_{atom2} )$ <br/> Default: 1.0 | optional |
+
+
+### Returns
+
+The command return the trajectory corresponding to the PDB file with the correced topology and the list of atom IDs pair used to create new bonds.
+
+One PDB file containg the added bonds is also saved.
+
+| Return | Format | Description |
+| ------ | ------ | --- |
+| traj  | MDTraj trajectory | Trajectory of the PDB file, with corected topology. |
+| list_atoms_to_link | list | List of atom IDs pair used to create new bonds |
+
+
+
+## 3. Correlate PDB with MDTraj topology
 
 **mdtraj_chainID_2_chainName**(pdb_file_path, *write_outfile=True*)
 
@@ -84,7 +117,7 @@ The command return two dictionnaries: *dict_chainID_2_chainName, dict_chainName_
 
 
 
-## x. Minimize structure using OpenMM
+## 4. Minimize structure using OpenMM
 
 ### Description
 

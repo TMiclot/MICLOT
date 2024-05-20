@@ -494,7 +494,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 
 ## 14. Chalcogen bond & S/Se mediated H-bond
 
-**SSe_hydrogen_chalcogen_bond**(self, trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0*):    
+**SSe_hydrogen_chalcogen_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_SX=3.6, MIN_angle_theta_chalcogen = 50.0, MAX_angle_dihedral_chalcogen=50.0, MIN_angle_phi_chalcogen=30.0, MAX_angle_phi_chalcogen=60.0, MIN_angle_csx_chalcogen=115.0, MAX_angle_csx_chalcogen=155.0, MAX_angle_csx_hbond=145.0*)   
 
 ### Description
 
@@ -528,4 +528,28 @@ Identify chalcogen bond or S/Se mediated H-bond. The analysis don't take in acco
 | .get_atoms      | Return list of atoms index involved in chalogen bond and another list of atoms index involved in H-bond. | List, List <br/> Format: [[index_S/Se,index_N/O],...] , [[index_S/Se,index_N/O],...] | MDTraj indices |
 | .get_angle      | Return a list of angles for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...], [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...] | Å |
 | .get_distance   | Return a list of distance  for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [distance,...] , [distance,...] | degree |
+
+
+
+
+
+## 15. S/Se - Aromatic
+
+**SSe_hydrogen_chalcogen_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=5.5, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0*)
+
+### Description
+
+Identify the interaction between an sulfur or selenium atomand an aromatic resiue. The output give in which aromatic area the interaction take place: $\pi$, quadrupole or intermediate. 
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| trajectory   | mdtraj  | MDTraj trajectory.  | mandatory |
+| res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
+| res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
+| frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+| MAX_distance | integer | Maximum distance between COM of aromatic ring and the S/Se. <br/> Default value: 5.5Å | optional |
+| MIN_pi_angle | integer | Minimum angle defining the Pi area (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
+| MAX_quadrupole_angle | integer | Maximum angle defining the quadrupole area (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
 
