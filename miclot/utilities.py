@@ -1188,49 +1188,45 @@ def identiy_unbondeed_atoms_and_clash(trajectory, list_atom_indices, list_bonds_
         bonds.add(tuple(sorted([bond[0].index, bond[1].index])))
         
         
-    #===== Iniitalize =====
-    has_bond = False
-        
-        
     #===== Check if any pair of atoms in the residue forms a bond =====
+    # create a list of all atom pair without duplicate
+    list_atom_pair = [tuple(sorted(i)) for i in list(combinations(list_atom_indices, 2))]
+    
     # loop over all atom pairs
-    for atom_1 in list_atom_indices:
-        for atom_2 in list_atom_indices:
-            
-            #----- if the bond exist, has_bond become True, then break the atom_2 loop -----
-            if atom_1 != atom_2 and tuple(sorted([atom_1, atom_2])) in bonds:
-                has_bond = True
-                break
-            
-            #----- if the atoms bond dont't exist, check their distance and determime if they must be linked or not -----
-            elif atom_1 != atom_2:
-                # Measure the distance between the two atoms
-                distance = md.compute_distances(trajectory, [[atom_1, atom_2]])[0] *10
-                
-                # Get element symbol of atom_1 and atom_2
-                element_atom_1 = trajectory.topology.atom(atom_1).element.symbol
-                element_atom_2 = trajectory.topology.atom(atom_2).element.symbol
-                
-                # Calculate max_distance and min_distance for the bound between the atom_2 and atom_2
-                max_distance = factor_max_distance * ( dict_radii_vdw[element_atom_1] + dict_radii_vdw[element_atom_2] )
-                min_distance = factor_min_distance * dict_radii_covalent[element_atom_1] + dict_radii_covalent[element_atom_2]
-                
-                # check if the distance is between the min (clash) distance and the max distance fto identify a bond
-                if min_distance <= distance <= max_distance:
-                    # append the list with this atom pair
-                    list_bonds_to_add.append(sorted([atom_1, atom_2]))
-                    # Use a list comprehention to remove duplicate
-                    list_bonds_to_add = list(set(map(tuple, list_bonds_to_add)))
-                
-                # if the distance is below the min (clash) distance, raise an error
-                elif distance < min_distance and check_clash == True:
-                    raise ValueError(f"Clash contact between atoms: {atom_1} and {atom_2}")
-                    
-        #----- if 'has_bond' is True, break the atom_1 loop -----
-        if has_bond:
+    for atom_pair in list_atom_pair:
+        #----- if the bond exist, has_bond become True, then break the atom_2 loop -----
+        if atom_pair in bonds:
             break
+        
+        #----- if the atoms bond dont't exist, check their distance and determime if they must be linked or not -----
+        else:
+            # get atom indices
+            atom_1 = atom_pair[0]
+            atom_2 = atom_pair[1]
             
+            # Measure the distance between the two atoms
+            distance = md.compute_distances(trajectory, [[atom_1, atom_2]])[0] *10
             
+            # Get element symbol of atom_1 and atom_2
+            element_atom_1 = trajectory.topology.atom(atom_1).element.symbol
+            element_atom_2 = trajectory.topology.atom(atom_2).element.symbol
+            
+            # Calculate max_distance and min_distance for the bound between the atom_2 and atom_2
+            max_distance = factor_max_distance * ( dict_radii_vdw[element_atom_1] + dict_radii_vdw[element_atom_2] )
+            min_distance = factor_min_distance * dict_radii_covalent[element_atom_1] + dict_radii_covalent[element_atom_2]
+            
+            # check if the distance is between the min (clash) distance and the max distance fto identify a bond
+            if min_distance <= distance <= max_distance:
+                # append the list with this atom pair
+                list_bonds_to_add.append(sorted([atom_1, atom_2]))
+                # Use a list comprehention to remove duplicate
+                list_bonds_to_add = list(set(map(tuple, list_bonds_to_add)))
+            
+            # if the distance is below the min (clash) distance, raise an error
+            elif distance < min_distance and check_clash == True:
+                raise ValueError(f"Clash contact between atoms: {atom_1} and {atom_2}")        
+         
+     
     #===== Return the list =====
     return list_bonds_to_add
 
