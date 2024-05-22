@@ -12,7 +12,7 @@ __version__ = "Version: 1.0 -- jj/mm/2024"
 
 __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion', 'salt_bridge', \
            'hydrogen_bond', 'van_der_waals', 'amino_pi', 'charge_aromatic', 'aromatic_aromatic', \
-           'arg_involved', 'pi_hbond', 'n_pi', 'SSe_hydrogen_chalcogen_bond', 'sse_aromatic']
+           'arg_involved', 'pi_hbond', 'n_pi', 'sse_hydrogen_chalcogen_bond', 'sse_aromatic']
 
 
 
@@ -440,7 +440,7 @@ class hydrophobic:
         #===== Get CA atoms index and distance for residue A and B =====
         self.atom_CA_res_A = self.top.select(f"resid {self.res_A} and name CA")[0]
         self.atom_CA_res_B = self.top.select(f"resid {self.res_B} and name CA")[0]
-        self.distance_CA = md.compute_distances(traj, [[self.atom_CA_res_A, self.atom_CA_res_B]])[0][0] *10 # *10 to convert nm to angstrom
+        self.distance_CA = md.compute_distances(self.traj, [[self.atom_CA_res_A, self.atom_CA_res_B]])[0][0] *10 # *10 to convert nm to angstrom
         
         #===== Get center of mass (COM) of residue A and B & the distance between them =====
         # Compute COM of side chaines
@@ -554,8 +554,8 @@ class charge_clash_repulsion:
         self.charged_atoms_res_B = self.top.select(f"resid {self.res_B} and name {self.charged_atoms[self.res_B_name]}")[0]
         
         #==== Compute CA-CA and X-X distances =====
-        self.distance_CA = md.compute_distances(traj, [[self.atom_CA_res_A, self.atom_CA_res_B]])[0][0] *10
-        self.distance_charge = md.compute_distances(traj, [[self.charged_atoms_res_A, self.charged_atoms_res_B]])[0][0] *10
+        self.distance_CA = md.compute_distances(self.traj, [[self.atom_CA_res_A, self.atom_CA_res_B]])[0][0] *10
+        self.distance_charge = md.compute_distances(self.traj, [[self.charged_atoms_res_A, self.charged_atoms_res_B]])[0][0] *10
  
 
 
@@ -2429,7 +2429,7 @@ class pi_hbond:
 #===== Class for n-->pi*
 #=====================================================
 class n_pi:
-    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110.0 , angular_tolerance=5.0):
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110.0 , angular_tolerance=10.0):
         """
         INTERACTION TYPE    n --> Pi*
         SUBTYPE(S)          regular or reciprocal
@@ -2456,7 +2456,7 @@ class n_pi:
                                   Default value: 110.0
 
             angular_tolerance     The range of angle is ref_angle +/- N.
-                                  Default value of N: 5.0
+                                  Default value of N: 10.0
 
             frame                 Frame ID on which to perform the analysis.
                                   Default value: 0

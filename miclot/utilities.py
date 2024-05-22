@@ -32,6 +32,7 @@ __all__ = ['pdb2pandas','mdtraj_chainID_2_chainName', 'get_sequence_secstruct', 
 
 import os
 import subprocess
+from itertools import combinations
 #
 import numpy as np
 import mdtraj as md

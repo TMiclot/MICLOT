@@ -460,7 +460,7 @@ Please note that protonated histidine are not taken in acount are not taken into
 
 ## 13. $n \rightarrow \pi^*$
 
-**n_pi**(trajectory, res_index_A, res_index_B, *frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110 , angular_tolerance=5.0*)
+**n_pi**(trajectory, res_index_A, res_index_B, *frame=0, ref_distance=3.0, distance_tolerance=0.25, ref_angle=110 , angular_tolerance=10.0*)
 
 ### Description
 
@@ -477,7 +477,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 | ref_distance | float | Distance between O..C atoms. <br/> Default value: 3.0 Å | optional |
 | distance_tolerance | float | The range of distance is ref_distance +/- N. <br/> Default value of N: 0.25 | optional |
 | ref_angle | float | Angle between O..C=O atoms. <br/> Default value: 110.0 | optional |
-| angular_tolerance | float | The range of angle is ref_angle +/- N. <br/> Default value of N: 5.0 | optional |
+| angular_tolerance | float | The range of angle is ref_angle +/- N. <br/> Default value of N: 10.0 | optional |
 
 ### Properties
 

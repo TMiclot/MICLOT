@@ -538,7 +538,7 @@ None
 
 
 
-## 7. Amino-$\pi$
+## 7. Amino $- \pi$
 
 ### 7.1. Simple usage
 
@@ -863,14 +863,14 @@ print(interaction.get_angle)
 (106.11885, 99.668915)
 ```
 
-### 11.2. No interaction
+### 11.2. No interaction when changing `angle_tolerance`
 
 **Code**
 
 ```python
 pdb_file = 'n_pi_bond_1k4d_res75-79.pdb'
 traj = md.load(pdb_file, top=pdb_file)
-interaction = n_pi(traj, 0,1) 
+interaction = n_pi(traj, 0,1, angular_tolerance=5) 
 print(interaction.check_interaction)
 print(interaction.get_distance)
 print(interaction.get_angle)
@@ -880,28 +880,6 @@ print(interaction.get_angle)
 
 ```
 (False, False)
-(3.051159381866455, 4.092892408370972)
-(116.220634, 96.67473)
-```
-
-
-### 11.3. Changing the angle_tolerance
-
-**Code**
-
-```python
-pdb_file = 'n_pi_bond_1k4d_res75-79.pdb'
-traj = md.load(pdb_file, top=pdb_file)
-interaction = n_pi(traj, 0,1, angular_tolerance=7) 
-print(interaction.check_interaction)
-print(interaction.get_distance)
-print(interaction.get_angle)
-```
-
-**Result**
-
-```
-(True, 'regular')
 (3.051159381866455, 4.092892408370972)
 (116.220634, 96.67473)
 ```
@@ -1052,6 +1030,92 @@ print(interaction.get_angle)
 51.534096128380675
 ```
 
+
+## 14. Arg-Arg & Arg-aromatic
+
+### 14.1.
+
+**Code**
+
+```python
+pdb_file = 'ARG-ARG-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = arg_involved(traj, 0,1) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'Arg-Aromatic', 'parallel')
+3.7319016658717015
+6.318758521316121
+```
+
+### 14.2.
+
+**Code**
+
+```python
+pdb_file = 'ARG-ARG-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = arg_involved(traj, 2,3) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'Arg-Aromatic', 'perpendicular')
+4.710802378009887
+83.06692941259753
+```
+
+### 14.3.
+
+**Code**
+
+```python
+pdb_file = 'ARG-ARG-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = arg_involved(traj, 4,5) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'Arg-Arg', 'perpendicular')
+4.070874452590942
+72.61663724626918
+```
+
+### 14.4.
+
+**Code**
+
+```python
+pdb_file = 'ARG-ARG-aromatic.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = arg_involved(traj, 6,7) 
+print(interaction.check_interaction)
+print(interaction.get_distance)
+print(interaction.get_angle)
+```
+
+**Result**
+
+```
+(True, 'Arg-Arg', 'parallel')
+3.8860461115837097
+17.299301309538308
+```
 
 <!--- TEMPLATE
 ## 4. Salt bridge
