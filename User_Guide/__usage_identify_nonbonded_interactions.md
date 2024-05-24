@@ -7,10 +7,52 @@
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
 > [!WARNING]
-> If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files.
-> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file d'ont containt the information about connectivity between atoms.
+> 1. If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files. 
+> Alternatively you can use the [`fix_topology_bonds`](__usage_prepare_structure.md#2-create-a-trajectory-with-correct-bonds-in-the-topology) to generate a corrected topology.
+> 
+> 2. It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file don't containt the information about connectivity between atoms.
 >
-> It is also necessary to have hydrogens atoms.
+> 3. It is also necessary to have hydrogens atoms.
+
+
+## 0. Identify all interfactions in a pair of residues
+
+**identify_all_interaction_pair**(trajectory, pair, *frame=0*)
+
+### Description
+
+A fucntion to identify all interaction between a pair of residue.
+
+It run all interaction commands (with default parameters) and return a Pandas DataFrame with informations of each residue, the number of interaction doing by the pair, a detail of the interaction type and subtype.
+If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
+
+>[!IMPORTANT]
+> Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
+
+>[!TIPS]
+> You can easily create a list with all possible pairs, without redundancy, using [itertools](https://docs.python.org/3/library/itertools.html). Below, a very short example:
+>
+> ```python
+> import itertools
+> 
+> list_residues = [1,2,3,4]
+>
+> # Create a list with all possible pairs
+> # (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
+> list_pairs = list(itertools.combinations(list_residues, 2))
+> ```
+
+
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| pair        | list | Pair of residues. The format is a list of MDTraj indices. <br/> Example: [0,3] | mandatory |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
+
+
 
 ## 1. C-bond
 

@@ -529,7 +529,7 @@ class cys_bridge:
 #===== Function to check bridge into an entire PDB file
 #=====================================================
 
-def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True):
+def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True, use_tqdm=True):
     """
     DESCRIPTION
         This command check a PDB structure to identify all CYS-CYS bridges.
@@ -543,26 +543,27 @@ def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True):
                     with modified CYS to CYX, or SEC to XSE, names.
                     If set to False, warns the user that no PDB file is being written. 
                     Default value: True
+                    
         logfile     Generate an output file in CSV format containing all tests
                     performed and their results.
                     If set to False the result will be print in the terminal,
                     but with less informations.
+                    Default value: True
+
+        use_tqdm    Use tqdm to display the progress bar.
                     Default value: True
     """
     #===== load PDB file in mdtraj =====
     traj = md.load(pdb_file, top=pdb_file)
 
     #===== Get index of all CYS and SEC in the structure (without redundancy) =====
-    all_cys = set(traj.topology.atom(i).residue.index for i in traj.topology.select("protein and element S Se"))
+    list_all_cys = set(traj.topology.atom(i).residue.index for i in traj.topology.select("protein and element S Se"))
 
+    #===== create a list of all atom pair without duplicate =====
+    list_cys_pair = [tuple(sorted(i)) for i in list(combinations(list_all_cys , 2))]
+    
     #===== Create a list of cys involved in bridge, based on distance only. =====
     list_bridges = []
-    
-    #===== Calculate total number of iterations =====
-    total_iterations = len(all_cys) ** 2
-
-    #===== Initialize tqdm with total number of iterations =====
-    progress_bar = tqdm(total=total_iterations, desc='Cys-Cys Bridge - Progress')
     
     #===== If the logfile is True, create a pandas table to store all output file =====
     if logfile == True:
@@ -573,77 +574,79 @@ def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True):
     else:
         print("INFO - No logfile will be written.")
 
+    #===== Chek usage of tqdm =====
+    if use_tqdm == True:
+        iterable = tqdm(list_cys_pair, desc="Residue pair ...", position=0)
+    else:
+        iterable = list_cys_pair
         
     #===== loop over all possible (seleno)cystein pairs =====
-    for cys_A in all_cys:
-        for cys_B in all_cys:
+    for pair in iterable:
+        
+        # get indices
+        cys_A = pair[0]
+        cys_B = pair[1]
+
+        #----- Check the Cys-Cys bridge if the two Cys are not already involved into Cys Bridge -----
+        if cys_A not in list_bridges and cys_B not in list_bridges:
             
-            #----- Update progress bar -----
-            progress_bar.update(1)
+            #----- Perform the checking -----
+            bridge = cys_bridge(traj, cys_A, cys_B)
 
-            #----- Check the Cys-Cys bridge if the two Cys are not already involved into Cys Bridge -----
-            if cys_A != cys_B and cys_A not in list_bridges and cys_B not in list_bridges:
+            #----- Rename Cys and get bridge type -----
+            # If the bridge is disulfide, rename the two CYS to CYX
+            if bridge.check_interaction[0] == True and bridge.check_interaction[1] == "disulfide":
+                # Add cys_A and cys_B to list_bridges
+                list_bridges.append(cys_A)
+                list_bridges.append(cys_B)
+                # Rename the two Cys in the topology
+                traj.topology.residue(cys_A).name = "CYX"
+                traj.topology.residue(cys_B).name = "CYX"
+
+            # If the bridge is diselenide, rename the two CYS to XSE
+            elif bridge.check_interaction[0] == True and bridge.check_interaction[1] == "diselenide":
+                # Add cys_A and cys_B to list_bridges
+                list_bridges.append(cys_A)
+                list_bridges.append(cys_B)
+                # Rename the two seleno-Cys in the topology
+                traj.topology.residue(cys_A).name = "XSE"
+                traj.topology.residue(cys_B).name = "XSE"
+
+            # If the bridge is disulfide, rename the two CYS to CYX and SEC to XSE
+            elif bridge.check_interaction[0] == True and bridge.check_interaction[1] == "selenosulfide":
+                # Add cys_A and cys_B to list_bridges
+                list_bridges.append(cys_A)
+                list_bridges.append(cys_B)
+                # Identify the Cys index and the seleno-Cys index
+                resid_XSE = traj.topology.select(f'resid {cys_A} {cys_B} and element Se')
+                resid_CYX = traj.topology.select(f'resid {cys_A} {cys_B} and element S')
+                # Rename the two (seleno-)Cys in the topology
+                traj.topology.residue(resid_XSE[0]).name = "XSE"
+                traj.topology.residue(resid_CYX[0]).name = "CYX"
+            
+            
+            # if logfile is set to true, expand the pandas dataframe
+            if logfile == True:
+                df_temp = pd.DataFrame({'ResName_A': [traj.topology.residue(cys_A).name],
+                    'ResID_A': [cys_A],
+                    'ResSeq_A': [traj.topology.residue(cys_A).resSeq],
+                    'ChainID_A': [traj.topology.residue(cys_A).chain.index],
+                    'ChainName_A': [chr(65+traj.topology.residue(cys_A).chain.index)],
+                    'ResName_B': [traj.topology.residue(cys_B).name],
+                    'ResID_B': [cys_B],
+                    'ResSeq_B': [traj.topology.residue(cys_B).resSeq],
+                    'ChainID_B': [traj.topology.residue(cys_B).chain.index],
+                    'ChainName_B': [chr(65+traj.topology.residue(cys_B).chain.index)],
+                    'Bridge': [str(bridge.check_interaction[0])],
+                    'Type': [str(bridge.check_interaction[1])]
+                    })
                 
-                #----- Perform the checking -----
-                bridge = cys_bridge(traj, cys_A, cys_B)
-
-                #----- Rename Cys and get bridge type -----
-                # If the bridge is disulfide, rename the two CYS to CYX
-                if bridge.check_interaction[0] == True and bridge.check_interaction[1] == "disulfide":
-                    # Add cys_A and cys_B to list_bridges
-                    list_bridges.append(cys_A)
-                    list_bridges.append(cys_B)
-                    # Rename the two Cys in the topology
-                    traj.topology.residue(cys_A).name = "CYX"
-                    traj.topology.residue(cys_B).name = "CYX"
-
-                # If the bridge is diselenide, rename the two CYS to XSE
-                elif bridge.check_interaction[0] == True and bridge.check_interaction[1] == "diselenide":
-                    # Add cys_A and cys_B to list_bridges
-                    list_bridges.append(cys_A)
-                    list_bridges.append(cys_B)
-                    # Rename the two seleno-Cys in the topology
-                    traj.topology.residue(cys_A).name = "XSE"
-                    traj.topology.residue(cys_B).name = "XSE"
-
-                # If the bridge is disulfide, rename the two CYS to CYX and SEC to XSE
-                elif bridge.check_interaction[0] == True and bridge.check_interaction[1] == "selenosulfide":
-                    # Add cys_A and cys_B to list_bridges
-                    list_bridges.append(cys_A)
-                    list_bridges.append(cys_B)
-                    # Identify the Cys index and the seleno-Cys index
-                    resid_XSE = traj.topology.select(f'resid {cys_A} {cys_B} and element Se')
-                    resid_CYX = traj.topology.select(f'resid {cys_A} {cys_B} and element S')
-                    # Rename the two (seleno-)Cys in the topology
-                    traj.topology.residue(resid_XSE[0]).name = "XSE"
-                    traj.topology.residue(resid_CYX[0]).name = "CYX"
-                
-                
-                # if logfile is set to true, expand the pandas dataframe
-                if logfile == True:
-                    df_temp = pd.DataFrame({'ResName_A': [traj.topology.residue(cys_A).name],
-                        'ResID_A': [cys_A],
-                        'ResSeq_A': [traj.topology.residue(cys_A).resSeq],
-                        'ChainID_A': [traj.topology.residue(cys_A).chain.index],
-                        'ChainName_A': [chr(65+traj.topology.residue(cys_A).chain.index)],
-                        'ResName_B': [traj.topology.residue(cys_B).name],
-                        'ResID_B': [cys_B],
-                        'ResSeq_B': [traj.topology.residue(cys_B).resSeq],
-                        'ChainID_B': [traj.topology.residue(cys_B).chain.index],
-                        'ChainName_B': [chr(65+traj.topology.residue(cys_B).chain.index)],
-                        'Bridge': [str(bridge.check_interaction[0])],
-                        'Type': [str(bridge.check_interaction[1])]
-                        })
-                    
-                    df = pd.concat([df, df_temp], ignore_index=True)
-                
-                # if logfile is or set to true, print minimal information
-                else:
-                    print("\t[+]", cys_A, cys_B, bridge.check_interaction)
-                    
-
-    #===== Close the progress bar =====
-    progress_bar.close()
+                df = pd.concat([df, df_temp], ignore_index=True)
+            
+            # if logfile is or set to true, print minimal information
+            else:
+                print("\t[+]", cys_A, cys_B, bridge.check_interaction)
+    
     
     
     #===== Write the logfile =====
@@ -652,9 +655,10 @@ def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True):
         name = pdb_file.split('.')[0]
         
         # Export DataFrame to CSV file
-        df.to_csv(f'{name}_CYS_log.csv', index=False)  # Set index=False to exclude row indices
+        df.to_csv(f'{name}_log.csv', index=False)  # Set index=False to exclude row indices
 
-  
+
+    
     #===== Export the the modified structure in PDB file or export the topology =====
     if outfile == True:
         # Get the name of the pdb file

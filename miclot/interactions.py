@@ -2979,7 +2979,7 @@ class sse_aromatic:
 #=====================================================
 #===== Function to identify all NB interaction in pair of residues
 #=====================================================
-def identify_all_interaction_pair(pair, trajectory, frame):
+def identify_all_interaction_pair(trajectory, pair, frame=0):
     """
     DESCRIPTION
         A fucntion to identify all interaction between a pair of residue.
@@ -2995,7 +2995,10 @@ def identify_all_interaction_pair(pair, trajectory, frame):
     ARGUMENTS
         pair          pair of residues. The format is a list of MDTraj indices.
                       example: [0,3]
+
         trajectory    MDTraj trajectory.
+
+    OPTIONAL ARGUMENTS
         frame         trajectory frame.
                       Default value:0
     """

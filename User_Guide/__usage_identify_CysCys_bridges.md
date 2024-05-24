@@ -58,7 +58,7 @@ To meet the user's needs, two commands have been implemented to identify cystein
 
 ## 2. Checking Cys-Cys bridges over a PDB structure
 
-**cys_bridges_inPDB**(pdb_file, *outfile=True, logfile=True*)
+**cys_bridges_inPDB**(pdb_file, *outfile=True, logfile=True*, use_tqdm=True)
 
 ### Description
 
@@ -75,6 +75,7 @@ This command check a PDB structure to identify all CYS-CYS bridges. It can ident
 | pdb_file | string  | PDB structure path. | mandatory |
 | outfile  | boolean | Write a PDB file with modified Cys names if any bridge is detected. <br/> Default value: True | optional |
 | logfile  | boolean | Generate an output file in CSV format containing all tests performed and their results. If set to False the result will be print in the terminal, but with less informations. <br/> Default value: True | optional |
+| use_tqdm | boolean | Use tqdm to display the progress bar. <br/> Default value: True | optional |
 
 > [!IMPORTANT]
 > In the output PDB file, chain name and residue number can be renamed and/or renumbered, because that's how MDTraj works.
