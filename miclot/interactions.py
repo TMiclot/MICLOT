@@ -23,6 +23,7 @@ __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion'
 import numpy as np
 from skspatial.objects import Plane, Vector, Points
 import mdtraj as md
+import pandas as pd
 
 
 
@@ -1598,7 +1599,7 @@ class charge_aromatic:
         
         RETURN  
             When True, 'charge' is replaced by cation or anion.
-            True, 'charge'-Pi              The interaction exist.
+            True, 'charge'-pi              The interaction exist.
             True, 'charge'-intermediate    The interaction exist.
             True, 'charge'-quadrupole      The interaction exist.
             
@@ -1612,7 +1613,7 @@ class charge_aromatic:
         
         # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
         if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle:
-            return True, f"{charge_type}-Pi"
+            return True, f"{charge_type}-pi"
         elif self.distance <= self.MAX_distance and self.MAX_quadrupole_angle < self.angle < self.MIN_pi_angle:
             return True, f"{charge_type}-intermediate"
         elif self.distance <= self.MAX_distance and self.angle <= self.MAX_quadrupole_angle:
@@ -2970,6 +2971,518 @@ class sse_aromatic:
         UNIT           Angstrom
         """
         return self.distance
+
+
+
+
+
+#=====================================================
+#===== Function to identify all NB interaction in pair of residues
+#=====================================================
+def identify_all_interaction_pair(pair, trajectory, frame):
+    """
+    DESCRIPTION
+        A fucntion to identify all interaction between a pair of residue.
+
+        It run all interaction commands (with default parameters) and return a
+        Pandas DataFrame with informations of each residue, the number of interaction
+        doing by the pair, a detail of the interaction type and subtype.
+        If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
+        
+        Exception for salt bridges, it return 1 if bothe h-bond and distance between
+        charges are identified, or return 0.5 if only one of them is identified.
+    
+    ARGUMENTS
+        pair          pair of residues. The format is a list of MDTraj indices.
+                      example: [0,3]
+        trajectory    MDTraj trajectory.
+        frame         trajectory frame.
+                      Default value:0
+    """
+    #===== Create a list to store =====
+    list_interaction_pair = []        
+        
+        
+    #----- check interaction: C-bond -----
+    try:
+        cbond = C_bond(trajectory, pair[0], pair[1], frame=frame)
+        
+        if cbond.check_interaction == True:
+            is_c_bond = 1
+        else:
+            is_c_bond = 0
+    
+    except:
+        is_c_bond = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_c_bond)
+    
+    
+    
+    #----- check interaction: Amino-Pi -----
+    try:
+        aminoPi = amino_pi(trajectory, pair[0], pair[1], frame=frame)
+        
+        if aminoPi.check_interaction == True:
+            is_amino_pi = 1
+        else:
+            is_amino_pi = 0
+    
+    except:
+        is_amino_pi = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_amino_pi)
+    
+
+    
+    #----- check interaction: 'Arg-Aromatic' & 'Arg-Arg' -----
+    try:
+        # get the interaction
+        argInvolved = arg_involved(trajectory, pair[0], pair[1], frame=frame)
+        argInvolved_type = argInvolved.check_interaction[1]
+        argInvolved_subtype = argInvolved.check_interaction[2]
+        
+        # initialise all variable
+        is_arg_aromatic_parallel      = 0
+        is_arg_aromatic_perpendicular = 0
+        is_arg_aromatic_intermediate  = 0
+        is_arg_arg_parallel           = 0
+        is_arg_arg_perpendicular      = 0
+        is_arg_arg_intermediate       = 0
+        
+        # check which type of Arg involved interaction is it
+        if argInvolved_type == 'Arg-Aromatic' and argInvolved_subtype == 'parallel':
+            is_arg_aromatic_parallel = 1
+            
+        elif argInvolved_type == 'Arg-Aromatic' and argInvolved_subtype == 'perpendicular':
+            is_arg_aromatic_perpendicular = 1
+            
+        elif argInvolved_type == 'Arg-Aromatic' and argInvolved_subtype == 'intermediate':
+            is_arg_aromatic_intermediate = 1 
+            
+        if argInvolved_type == 'Arg-Arg' and argInvolved_subtype == 'parallel':
+            is_arg_arg_parallel = 1
+            
+        elif argInvolved_type == 'Arg-Arg' and argInvolved_subtype == 'perpendicular':
+            is_arg_arg_perpendicular = 1
+            
+        elif argInvolved_type == 'Arg-Arg' and argInvolved_subtype == 'intermediate':
+            is_arg_arg_intermediate = 1 
+    
+    except:
+        is_arg_aromatic_parallel      = np.nan
+        is_arg_aromatic_perpendicular = np.nan
+        is_arg_aromatic_intermediate  = np.nan
+        is_arg_arg_parallel           = np.nan
+        is_arg_arg_perpendicular      = np.nan
+        is_arg_arg_intermediate       = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_arg_aromatic_parallel, is_arg_aromatic_perpendicular, is_arg_aromatic_intermediate, \
+                                 is_arg_arg_parallel, is_arg_arg_perpendicular, is_arg_arg_intermediate])
+    
+    
+    
+    #----- check interaction: Aromatic-Aromatic -----
+    try:
+        # get the interaction
+        aromaticAromatic = aromatic_aromatic (trajectory, pair[0], pair[1], frame=frame)
+        
+        #initialise result variable
+        is_aromatic_aromatic_parallel = 0
+        is_aromatic_aromatic_offset   = 0
+        is_aromatic_aromatic_coplanar = 0
+        is_aromatic_aromatic_Yshaped  = 0
+        is_aromatic_aromatic_Tshaped  = 0
+        
+        # check which type of aromatic-aromatic interaction is it
+        if aromaticAromatic.check_interaction[1] == 'parallel':
+            is_aromatic_aromatic_parallel = 1
+            
+        elif aromaticAromatic.check_interaction[1] == 'offset':
+            is_aromatic_aromatic_offset = 1
+            
+        elif aromaticAromatic.check_interaction[1] == 'coplanar':
+            is_aromatic_aromatic_coplanar = 1
+            
+        elif aromaticAromatic.check_interaction[1] == 'Y-shaped':
+            is_aromatic_aromatic_Yshaped = 1
+            
+        elif aromaticAromatic.check_interaction[1] == 'T-shaped':
+            is_aromatic_aromatic_Tshaped = 1
+
+    
+    except:
+        is_aromatic_aromatic_parallel = np.nan
+        is_aromatic_aromatic_offset   = np.nan
+        is_aromatic_aromatic_coplanar = np.nan
+        is_aromatic_aromatic_Yshaped  = np.nan
+        is_aromatic_aromatic_Tshaped  = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_aromatic_aromatic_parallel, is_aromatic_aromatic_offset, is_aromatic_aromatic_coplanar, \
+                                 is_aromatic_aromatic_Yshaped, is_aromatic_aromatic_Tshaped])
+    
+    
+    
+    #----- check interaction: charge-aromatic -----
+    try:
+        # get the interaction
+        chargeAromatic = charge_aromatic (trajectory, pair[0], pair[1], frame=frame)
+
+        #initialise result variable
+        is_cation_pi = 0
+        is_cation_intermediate = 0
+        is_cation_quadrupole = 0
+        is_anion_pi = 0
+        is_anion_intermediate = 0
+        is_anion_quadrupole = 0
+
+        # check which type is it
+        if chargeAromatic.check_interaction[1] == 'cation-pi':
+            is_cation_pi = 1
+
+        elif chargeAromatic.check_interaction[1] == 'cation-intermediate':
+            is_cation_intermediate = 1
+
+        elif chargeAromatic.check_interaction[1] == 'cation-quadrupole':
+            is_cation_quadrupole = 1
+
+        elif chargeAromatic.check_interaction[1] == 'anion-pi':
+            is_anion_pi = 1
+
+        elif chargeAromatic.check_interaction[1] == 'anion-intermediate':
+            is_anion_intermediate = 1
+
+        elif chargeAromatic.check_interaction[1] == 'anion-quadrupole':
+            is_anion_quadrupole = 1
+    
+    except:
+        is_cation_pi = np.nan
+        is_cation_intermediate = np.nan
+        is_cation_quadrupole = np.nan
+        is_anion_pi = np.nan
+        is_anion_intermediate = np.nan
+        is_anion_quadrupole = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_cation_pi, is_cation_intermediate, is_cation_quadrupole, \
+                                 is_anion_pi, is_anion_intermediate, is_anion_quadrupole])
+    
+    
+    
+    #----- check interaction: Clash or repulsion between charges -----
+    try:
+        # get the interaction
+        chargeClashRepulsion = charge_clash_repulsion (trajectory, pair[0], pair[1], frame=frame)
+        
+        # initalise varaibale
+        is_charge_repulsion = 0
+        is_charge_clash = 0
+        
+        # check which type is it
+        if chargeClashRepulsion.check_interaction[2] == 'repulsion':
+            is_charge_repulsion = 1
+
+        elif chargeClashRepulsion.check_interaction[2] == 'clash':
+            is_charge_clash = 1
+    
+    except:
+        is_charge_repulsion = np.nan
+        is_charge_clash = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_charge_repulsion, is_charge_clash])
+    
+    
+    
+    #----- check interaction: hydrogen bonds -----
+    try:
+        hbond = hydrogen_bond(trajectory, pair[0], pair[1], frame=frame)
+        
+        if hbond.check_interaction == True:
+            is_hydrogen_bond = 1
+        else:
+            is_hydrogen_bond = 0
+    
+    except:
+        is_hydrogen_bond = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_hydrogen_bond)
+    
+    
+    
+    #----- check interaction: hydrophobic interaction & hydrophobe/hydrophile clash -----
+    try:
+        # get the interaction
+        hydrophobic = hydrophobic(trajectory, pair[0], pair[1], frame=frame)
+        
+        # initialise variable
+        is_hydrophobic_interaction = 0
+        is_hydrophobe_or_hydrophile_clash = 0
+        
+        # check which type is it
+        if hydrophobic.check_interaction[2] == 'hydrophobic':
+            is_hydrophobic_interaction = 1
+        
+        elif hydrophobic.check_interaction[2] == 'clash':
+            is_hydrophobe_or_hydrophile_clash = 1
+    
+    except:
+        is_hydrophobic_interaction = np.nan
+        is_hydrophobe_or_hydrophile_clash = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_hydrophobic_interaction, is_hydrophobe_or_hydrophile_clash])
+    
+    
+    
+    #----- check interaction: n-->pi* -----
+    try:
+        # get the interaction
+        npi = n_pi(trajectory, pair[0], pair[1], frame=frame)
+        
+        # initialise result variable
+        is_n_pi_regular = 0
+        is_n_pi_reciprocal = 0
+        
+        # search which type is it
+        if npi.check_interaction[1] == 'regular':
+            is_n_pi_regular = 1
+        
+        elif npi.check_interaction[1] == 'reciprocal':
+            is_n_pi_reciprocal = 1  
+    
+    except:
+        is_n_pi_regular = np.nan
+        is_n_pi_reciprocal = np.nan
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_n_pi_regular, is_n_pi_reciprocal])
+    
+    
+    
+    #----- check interaction: pi H-bond -----
+    try:
+        piHbond = pi_hbond(trajectory, pair[0], pair[1], frame=frame)
+        
+        if piHbond.check_interaction == True:
+            is_pi_hbond = 1
+        else:
+            is_pi_hbond = 0
+
+    except:
+        is_pi_hbond = np.nan
+
+    
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_pi_hbond)  
+    
+    
+    
+    #----- check interaction: Salt bridge -----
+    try:
+        # get the interaction
+        saltbridge = salt_bridge(trajectory, pair[0], pair[1], frame=frame)
+        
+        # Salt bridge is 1 if both charge distance & H-bond
+        if saltbridge.check_interaction[0] == True and saltbridge.check_interaction[1] == True:
+            is_salt_bridge = 1
+            
+        # Salt bridge is 0.5 if only charge distance or only H-bond  
+        elif saltbridge.check_interaction[0] == True or saltbridge.check_interaction[1] == True:
+            is_salt_bridge = 0.5
+            
+        else:
+            is_salt_bridge = 0
+
+    except:
+        is_salt_bridge = np.nan
+
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_salt_bridge)
+    
+    
+    
+    #----- check interaction: S/Se-Aromatic -----
+    try:
+        # get the interaction
+        SSeAromatic = sse_aromatic(trajectory, pair[0], pair[1], frame=frame)
+
+        # initalise variable
+        is_S_pi = 0
+        is_S_intermediate = 0
+        is_S_quadrupole = 0
+        is_Se_pi = 0
+        is_Se_intermediate = 0
+        is_Se_quadrupole = 0
+        
+        # search which type is it
+        if SSeAromatic.check_interaction[1] == 'S-pi':
+            is_S_pi = 1
+            
+        elif SSeAromatic.check_interaction[1] == 'S-intermediate':
+            is_S_intermediate = 1
+            
+        elif SSeAromatic.check_interaction[1] == 'S-quadrupole':
+            is_S_quadrupole = 1
+            
+        elif SSeAromatic.check_interaction[1] == 'Se-pi':
+            is_Se_pi = 1
+            
+        elif SSeAromatic.check_interaction[1] == 'Se-intermediate':
+            is_Se_intermediate = 1
+            
+        elif SSeAromatic.check_interaction[1] == 'Se-quadrupole':
+            is_Se_quadrupole = 1            
+
+    except:
+        is_S_pi = np.nan
+        is_S_intermediate = np.nan
+        is_S_quadrupole = np.nan
+        is_Se_pi = np.nan
+        is_Se_intermediate = np.nan
+        is_Se_quadrupole = np.nan
+
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_S_pi, is_S_intermediate, is_S_quadrupole, \
+                                 is_Se_pi, is_Se_intermediate, is_Se_quadrupole])
+        
+    
+    
+    #----- check interaction: S/Se mediated H-bon & chalcogen -----
+    try:
+        # get the interaction
+        SSE_hbond_chalcogen = sse_hydrogen_chalcogen_bond(trajectory, pair[0], pair[1], frame=frame)
+
+        # inialize variable
+        is_sse_hbond = 0
+        is_sse_chalcogen = 0
+
+        if SSE_hbond_chalcogen.check_interaction[1] == 'h-bond':
+            is_sse_hbond = 1
+        elif SSE_hbond_chalcogen.check_interaction[1] == 'chalcogen':
+            is_sse_chalcogen = 1
+
+    except:
+        is_sse_hbond = np.nan
+        is_sse_chalcogen = np.nan
+
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.extend([is_sse_hbond, is_sse_chalcogen])
+    
+    
+    
+    #----- check interaction: van der Waals -----
+    try:
+        vdw = van_der_waals(trajectory, pair[0], pair[1], frame=frame)
+
+        if vdw.check_interaction[0] == True:
+            is_van_der_waals = 1
+        else:
+            is_van_der_waals = 0
+
+    except:
+        is_van_der_waals = np.nan
+
+    # add the interaction result to the list_interaction_pair
+    list_interaction_pair.append(is_van_der_waals)
+
+    
+    #===== return relust =====
+    #Check if the list_interaction_pair contain at least one 1 or one 0.5
+    array_interaction_pair = np.array(list_interaction_pair)
+    
+    # Check if the array contains at least one 1
+    if 1 in array_interaction_pair or 0.5 in array_interaction_pair:
+
+        #----- Get information in the topology, concerning the two residues -----
+        # for residue 1
+        residue_1 = trajectory.topology.residue(pair[0])
+        residue_1_resseq = trajectory.topology.residue(pair[0]).resSeq
+        residue_1_name = trajectory.topology.residue(pair[0]).name
+        residue_1_chain = trajectory.topology.residue(pair[0]).chain.index
+        
+        # for residue 2
+        residue_2 = trajectory.topology.residue(pair[1])
+        residue_2_resseq = trajectory.topology.residue(pair[1]).resSeq
+        residue_2_name = trajectory.topology.residue(pair[1]).name
+        residue_2_chain = trajectory.topology.residue(pair[1]).chain.index
+        
+        #----- calculate the number of interaction in the pair -----
+        # np.ceil is used to up 0.5 to 1 for the salt bridge
+        # np.nansum is used to calculate the sum without taking in account the np.nan
+        number_interactions = np.nansum( np.ceil( array_interaction_pair ) )
+        
+        #----- create a pandas dataframe and return it -----
+        df = pd.DataFrame([{"residue_1_index" : pair[0],
+                            "residue_1_resSeq": residue_1_resseq,
+                            "residue_1_name"  : residue_1_name,
+                            "residue_1_chain" : residue_1_chain,
+                            "residue_2_index" : pair[1],
+                            "residue_2_resSeq": residue_2_resseq,
+                            "residue_2_name"  : residue_2_name,
+                            "residue_2_chain" : residue_2_chain,
+                            #
+                            "number_interactions" : number_interactions,
+                            #
+                            "c_bond" : is_c_bond,
+                            #
+                            "amino_pi" : is_amino_pi,
+                            #
+                            "arg_aromatic_parallel"      : is_arg_aromatic_parallel,    
+                            "arg_aromatic_perpendicular" : is_arg_aromatic_perpendicular,
+                            "arg_aromatic_intermediate " : is_arg_aromatic_intermediate,
+                            "arg_arg_parallel"      : is_arg_arg_parallel,     
+                            "arg_arg_perpendicular" : is_arg_arg_perpendicular,     
+                            "arg_arg_intermediate"  : is_arg_arg_intermediate, 
+                            #
+                            "aromatic_aromatic_parallel" : is_aromatic_aromatic_parallel,
+                            "aromatic_aromatic_offset"   : is_aromatic_aromatic_offset,  
+                            "aromatic_aromatic_coplanar" : is_aromatic_aromatic_coplanar,
+                            "aromatic_aromatic_Yshaped"  : is_aromatic_aromatic_Yshaped, 
+                            "aromatic_aromatic_Tshaped"  : is_aromatic_aromatic_Tshaped, 
+                            #
+                            "cation_pi"           : is_cation_pi,
+                            "cation_intermediate" : is_cation_intermediate,
+                            "cation_quadrupole"   : is_cation_quadrupole,
+                            "anion_pi"            : is_anion_pi,
+                            "anion_intermediate"  : is_anion_intermediate,
+                            "anion_quadrupole"    : is_anion_quadrupole,
+                            #
+                            "charge_repulsion" : is_charge_repulsion,
+                            "charge_clash"     : is_charge_clash,
+                            #
+                            "hydrogen_bond" : is_hydrogen_bond,
+                            #
+                            "hydrophobic_interaction"        : is_hydrophobic_interaction,
+                            "hydrophobe_or_hydrophile_clash" : is_hydrophobe_or_hydrophile_clash,
+                            #
+                            "n_pi_regular"    : is_n_pi_regular,
+                            "n_pi_reciprocal" : is_n_pi_reciprocal,
+                            #
+                            "pi_hbond" : is_pi_hbond,
+                            #
+                            "salt_bridge" : is_salt_bridge,
+                            #
+                            "S_pi"            : is_S_pi,
+                            "S_intermediate"  : is_S_intermediate,
+                            "S_quadrupole"    : is_S_quadrupole,
+                            "Se_pi"           : is_Se_pi,
+                            "Se_intermediate" : is_Se_intermediate,
+                            "Se_quadrupole"   : is_Se_quadrupole,
+                            #
+                            "sse_hbond"     : is_sse_hbond,
+                            "sse_chalcogen" : is_sse_chalcogen,
+                            #
+                            "van_der_waals" : is_van_der_waals,
+        }])
+        
+        return df
+    
 
 
 
