@@ -21,7 +21,7 @@ __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion'
 #=====================================================
 
 import numpy as np
-from skspatial.objects import Plane, Vector, Point
+from skspatial.objects import Plane, Vector, Points
 import mdtraj as md
 
 
@@ -1207,9 +1207,9 @@ class van_der_waals:
             False, False       The interaction don't exist.
         """
         # List of AA properties
-        polar = ['CYS', 'HIS', 'ASN', 'GLN', 'SER', 'THR', 'TRP']
+        polar = ['CYS', 'HIS', 'HIE', 'HID', 'HSE', 'HSD', 'ASN', 'GLN', 'SER', 'THR', 'TRP']
         apolar = ['ALA', 'PHE', 'GLY', 'ILE', 'LEU', 'VAL', 'MET', 'PRO', 'TYR']
-        charged = ['GLU', 'ASP', 'LYS', 'ARG', 'HIP', 'CYM', 'TYM']
+        charged = ['GLU', 'ASP', 'LYS', 'ARG', 'HIP', 'HSP', 'CYM', 'TYM']
         
         if self.res_A_name in polar and self.res_B_name in polar:
             subtype = "polar-polar"
@@ -2747,7 +2747,7 @@ class sse_hydrogen_chalcogen_bond:
                                             (happend only if the two residues contain S/Se).
             True, 'chalcogen'               interaction exist and is chalcogen.
             True, 'h-bond'                  interaction exists and is H-bond.
-            False                           no interaction.
+            False, False                    no interaction.
         """
         if 0 < len(self.list_chalcogen) and 0 < len(self.list_hbond):
             return True, 'chalcogen and h-bond'
@@ -2759,7 +2759,7 @@ class sse_hydrogen_chalcogen_bond:
             return True, 'h-bond'
         
         else:
-            return False
+            return False, False
         
     @property
     def get_atoms(self):
@@ -2934,7 +2934,7 @@ class sse_aromatic:
         
         RETURN  
             When True, 'S/Se' is replaced by cation or anion.
-            True, 'S/Se'-Pi              The interaction exist.
+            True, 'S/Se'-pi              The interaction exist.
             True, 'S/Se'-intermediate    The interaction exist.
             True, 'S/Se'-quadrupole      The interaction exist.
             
@@ -2945,7 +2945,7 @@ class sse_aromatic:
         
         # Take the absolute value of the angle to ensure negative and positive values are considered as the same (ex: -80 is 80)
         if self.distance <= self.MAX_distance and self.MIN_pi_angle <= self.angle <= 90.0:
-            return True, f"{symbol}-Pi"
+            return True, f"{symbol}-pi"
         elif self.distance <= self.MAX_distance and self.MAX_quadrupole_angle < self.angle < self.MIN_pi_angle:
             return True, f"{symbol}-intermediate"
         elif self.distance <= self.MAX_distance and 0 <= self.angle <= self.MAX_quadrupole_angle:

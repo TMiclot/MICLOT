@@ -3,11 +3,22 @@
 
 This page
 
+## Interaction *clash*
+
+An interaction clash is a pair of close residues with same charge or same hydrophobicity (hydrophile or hydrophobe).
+
+List of all *clash*:
+
+- anion-anion
+- cation-cation
+- hydrophobe-hydrophobe
+- hydrophile-hydrophophile
+
+
 
 ## Interaction network
 
- An interaction network represents a motif consisting of residue
-pairs, their corresponding secondary structures, and the non-covalent interaction types between their atoms. Depending on the system being studied, an interaction network can either arise from the folding of a protein chain onto itself or from the interface between interacting protein chains.
+An interaction network represents a motif consisting of residue pairs, their corresponding secondary structures, and the non-covalent interaction types between their atoms. Depending on the system being studied, an interaction network can either arise from the folding of a protein chain onto itself or from the interface between interacting protein chains.
 
 
 

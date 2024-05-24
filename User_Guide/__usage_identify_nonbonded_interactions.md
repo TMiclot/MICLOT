@@ -263,7 +263,7 @@ Identify van der Waals interaction between two residues.
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
-| .check_interaction   | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .check_interaction   | Check if the given interaction type exisit.  | Boolean (True / False ) & string() |  |
 | .get_distance        | Return the list distances between atoms pairs making vdW interaction and the list of their index. | list_distance (list), list_contacts (list) | Å |
 | .get_number_contacts | Return the number of atom-atom vdW contact between the two residues. | integer |  |
 | .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | float or boolean | $Å^2$ |

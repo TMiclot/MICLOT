@@ -58,7 +58,7 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 ### Description
 
-Calculate the binding energy of a protein-protein complex using the [contact-based method]( https://doi.org/10.7554/eLife.07454).
+Calculate the binding energy of a protein-protein complex using the [contact-based method](__free_energy.md#2-protein-binding-contacts-based-method).
 
 ### Arguments
 
