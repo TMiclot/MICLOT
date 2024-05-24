@@ -29,7 +29,7 @@ If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
 >[!IMPORTANT]
 > Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
 
->[!TIPS]
+>[!TIP]
 > You can easily create a list with all possible pairs, without redundancy, using [itertools](https://docs.python.org/3/library/itertools.html). Below, a very short example:
 >
 > ```python

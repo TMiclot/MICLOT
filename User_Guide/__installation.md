@@ -90,7 +90,7 @@ trajectory = md.load(pdb_file, top=pdb_file)
 trajectory.remove_solvent(inplace=True)
 
 # Calculate Coulomb and LJ energies for residues indeces 0 and 3
-energy = coulomb_lj(trajectory, 0,3 ,'/home/user/analysis/ForceField/protein.ff14SB.xml', frame=frame)
+energy = coulomb_lj(trajectory, 0,3 ,'/home/user/analysis/ForceField/protein.ff14SB.xml')
 
 print(energy.get_energy[0]) #isolate total energy C + LJ
 print(energy.get_energy_coulomb[0]) #isolate total C
