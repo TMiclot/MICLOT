@@ -1,18 +1,19 @@
 [User Guide home](Manual.md)
 # Glossary 
 
-This page
+This page ...
 
-## Interaction *clash*
+## Repulsion
 
-An interaction clash is a pair of close residues with same charge or same hydrophobicity (hydrophile or hydrophobe).
+**Synonym:** clash
 
-List of all *clash*:
+An interaction clash is a pair of close residues with same charge or diffrerent hydrophobicity (hydrophile or hydrophobe).
+
+List of all repulsion types:
 
 - anion-anion
 - cation-cation
-- hydrophobe-hydrophobe
-- hydrophile-hydrophophile
+- hydrophobe-hydrophophile
 
 
 

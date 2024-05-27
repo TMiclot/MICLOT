@@ -2,8 +2,17 @@
 
 # Non-bonding interactions
 
+This part ...
 
-## Canonical non-bonding interactions
+## Relation between residue interaction types
+
+
+
+<img src="pictures/interaction_diagram.png" width="650">
+
+*A hight quality of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
+
+## 1. 
 
 
 
