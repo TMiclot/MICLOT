@@ -58,7 +58,8 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 ### Description
 
-Calculate the binding energy of a protein-protein complex using the [contact-based method](__free_energy.md#2-protein-binding-contacts-based-method).
+Calculate the binding energy of a protein-protein complex using the [contact-based method](__free_energy.md#2-protein-binding-contacts-based-method). Currently the implementation allow user to work only with PDB ().
+Because the method has been calibrated for use on fixed structures, but no mention has been made of molecular dynamics trajectories. So it was decided to restrict use to fixed structures: PDb, mmCIF, and all MDTraj readable files.
 
 ### Arguments
 
@@ -71,4 +72,4 @@ Calculate the binding energy of a protein-protein complex using the [contact-bas
 
 ### Returns
 
-Return a Pandas Dataframe
+Return a Pandas Dataframe.

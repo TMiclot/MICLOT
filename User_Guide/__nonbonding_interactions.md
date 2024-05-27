@@ -2,7 +2,10 @@
 
 # Non-bonding interactions
 
-This part ...
+This part explains all the geometric (distance, angle) and energetic (when available) parameters used to identify the types of interactions between two residues.
+
+>[!IMPORTANT]
+>It is important to note that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
 
 ## Relation between residue interaction types
 
@@ -10,7 +13,7 @@ This part ...
 
 <img src="pictures/interaction_diagram.png" width="650">
 
-*A hight quality of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
+*A hight quality version of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
 
 ## 1. 
 
