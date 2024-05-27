@@ -200,7 +200,7 @@ The IC-NIS model is based on the following equation:
 
 $$
 \begin{align}
-	\Delta G & = (- 0.09459 \times IC_{charged/charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{apolar}^{\%}) + (0.13810 \times NIS_{charged}^{\%}) - 15.9433 \\
+	\Delta G & = (- 0.09459 \times IC_{charged/charged}) - (0.10007 \times IC_{charged/apolar}) + (0.19577 \times IC_{polar/polar}) - (0.22671 \times IC_{polar/apolar}) + (0.18681 \times NIS_{apolar}^{\\%}) + (0.13810 \times NIS_{charged}^{\\%}) - 15.9433 \\
 	Kd & = e^{\frac{\Delta G}{RT}}
 \end{align}
 $$
@@ -213,8 +213,8 @@ And the terms of the equations are defined as:
 | $IC_{charged/charged}$ | Number of contacts between two charged residues. |  |
 | $IC_{charged/apolar}$  | Number of contacts between charged and apolar residues. |  |
 | $IC_{polar/polar}$     | Number of contacts between two polar residues. |  |
-| $NIS_{apolar}^{\%}$    | % of apolar residue in the NIS (see 3.3.) | % |
-| $NIS_{charged}^{\%}$  | % of charged residue in the NIS (see 3.3.) | % |
+| $NIS_{apolar}^{\\%}$    | % of apolar residue in the NIS (see 3.3.) | % |
+| $NIS_{charged}^{\\%}$  | % of charged residue in the NIS (see 3.3.) | % |
 | Kd                     | Dissociation constant. | M |
 | R                      | Ideal gas constant. <br/> Value: 0.0019858775 | kcal/mol |
 | T                      | Temperature | Kelvin |
