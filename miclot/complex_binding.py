@@ -22,7 +22,6 @@ import numpy as np
 import pandas as pd
 pd.options.mode.copy_on_write = True
 import freesasa
-from Bio.PDB import PDBParser, Polypeptide
 
 # Import module from MICLOT
 from miclot.utilities import pdb2pandas, mdtraj_chainID_2_chainName

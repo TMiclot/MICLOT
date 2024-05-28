@@ -242,6 +242,51 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
     OPTIONAL ARGUMENT
         write_outfile    (True/False) Write the output files.   
     """
+    #===== Dictionnary to convert 3 letters code to 1 letter code =====
+    seq1 = {'ALA': 'A',
+            'ARG': 'R',
+            'ASN': 'N',
+            # aspartate
+            'ASP': 'D', 'ASH': 'D',
+            # cysteine
+            'CYS': 'C', 'CYH': 'C', 'CYX': 'C', 'CYM': 'C', 'SEC': 'C',
+            'XSE': 'C', #custom: seleno-cystein involved in selenide bond
+            # glutamate
+            'GLN': 'Q', 'GLH': 'Q',
+            #
+            'GLU': 'E',
+            'GLY': 'G',
+            # histidine
+            'HIS': 'H',
+            'HID': 'H', 'HIE': 'H',
+            'HSD': 'H', 'HSE': 'H',
+            'HIP': 'H', 'HSP': 'H',
+            #
+            'ILE': 'I',
+            'LEU': 'L',
+            # lysine
+            'LYS': 'K', 'LYN': 'K',
+            # methionine
+            'MET': 'M', 'MSE': 'M',
+            #
+            'PHE': 'F',
+            'PRO': 'P',
+            'PYL': 'O',
+            'SER': 'S',
+            'SEC': 'U',
+            'THR': 'T',
+            'TRP': 'W',
+            # tyrosine
+            'TYR': 'Y', 'TYM': 'Y',
+            #
+            'VAL': 'V',
+            # others
+            'ASX': 'B',
+            'GLX': 'Z',
+            'XAA': 'X',
+            'XLE': 'J'
+            }
+    
     #===== read the PDB file with MDTraj=====
     traj = md.load(pdb_file_path, top=pdb_file_path)
 
@@ -250,8 +295,7 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
     # Compute DSSP vertion of MSTraj
     list_secondary_structure = md.compute_dssp(traj, simplified=True)[0]
 
-    # replace all 'NA' to 'N'
-    # it appear for << "residue" in the topology which isn't actually a protein residue. >>
+    # 
     list_secondary_structure = list(map(lambda x: x.replace('NA', 'N'), list_secondary_structure))
 
 
@@ -322,7 +366,7 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
         list_name_3_letter = df_select_chainID['name'].to_list()
 
         # convert the 3 letter code into 1 letter ode and stor it to another list
-        list_name_1_letter = [seq1(name) for name in list_name_3_letter]
+        list_name_1_letter = [seq1[name.upper()] if name in seq1 else 'x' for name in list_name_3_letter]
 
         # convert the 1 letter code list to a string
         sequence = ''.join(list_name_1_letter)
@@ -349,6 +393,14 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 
 
 
+    #===== Generate output dictionnaries =====
+    # generate the dictionnary chainID --> sequence
+    dict_chainID_sequence = df_chain_sequence_ss.set_index('chainID')['sequence'].to_dict()
+
+    # generate the dictionnary chainID --> secondary structure
+    dict_chainID_ss = df_chain_sequence_ss.set_index('chainID')['secondary_structure'].to_dict()
+
+
 
     #===== Save output files =====
     if write_outfile == True:
@@ -363,20 +415,10 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 
 
 
-
-
-    #===== Generate output dictionnaries =====
-    # generate the dictionnary chainID --> sequence
-    dict_chainID_sequence = df_chain_sequence_ss.set_index('chainID')['sequence'].to_dict()
-
-    # generate the dictionnary chainID --> secondary structure
-    dict_chainID_ss = df_chain_sequence_ss.set_index('chainID')['secondary_structure'].to_dict()
-
-
-
-
     #===== Return result =====
     return dict_chainID_sequence, dict_chainID_ss
+
+
 
 
 

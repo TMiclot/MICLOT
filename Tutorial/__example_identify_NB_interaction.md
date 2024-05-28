@@ -7,8 +7,28 @@ This tutorial give you working example on how to identify non-bonded interaction
 ## First step: load required modules
 
 ```python
-import ***
+# Define the path to of the package
+package_dir = '/path/to/MICLOT'
+
+# Add the 'miclot' package directory to sys.path
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 ```
+
+Now you can import the package:
+
+```python
+import miclot.interactions as mci
+```
+
+Using this way, all commands to analyse an interaction type are callable using *mci*. For example: mci.C_bond()
+
+Or you can import directly all command, so it wil be not necessary to use *mci.*:
+
+```python
+from miclot.interactions import *
+```
+
 
 
 ## 0. C5 hydrogen bond

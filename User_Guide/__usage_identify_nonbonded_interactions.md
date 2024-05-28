@@ -97,7 +97,7 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| trajectory        | integer | MDTraj trajectory.  | mandatory |
+| trajectory        | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index         | integer | Index of the residue in MDTraj topology. | mandatory |
 | angular_tolerance | float | Set an absolute tolerance parameter N. So the range of angle is 140.0˚ +/- N. <br/> Default value of N: 10.0 <br/> See documentation concerning [numpy.isclose](https://numpy.org/doc/stable/reference/generated/numpy.isclose.html). | optional |
 | frame             | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
@@ -326,7 +326,7 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| trajectory   | integer | MDTraj trajectory.  | mandatory |
+| trajectory   | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
@@ -366,7 +366,7 @@ It identify 3 subtypes, where *charge* is cation or anion:
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| trajectory   | integer | MDTraj trajectory.  | mandatory |
+| trajectory   | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A  | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B  | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame        | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |

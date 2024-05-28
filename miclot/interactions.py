@@ -70,7 +70,7 @@ class C5_hydrogen_bond:
         
         
         #==== Compute O---H distance =====
-        self.distance = md.compute_distances(traj, [[self.atom_O_res, self.atom_H_res]])[0][0] *10
+        self.distance = md.compute_distances(self.traj, [[self.atom_O_res, self.atom_H_res]])[0][0] *10
         
         
         #===== Compute Psy and Phi angle =====
@@ -1189,7 +1189,7 @@ class van_der_waals:
         
         # Compute interface
             # np.sum(self.SASA_pair) sum the SASA of the tow residue when forming pair
-            # *100 to convert nm^2 to angstro^2
+            # *100 to convert nm^2 to angstrom^2
         interface = ( SASA_res_A[0] + SASA_res_B[0] - np.sum(SASA_pair) ) *100        
         
         # return result
@@ -3099,6 +3099,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
         is_aromatic_aromatic_coplanar = 0
         is_aromatic_aromatic_Yshaped  = 0
         is_aromatic_aromatic_Tshaped  = 0
+        is_aromatic_aromatic_intermediate = 0
         
         # check which type of aromatic-aromatic interaction is it
         if aromaticAromatic.check_interaction[1] == 'parallel':
@@ -3116,6 +3117,8 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
         elif aromaticAromatic.check_interaction[1] == 'T-shaped':
             is_aromatic_aromatic_Tshaped = 1
 
+        elif aromaticAromatic.check_interaction[1] == 'intermediate':
+            is_aromatic_aromatic_intermediate = 1
     
     except:
         is_aromatic_aromatic_parallel = np.nan
@@ -3123,10 +3126,11 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
         is_aromatic_aromatic_coplanar = np.nan
         is_aromatic_aromatic_Yshaped  = np.nan
         is_aromatic_aromatic_Tshaped  = np.nan
+        is_aromatic_aromatic_intermediate = np.nan
     
     # add the interaction result to the list_interaction_pair
     list_interaction_pair.extend([is_aromatic_aromatic_parallel, is_aromatic_aromatic_offset, is_aromatic_aromatic_coplanar, \
-                                 is_aromatic_aromatic_Yshaped, is_aromatic_aromatic_Tshaped])
+                                 is_aromatic_aromatic_Yshaped, is_aromatic_aromatic_Tshaped, is_aromatic_aromatic_intermediate])
     
     
     
@@ -3447,7 +3451,8 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
                             "aromatic_aromatic_offset"   : is_aromatic_aromatic_offset,  
                             "aromatic_aromatic_coplanar" : is_aromatic_aromatic_coplanar,
                             "aromatic_aromatic_Yshaped"  : is_aromatic_aromatic_Yshaped, 
-                            "aromatic_aromatic_Tshaped"  : is_aromatic_aromatic_Tshaped, 
+                            "aromatic_aromatic_Tshaped"  : is_aromatic_aromatic_Tshaped,
+                            "aromatic_aromatic_intermediate" : is_aromatic_aromatic_intermediate, 
                             #
                             "cation_pi"           : is_cation_pi,
                             "cation_intermediate" : is_cation_intermediate,

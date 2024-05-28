@@ -10,7 +10,7 @@ __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
 
-__all__ = ['coulomb_lj']
+__all__ = ['coulomb_lj','omm_coulomb_lj']
 
 
 #=====================================================
@@ -20,6 +20,11 @@ __all__ = ['coulomb_lj']
 import xml.etree.ElementTree as ET
 import mdtraj as md
 import numpy as np
+
+#openmm
+from openmm import *
+from openmm.app import *
+from openmm.unit import *
 
 
 
@@ -507,6 +512,247 @@ class coulomb_lj:
         """
         return self.energy_C, self.energy_C_cutoff, self.energy_C_reactionfield    
     
+
+
+
+
+#=====================================================
+#===== Class to calculate Coulomb and LJ using OpenMM
+#=====================================================
+class omm_coulomb_lj:
+    def __init__(self, trajectory, index_residue_A, index_residue_B, method=NoCutoff, nonbonded_cutoff=10, frame=0):
+        """
+        DESCRIPTION
+            Adapted from https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/Computing%20Interaction%20Energies.html
+            
+            Calculate Coulomb and Lennard-Jones energies using openMM.
+            It automaticaly return values for AMBER and CHARMM force fields.
+        
+        
+        ARGUMENTS
+            trajectory         MDTraj trajectory
+            index_residue_A    MDTraj index of residue A
+            index_residue_B    MDTraj index of residue B
+            
+            
+        OPTIANL ARGUMENTS
+            frame     MDTraj frame ID on which to perform the analysis.
+            
+            method    openMM keyword (not a string) defining the method to use for nonbonded interactions.
+                      Allowed values: NoCutoff, CutoffNonPeriodic, CutoffPeriodic, Ewald, PME, or LJPME
+                      Default value: NoCutoff
+                      
+            nonbonded_cutoff    cutoff distance to use for nonbonded interactions
+                                Default value: 10 angstrom
+        """
+        #===== Initialise variable =====
+        self.trajectory = trajectory[frame]
+        self.index_residue_A = index_residue_A
+        self.index_residue_B = index_residue_B
+        self.method = method
+        self.nonbonded_cutoff = nonbonded_cutoff /10 # /10 to convert angstrom into nm
+        
+        
+        #===== Convert MDTraj topology and position to openMM =====
+        #convert the topology
+        self.openmm_topology = self.trajectory.topology.to_openmm()
+        
+        # Get the positions from the first frame (for example)
+        self.positions = self.trajectory.xyz[0]  # MDTraj stores positions in nanometers
+
+        # Convert MDTraj positions to OpenMM positions
+        self.openmm_positions = [Vec3(pos[0], pos[1], pos[2]) *nanometer for pos in self.positions]
+        
+        
+        #===== calculate energies =====
+        self.amber_total, self.amber_coulomb, self.amber_lj = self.calculate_amber()
+        self.charmm_total, self.charmm_coulomb, self.charmm_lj = self.calculate_charmm()
+        
+        
+        
+    #===== Functions ======
+    #----- scaling CHARMM Coulomb------
+    def scaling_charmm_energy_coulomb(self, context, residue_A_scale, residue_B_scale):
+        """
+        Extract the desired par in the energy. 0: inactivated / 1: activated
+        """
+        context.setParameter("residue_A_scale", residue_A_scale)
+        context.setParameter("residue_B_scale", residue_B_scale)
+        return context.getState(getEnergy=True, groups={0}).getPotentialEnergy()
+    
+    
+    #----- scaling AMBER Coulomb and LJ -----
+    def scaling_amber_energy(self, context, residue_A_coulomb_scale, residue_A_lj_scale, residue_B_coulomb_scale, residue_B_lj_scale):
+        """
+        Extract the desired par in the energy. 0: inactivated / 1: activated
+        """
+        context.setParameter("residue_A_coulomb_scale", residue_A_coulomb_scale)
+        context.setParameter("residue_A_lj_scale", residue_A_lj_scale)
+        context.setParameter("residue_B_coulomb_scale", residue_B_coulomb_scale)
+        context.setParameter("residue_B_lj_scale", residue_B_lj_scale)
+        return context.getState(getEnergy=True, groups={0}).getPotentialEnergy()
+    
+    
+    #----- Calculate energy with CHARMM -----
+    def calculate_charmm(self):
+        """
+        Calculate Coulomb and LJ energies using CHARMM force field.
+        """
+        # Create the system using charmm FF and with/without cutoff
+        forcefield = ForceField('charmm36.xml')
+        system = forcefield.createSystem(self.openmm_topology, nonbondedMethod=self.method, nonbondedCutoff=self.nonbonded_cutoff*nanometer)
+
+        # Define the selections for residues pair
+        residue_A = set([i.index for i in self.openmm_topology.atoms() if i.residue.index == self.index_residue_A])
+        residue_B = set([i.index for i in self.openmm_topology.atoms() if i.residue.index == self.index_residue_B])
+        
+        # Modify forces
+        for force in system.getForces():
+            if isinstance(force, NonbondedForce):
+                force.setForceGroup(0)
+                force.addGlobalParameter("residue_A_scale", 1)
+                force.addGlobalParameter("residue_B_scale", 1)
+                
+                for i in range(force.getNumParticles()):
+                    charge, sigma, epsilon = force.getParticleParameters(i)
+                    # Set the parameters to be 0 when the corresponding parameter is 0,
+                    # and to have their normal values when it is 1.
+                    force.setParticleParameters(i, 0, 0, 0)
+                    if i in residue_A:
+                        force.addParticleParameterOffset("residue_A_scale", i, charge, sigma, epsilon)
+                    elif i in residue_B:
+                        force.addParticleParameterOffset("residue_B_scale", i, charge, sigma, epsilon)
+                
+                for i in range(force.getNumExceptions()):
+                    p1, p2, chargeProd, sigma, epsilon = force.getExceptionParameters(i)
+                    force.setExceptionParameters(i, p1, p2, 0, 0, 0)
+            
+            elif isinstance(force, CustomNonbondedForce):
+                force.setForceGroup(1)
+                force.addInteractionGroup(residue_A, residue_B)
+            
+            else:
+                force.setForceGroup(2)
+
+
+        # Create a Context for performing calculations.
+        #     The integrator is not important, since we will only be performing single point energy evaluations.
+        integrator = VerletIntegrator(0.001*picosecond)
+        context = Context(system, integrator)
+        context.setPositions(self.openmm_positions)
+        
+        # Get the total coulomb energies for each residues
+        total_coulomb     = self.scaling_charmm_energy_coulomb(context, 1, 1)
+        residue_A_coulomb = self.scaling_charmm_energy_coulomb(context, 1, 0)
+        residue_B_coulomb = self.scaling_charmm_energy_coulomb(context, 0, 1)
+        
+        # Calculate coulomb energy specificly for the pair
+        coulomb_pair = total_coulomb - residue_A_coulomb - residue_B_coulomb
+        
+        # Calculate LJ energy specificly for the pair
+        lj_pair = context.getState(getEnergy=True, groups={1}).getPotentialEnergy()
+        
+        # calculate coulomb + LJ for the pair
+        lj_coulomb_pair = coulomb_pair + lj_pair
+
+        # return the energies
+        return lj_coulomb_pair, coulomb_pair, lj_pair
+    
+    
+    #----- Calculate energy with AMBER -----------
+    def calculate_amber(self):
+        """
+        Calculate Coulomb and LJ energies using AMBER force field.
+        """
+        # Create the system using amber FF and with/without cutoff
+        forcefield = ForceField('amber14-all.xml')
+        system = forcefield.createSystem(self.openmm_topology, nonbondedMethod=self.method, nonbondedCutoff=self.nonbonded_cutoff*nanometer)
+
+        # Define the selections for residues pair
+        residue_A = set([i.index for i in self.openmm_topology.atoms() if i.residue.index == self.index_residue_A])
+        residue_B = set([i.index for i in self.openmm_topology.atoms() if i.residue.index == self.index_residue_B])
+        
+        # Modify forces
+        for force in system.getForces():
+            if isinstance(force, NonbondedForce):
+                force.setForceGroup(0)
+                force.addGlobalParameter("residue_A_coulomb_scale", 1)
+                force.addGlobalParameter("residue_A_lj_scale", 1)
+                force.addGlobalParameter("residue_B_coulomb_scale", 1)
+                force.addGlobalParameter("residue_B_lj_scale", 1)
+                for i in range(force.getNumParticles()):
+                    charge, sigma, epsilon = force.getParticleParameters(i)
+                    force.setParticleParameters(i, 0, 0, 0)
+                    if i in residue_A:
+                        force.addParticleParameterOffset("residue_A_coulomb_scale", i, charge, 0, 0)
+                        force.addParticleParameterOffset("residue_A_lj_scale", i, 0, sigma, epsilon)
+                    elif i in residue_B:
+                        force.addParticleParameterOffset("residue_B_coulomb_scale", i, charge, 0, 0)
+                        force.addParticleParameterOffset("residue_B_lj_scale", i, 0, sigma, epsilon) 
+                for i in range(force.getNumExceptions()):
+                    p1, p2, chargeProd, sigma, epsilon = force.getExceptionParameters(i)
+                    force.setExceptionParameters(i, p1, p2, 0, 0, 0)
+            else:
+                force.setForceGroup(2)
+
+        ## Create a Context for performing calculations.
+        ##     The integrator is not important, since we will only be performing single point energy evaluations.
+        integrator = VerletIntegrator(0.001*picosecond)
+        context = Context(system, integrator)
+        context.setPositions(self.openmm_positions)
+        
+        # Get coulomb energy
+        coulomb_residue_A = self.scaling_amber_energy(context, 1, 0, 0, 0)
+        coulomb_residue_B = self.scaling_amber_energy(context, 0, 0, 1, 0)
+        coulomb_total     = self.scaling_amber_energy(context, 1, 0, 1, 0)
+        coulomb_pair      = coulomb_total - coulomb_residue_A - coulomb_residue_B
+        
+        # Get LJ energy
+        lj_residue_A = self.scaling_amber_energy(context, 0, 1, 0, 0)
+        lj_residue_B = self.scaling_amber_energy(context, 0, 0, 0, 1)
+        lj_total     = self.scaling_amber_energy(context, 0, 1, 0, 1)
+        lj_pair = lj_total - lj_residue_A - lj_residue_B
+        
+        # Get total (coulomb + LJ) energy
+        lj_coulomb_residue_A = self.scaling_amber_energy(context, 1, 1, 0, 0)
+        lj_coulomb_residue_B = self.scaling_amber_energy(context, 0, 0, 1, 1)
+        lj_coulomb_total     = self.scaling_amber_energy(context, 1, 1, 1, 1)
+        lj_coulomb_pair      = lj_coulomb_total - lj_coulomb_residue_A - lj_coulomb_residue_B
+
+        ## return the resulting energies
+        return lj_coulomb_pair, coulomb_pair, lj_pair
+    
+    
+    
+    #===== Return energies =====
+    @property
+    def get_energy(self):
+        """
+        DESCRIPTION    Return total energy as calculated using AMBER and CHARMM force field
+        RETURN         amber_total, charmm_total
+        UNIT           Kj/mol
+        """
+        return self.amber_total._value, self.charmm_total._value
+    
+    @property
+    def get_energy_coulomb(self):
+        """
+        DESCRIPTION    Return Coulomb energy as calculated using AMBER and CHARMM force field
+        RETURN         amber_coulomb, charmm_coulomb
+        UNIT           Kj/mol
+        """
+        return self.amber_coulomb._value, self.charmm_coulomb._value
+    
+    @property
+    def get_energy_LJ(self):
+        """
+        DESCRIPTION    Return Coulomb energy as calculated using AMBER and CHARMM force field
+        RETURN         amber_lj, charmm_lj
+        UNIT           Kj/mol
+        """
+        return self.amber_lj._value, self.charmm_lj._value
+        
+
 
 
 

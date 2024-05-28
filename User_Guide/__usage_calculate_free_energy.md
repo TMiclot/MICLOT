@@ -4,6 +4,8 @@
 
 ## 1. Coulomb & Lennard-Jones
 
+### 1.1. Without openMM
+
 **coulomb_lj**(trajectory, res_index_A, res_index_B, force_field_path, *frame=0, coulomb_cutoff=12, lj_cutoff=12, lj_switch=8, solute_dielectric=1.0, solvent_dielectric=78.5*)
 
 ### Description
@@ -13,7 +15,7 @@ It is possible to add a "hard" cutoff for both forces.
 It is also possible calculate the Coulomb force using a reaction field, or to calculate the LJ with a switching function.
 
 > [!CAUTION]
-> It is important to have atom names consistent with the force field used: AMBER or CHARMM.
+> It is important to have atom and residues names are consistent with the force field used: AMBER or CHARMM.
 > The command integrates a simple conversion of atom names between these two force fields, but it may not be sufficient.
 > Typically, an error due to atom names is:
 > 
@@ -21,9 +23,9 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| trajectory         | integer | MDTraj trajectory.  | mandatory |
+| trajectory         | mdtraj | MDTraj trajectory.  | mandatory |
 | res_index_A        | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B        | integer | Index of residue B in MDTraj topology. | mandatory |
 | force_field_path   | string  | Path to the force fiels AMBER or CHARMM. | mandatory |
@@ -49,6 +51,41 @@ It is also possible calculate the Coulomb force using a reaction field, or to ca
 
 > [!TIP]
 > The commands give the same values as [OpenMM](https://openmm.github.io/openmm-cookbook/latest/notebooks/cookbook/Computing%20Interaction%20Energies.html). Differences are lost in decimals.
+
+
+### 1.2. Using openMM
+
+**omm_coulomb_lj**(trajectory, index_residue_A, index_residue_B, *method=NoCutoff, nonbonded_cutoff=10.0, frame=0*)
+
+### Description
+
+>[!IMPORTANT]
+>Adapted from https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/Computing%20Interaction%20Energies.html
+
+Calculate Coulomb and Lennard-Jones energies using openMM. It automaticaly return values for AMBER and CHARMM force fields.
+
+Sometime using this function avoid some error due to residues/atoms encountered by previous command `coulomb_lj`, but is much slower.
+
+### Arguments
+
+| Argument | Description | Format | Requirement |
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| trajectory      | mdtraj | MDTraj trajectory.  | mandatory |
+| index_residue_A | integer | Index of residue A in MDTraj topology. | mandatory |
+| index_residue_B | integer | Index of residue B in MDTraj topology. | mandatory |
+| method          | openmm keyword  | Method used to calculate the energy. Allowed values: NoCutoff, CutoffNonPeriodic, CutoffPeriodic, Ewald, PME, or LJPME <br/> Default value: NoCutoff | optional |
+| nonbonded_cutoff | float | Cutoff applied to nonbonded interactions. <br/> Unit: Å <br/> Default value: 10 | optional |
+| frame           | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
+
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .get_energy         | Return the total energy of the pair (LJ + Coulomb) without considering cutoff and with the "hard" cutoff for LJ and Coulomb. | float: amber_total, charmm_total | kJ/mol |
+| .get_energy_LJ      | Return all calculated energy for LJ. | float: amber_lj, charmm_lj | kJ/mol |
+| .get_energy_coulomb | Return all calculated energy for Coulomb. | float: amber_coulomb, charmm_coulomb | kJ/mol |
+
 
 
 

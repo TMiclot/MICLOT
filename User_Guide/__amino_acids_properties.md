@@ -50,6 +50,8 @@ The table below refers to the standard items found in the PDB files. It use stan
 | Pyrrolysisne  | PYL           |         |          |            |              |            |     |
 | GLU or GLN    | GLX           |         |          |            |              |            |     |
 | ASP or ASN    | ASX           |         |          |            |              |            |     |
+| LEU or ILE    | XLE           |         |          |            |              |            |     |
+| Any amino acid |XAA           |         |          |            |              |            |     |
 | Unknown       | UNK           |         |          |            |              |            |     |
 
 > [!NOTE]  
