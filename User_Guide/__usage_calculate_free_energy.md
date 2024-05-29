@@ -4,6 +4,8 @@
 
 ## 1. Coulomb & Lennard-Jones
 
+All commands come from `miclot.coulomb_lj`
+
 ### 1.1. Without openMM
 
 **coulomb_lj**(trajectory, res_index_A, res_index_B, force_field_path, *frame=0, coulomb_cutoff=12, lj_cutoff=12, lj_switch=8, solute_dielectric=1.0, solvent_dielectric=78.5*)
@@ -90,6 +92,8 @@ Sometime using this function avoid some error due to residues/atoms encountered 
 
 
 ## 2. Binding energy using the *contact based method*
+
+All commands come from `miclot.complex_binding`
 
 **compute_binding_energy**(pdb_file_path, chainName_receptor, chainName_ligand, *temperature_celsius=25, write_outfile=True*)
 

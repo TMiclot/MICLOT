@@ -2,7 +2,7 @@
 
 # Prepare a structure
 
-A set of functions present in the *utilities* used to prepare a structure for analysis.
+All commands come from `miclot.utilities`
 
 
 ## 1. Add missing atoms & Rename residues by their protonated state

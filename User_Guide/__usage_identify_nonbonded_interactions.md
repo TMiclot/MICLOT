@@ -2,6 +2,8 @@
 
 # Identify Non-Bonded interactions
 
+All commands come from `miclot.interactions`
+
 > [!NOTE]
 > Each non-bonded interaction type is designed to be a [Classes](https://docs.python.org/3/tutorial/classes.html).
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.

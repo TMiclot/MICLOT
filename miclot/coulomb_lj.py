@@ -520,7 +520,7 @@ class coulomb_lj:
 #===== Class to calculate Coulomb and LJ using OpenMM
 #=====================================================
 class omm_coulomb_lj:
-    def __init__(self, trajectory, index_residue_A, index_residue_B, method=NoCutoff, nonbonded_cutoff=10, frame=0):
+    def __init__(self, trajectory, index_residue_A, index_residue_B, method=NoCutoff, nonbonded_cutoff=10.0, frame=0):
         """
         DESCRIPTION
             Adapted from https://openmm.github.io/openmm-cookbook/dev/notebooks/cookbook/Computing%20Interaction%20Energies.html
@@ -544,7 +544,7 @@ class omm_coulomb_lj:
                       
             nonbonded_cutoff    cutoff distance to use for nonbonded interactions
                                 Default value: 10 angstrom
-        """
+        """        
         #===== Initialise variable =====
         self.trajectory = trajectory[frame]
         self.index_residue_A = index_residue_A
@@ -552,6 +552,10 @@ class omm_coulomb_lj:
         self.method = method
         self.nonbonded_cutoff = nonbonded_cutoff /10 # /10 to convert angstrom into nm
         
+        #===== Initialize platfom and platform properties used by openMM =====
+        self.platform = Platform.getPlatformByName('CPU')     # force using only CPU. Using CUDA or OpenCL will slowdown due memory transfer.
+        self.platform.setPropertyDefaultValue('Threads', '1') # force using only one thread (more will slowdown the speed)
+
         
         #===== Convert MDTraj topology and position to openMM =====
         #convert the topology
@@ -638,7 +642,7 @@ class omm_coulomb_lj:
         # Create a Context for performing calculations.
         #     The integrator is not important, since we will only be performing single point energy evaluations.
         integrator = VerletIntegrator(0.001*picosecond)
-        context = Context(system, integrator)
+        context = Context(system, integrator, self.platform)
         context.setPositions(self.openmm_positions)
         
         # Get the total coulomb energies for each residues
@@ -698,7 +702,7 @@ class omm_coulomb_lj:
         ## Create a Context for performing calculations.
         ##     The integrator is not important, since we will only be performing single point energy evaluations.
         integrator = VerletIntegrator(0.001*picosecond)
-        context = Context(system, integrator)
+        context = Context(system, integrator, self.platform)
         context.setPositions(self.openmm_positions)
         
         # Get coulomb energy
@@ -751,6 +755,7 @@ class omm_coulomb_lj:
         UNIT           Kj/mol
         """
         return self.amber_lj._value, self.charmm_lj._value
+        
         
 
 

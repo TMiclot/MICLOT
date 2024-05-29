@@ -2,6 +2,31 @@
 
 # Fix a PDB structure
 
+## First step: load required modules
+
+```python
+# Define the path to of the package
+package_dir = '/path/to/MICLOT'
+
+# Add the 'miclot' package directory to sys.path
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
+```
+
+Now you can import the package:
+
+```python
+import miclot.utilities as mcu
+```
+
+Using this way, all commands to interact with structure are callable using *mcu*. For example: mcu.C_bond()
+
+Or you can import directly all command, so it wil be not necessary to use *mcu.*:
+
+```python
+from miclot.utilities import *
+```
+
 ## 1. Add missing atoms and hydrogens & Check protonation state
 
 This part will explain how to ...
