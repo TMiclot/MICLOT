@@ -17,7 +17,23 @@ All commands come from `miclot.interactions`
 > 3. It is also necessary to have hydrogens atoms.
 
 
-## 0. Identify all interfactions in a pair of residues
+
+## Identify all interfactions in a protein, or a complex
+
+*Here a protein or a protein complex is named system, independantly.*
+
+**interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_distance_contact=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"*):
+    
+### Description
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+
+
+
+## Identify all interfactions in a pair of residues
 
 **identify_all_interaction_pair**(trajectory, pair, *frame=0*)
 
@@ -43,7 +59,6 @@ If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
 > # (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
 > list_pairs = list(itertools.combinations(list_residues, 2))
 > ```
-
 
 
 ### Arguments

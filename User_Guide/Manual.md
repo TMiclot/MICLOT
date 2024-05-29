@@ -39,11 +39,11 @@ This part provide information about the classes and methods available in MICLOT.
 - [Calculate free energy of interacting residues or of a complex](__usage_calculate_free_energy.md)
 - [Atoms & Amino acids Database](__usage_database.md)
 
->[!IMPORTANT]
+>[!TIP]
 > For some cases you may want to limit the CPU usage, 2 ways are possible.
 > 1. In Linux, you can restrain Python directy in Bash using `taskset`. For example, this command force python to be executed on CPU 0 to 3:
 >
-> ``` bash
+> ```bash
 > taskset --cpu-list 0-3 python myscript.py
 > ```
 >
@@ -61,7 +61,3 @@ This part provide information about the classes and methods available in MICLOT.
 * * *
 ## Citing us
 Miclot, T. & Timr, S. The famous title. *Journal* ... 
-
-
-## How to contribute to MICLOT development
-Because the ambition of this project is to become as complete and performent as possible, anyone wishing to contribute to the project is welcome.

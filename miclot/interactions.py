@@ -12,7 +12,8 @@ __version__ = "Version: 1.0 -- jj/mm/2024"
 
 __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion', 'salt_bridge', \
            'hydrogen_bond', 'van_der_waals', 'amino_pi', 'charge_aromatic', 'aromatic_aromatic', \
-           'arg_involved', 'pi_hbond', 'n_pi', 'sse_hydrogen_chalcogen_bond', 'sse_aromatic']
+           'arg_involved', 'pi_hbond', 'n_pi', 'sse_hydrogen_chalcogen_bond', 'sse_aromatic', \
+           'identify_all_interaction_pair', 'interaction_table_whole_system']
 
 
 
@@ -25,7 +26,10 @@ from skspatial.objects import Plane, Vector, Points
 import mdtraj as md
 import pandas as pd
 
-
+from multiprocessing import Pool
+from itertools import combinations
+from tqdm import tqdm
+from complex_binding import omm_coulomb_lj
 
 
 
@@ -3490,6 +3494,157 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
         }])
         
         return df
+
+
+
+
+
+#=====================================================
+#===== Function to identify all NB interaction in a complete structure
+#=====================================================
+
+#----- Function used by multiprocessing -----
+def task(trajectory, pair, frame):
+    """
+    Is function is defined to be used by 'interaction_table_whole_system()' with multiprocessing.
+    Not designed to be used by user !
+    """
+    #----- Check which interaction types are performed between the two residues -----
+    interactions = mci.identify_all_interaction_pair(trajectory, pair, frame=frame)
+
+    # if their is not interaction, pass an go to next item in 'iterable'
+    if not isinstance(interactions, pd.DataFrame):
+        return None
+
+    else:
+
+        #----- Calculate Coulomb and LJ energies using AMBER and CHARMM -----
+        try:
+            energy = omm_coulomb_lj(trajectory, pair[0], pair[1], frame=frame)
+            #
+            energy_total_amber   = energy.get_energy[0]
+            energy_coulomb_amber = energy.get_energy_coulomb[0]
+            energy_lj_amber      = energy.get_energy_LJ[0]
+            #
+            energy_total_charmm   = energy.get_energy[1]
+            energy_coulomb_charmm = energy.get_energy_coulomb[1]
+            energy_lj_charmm      = energy.get_energy_LJ[1]
+
+        except:
+            energy_total_amber   = np.nan
+            energy_coulomb_amber = np.nan
+            energy_lj_amber      = np.nan
+            #
+            energy_total_charmm   = np.nan
+            energy_coulomb_charmm = np.nan
+            energy_lj_charmm      = np.nan
+
+
+        #----- check if residues 1 and 2 have C5-Hbond (intra-residue H-bond) -----
+        #..... Residue 1
+        try:
+            # search C5-Hbond
+            residue_1_C5Hbond = mci.C5_hydrogen_bond(trajectory, pair[0], frame=frame)
+
+            # check if exist for residue 1 or not
+            if residue_1_C5Hbond.check_interaction == True:
+                is_residue_1_C5Hbond = 1
+            else:
+                is_residue_1_C5Hbond = 0
+
+        except:
+            is_residue_1_C5Hbond = np.nan
+
+        #..... Residue 2
+        try:
+            # search C5-Hbond
+            residue_2_C5Hbond = mci.C5_hydrogen_bond(trajectory, pair[1], frame=frame)
+
+            # check if exist for residue 2 or not
+            if residue_2_C5Hbond.check_interaction == True:
+                is_residue_2_C5Hbond = 1
+            else:
+                is_residue_2_C5Hbond = 0
+
+        except:
+            is_residue_2_C5Hbond = np.nan    
+
+            
+        #----- Add energies and C5-Hbond to the row -----
+        interactions["energy_total_charmm"] = energy_total_charmm
+        interactions["energy_coulomb_charmm"] = energy_coulomb_charmm
+        interactions["energy_lj_charmm"] = energy_lj_charmm
+        interactions["energy_total_amber"] = energy_total_amber
+        interactions["energy_coulomb_amber"] = energy_coulomb_amber
+        interactions["energy_lj_amber"] = energy_lj_amber
+        interactions["residue_1_C5_Hbond"] = is_residue_1_C5Hbond
+        interactions["residue_2_C5_Hbond"] = is_residue_2_C5Hbond
+
+        return interactions
+        
+
+
+#----- Function to analyse the whole system -----
+def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_distance_contact=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"):
+    """
+    DESCRIPTION
+
+    ARGUMENTS
+
+    OPTIONAL ARGUMENTS
+    
+    """
+    #===== Initialize trajectory variable =====
+    trajectory = trajectory[frame]
+    
+    
+    #===== Get the list of ressidue pair =====
+    if list_pairs == "all":
+        list_resi = [i.index for i in trajectory.topology.residues]
+        list_residue_pairs = [tuple(sorted(i)) for i in list(combinations(list_resi , 2))]
+
+    else:
+        list_residue_pairs = list_pairs
+
+        
+    #===== Select only pairs with CA-CA distance <= MAX_distance_contact =====
+    all_distances_indices = md.compute_contacts(trajectory, contacts=list_residue_pairs, scheme='ca')
+
+    distances = all_distances_indices[0][0] *10 #*10 to convert nm to angstrom
+    pairs     = all_distances_indices[1]
+
+    # Create a boolean mask for distances <= MAX_distance_contact
+    mask = distances <= MAX_distance_contact
+
+    # Use the mask to filter pairs arrays
+    filtered_pairs = pairs[mask]
+
+
+    #===== create the process pool =====    
+    with Pool() as pool:
+        
+        # prepare arguments
+        items = [(trajectory, i, frame) for i in filtered_pairs]
+        
+        # loop over all residue pair to analyse their interactions
+        if use_tqdm == True:
+            results = pool.starmap(task, tqdm(items, total=len(items)))
+        else:
+            results = pool.starmap(task, items)
+    
+    
+    #===== Return results =====
+    # Initialize the final table
+    df = pd.DataFrame()
+    
+    # Append the final table with the row 
+    df = pd.concat([i for i in results if isinstance(i, pd.DataFrame)], ignore_index=True)
+    
+    if write_outfile == True:
+        df.to_csv(path_name_outfile, index=False)
+    
+    # return the complete dataframe
+    return df
     
 
 
