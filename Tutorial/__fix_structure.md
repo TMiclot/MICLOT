@@ -2,6 +2,10 @@
 
 # Fix a PDB structure
 
+This part ...
+
+
+
 ## First step: load required modules
 
 ```python
@@ -27,9 +31,32 @@ Or you can import directly all command, so it wil be not necessary to use *mcu.*
 from miclot.utilities import *
 ```
 
+
+
+## 0. Remove solvent
+
+Use MDTraj to remove solvent (water, ions, etc) and create a clened structure.
+
+```python
+import mdtraj as md
+
+pdb = 'name.pdb'
+
+# Load molecular structure using MDTraj
+traj = md.load(pdb, top=pdb)
+
+# Remove solvent (water, ions, ...)
+traj.remove_solvent(inplace=True)
+
+# Save structure as PDB file
+traj.save(f'name_noSolvent.pdb')
+```
+
+
+
+
 ## 1. Add missing atoms and hydrogens & Check protonation state
 
-This part will explain how to ...
 Using PDB2PQR-APBS with Propka (or [OpenMM](https://openmm.org/))
 
 It can be easly (and graphically) done using the PDB2PQR server: [https://server.poissonboltzmann.org/pdb2pqr](https://server.poissonboltzmann.org/pdb2pqr). Or using the script below:
