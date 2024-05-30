@@ -11,8 +11,7 @@ All commands come from `miclot.interactions`
 > [!WARNING]
 > 1. If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files. 
 > Alternatively you can use the [`fix_topology_bonds`](__usage_prepare_structure.md#2-create-a-trajectory-with-correct-bonds-in-the-topology) to generate a corrected topology.
-> 
-> 2. It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file don't containt the information about connectivity between atoms.
+> <br/> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file don't containt the information about connectivity between atoms.
 >
 > 3. It is also necessary to have hydrogens atoms.
 
@@ -20,45 +19,63 @@ All commands come from `miclot.interactions`
 
 ## Identify all interfactions in a protein, or a complex
 
-*Here a protein or a protein complex is named system, independantly.*
-
 **interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_distance_contact=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"*):
     
 ### Description
 
-### Arguments
+*Here a protein or a protein complex is named system, without difference.*
 
-| Argument | Format | Description | Requirement |
-| -------- | --- | --- | --- |
+In a system analyse all possible pairs (or given pairs) and return a complete table of their interaction types, with: 
 
+- Coulomb and Lennard-Jones energyes as calculated by openMM using both AMBER and CHARMM,
+- Presence/Absence of C5-Hbond for each residue perfoming the pair.
 
+The command return a Pandas DataFrame with all data and write it as CSV file.
 
-## Identify all interfactions in a pair of residues
-
-**identify_all_interaction_pair**(trajectory, pair, *frame=0*)
-
-### Description
-
-A fucntion to identify all interaction between a pair of residue.
-
-It run all interaction commands (with default parameters) and return a Pandas DataFrame with informations of each residue, the number of interaction doing by the pair, a detail of the interaction type and subtype.
-If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
-
->[!IMPORTANT]
-> Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
 
 >[!TIP]
-> You can easily create a list with all possible pairs, without redundancy, using [itertools](https://docs.python.org/3/library/itertools.html). Below, a very short example:
+> You can easily create a list with all possible pairs between given residues, without redundancy, using [itertools](https://docs.python.org/3/library/itertools.html). Below, a very short example:
 >
 > ```python
 > import itertools
 > 
 > list_residues = [1,2,3,4]
 >
-> # Create a list with all possible pairs
+> # Create a list with all possible pairs between residues IDs: 1,2,3,4
 > # (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
 > list_pairs = list(itertools.combinations(list_residues, 2))
 > ```
+
+> [!CAUTION]
+> 1. This command use all CPUs seen by Python, so it can use all CPUs of your computer. To ensure avoid any crash, be sure to limit the number of CPUs used by: Jupyter, or your script. To do this, you can take look at this [Tip](Manual.md#usage)
+> 2. This command can increase the memory usage by ~ 2/3 Go. Be sure your computer has enough free memory.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| trajectory  | mdtraj | MDTraj trajectory.  | mandatory |
+| frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
+| list_pairs  | list | List of pair of residue. By default take all possible pair in the system. Else can be set by user, using this format: [[id1,id2], [id3,id4], ...] | optional |
+| MAX_CA_distance | float | Maximum distance between CA atom of the two residue. Pairs with a greater distance will be ignored. <br/> Default value: 14.0 angstrom | optional |
+| write_outfile | boolean | Write the finale interaction table in CSV format (True/False). <br/> Default value: True | optional |
+| path_name_outfile | string | Path, containing the name, of the exported CSV table. By default the file is exported in the curent location and the name: "interaction_table_whole_system.csv" <br/> Custom: "my/path/interaction_table_whole_system.csv" | optional |
+| use_tqdm | boolean | Display tqdm proggress bar (True/False). <br/> Default value: False | optional |
+
+
+## Identify all interfactions for a pair of residues
+
+**identify_all_interaction_pair**(trajectory, pair, *frame=0*)
+
+### Description
+
+A fucntion to identify all interaction between residues forming a pair.
+
+It run all interaction commands (with default parameters) and return a Pandas DataFrame with informations of each residue, the number of interaction doing by the pair, a detail of the interaction type and subtype.
+If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
+
+>[!IMPORTANT]
+> Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
 
 
 ### Arguments

@@ -29,8 +29,8 @@ import pandas as pd
 from multiprocessing import Pool
 from itertools import combinations
 from tqdm import tqdm
-from complex_binding import omm_coulomb_lj
 
+from .coulomb_lj import omm_coulomb_lj
 
 
 #=====================================================
@@ -3510,7 +3510,7 @@ def task(trajectory, pair, frame):
     Not designed to be used by user !
     """
     #----- Check which interaction types are performed between the two residues -----
-    interactions = mci.identify_all_interaction_pair(trajectory, pair, frame=frame)
+    interactions = identify_all_interaction_pair(trajectory, pair, frame=frame)
 
     # if their is not interaction, pass an go to next item in 'iterable'
     if not isinstance(interactions, pd.DataFrame):
@@ -3544,7 +3544,7 @@ def task(trajectory, pair, frame):
         #..... Residue 1
         try:
             # search C5-Hbond
-            residue_1_C5Hbond = mci.C5_hydrogen_bond(trajectory, pair[0], frame=frame)
+            residue_1_C5Hbond = C5_hydrogen_bond(trajectory, pair[0], frame=frame)
 
             # check if exist for residue 1 or not
             if residue_1_C5Hbond.check_interaction == True:
@@ -3558,7 +3558,7 @@ def task(trajectory, pair, frame):
         #..... Residue 2
         try:
             # search C5-Hbond
-            residue_2_C5Hbond = mci.C5_hydrogen_bond(trajectory, pair[1], frame=frame)
+            residue_2_C5Hbond = C5_hydrogen_bond(trajectory, pair[1], frame=frame)
 
             # check if exist for residue 2 or not
             if residue_2_C5Hbond.check_interaction == True:
@@ -3585,14 +3585,38 @@ def task(trajectory, pair, frame):
 
 
 #----- Function to analyse the whole system -----
-def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_distance_contact=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"):
+def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"):
     """
     DESCRIPTION
+        In a system (protein/complex) analyse all possible pairs (or given pairs) and return a complete table of their interaction types,
+        with: 
+            - Coulomb and Lennard-Jones energyes as calculated by openMM using both AMBER and CHARMM,
+            - Presence/Absence of C5-Hbond for each residue perfoming the pair.
 
     ARGUMENTS
+        trajectory    MDTraj trajectory.
 
     OPTIONAL ARGUMENTS
-    
+        frame               Frame ID on which to perform the analysis.
+                            Default value: 0
+        
+        list_pairs          List of pair of residue. By default take all possible pair in the system.
+                            Else can be set by user, using this format: [[id1,id2], [id3,id4], ...]
+        
+        MAX_CA_distance     Maximum distance between CA atom of the two residue.
+                            Pairs with a greater distance will be ignored.
+                            Default value: 14.0 angstrom
+
+        use_tqdm            Display tqdm proggress bar (True/False).
+                            Default value: False
+
+        write_outfile       Write the finale interaction table in CSV format (True/False).
+                            Default value: True
+
+        path_name_outfile   Path, containing the name, of the exported CSV table.
+                            By default the file is exported in the curent location
+                            and the name: "interaction_table_whole_system.csv"
+                            Custom: "my/path/interaction_table_whole_system.csv"
     """
     #===== Initialize trajectory variable =====
     trajectory = trajectory[frame]
@@ -3607,14 +3631,16 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_di
         list_residue_pairs = list_pairs
 
         
-    #===== Select only pairs with CA-CA distance <= MAX_distance_contact =====
+    #===== Select only pairs with CA-CA distance <= MAX_CA_distance =====
+    # use MDTraj to compute distances between all pairs
     all_distances_indices = md.compute_contacts(trajectory, contacts=list_residue_pairs, scheme='ca')
-
-    distances = all_distances_indices[0][0] *10 #*10 to convert nm to angstrom
+    
+    # extract distance and pairs ID
+    distances = all_distances_indices[0][0] *10   #*10 to convert nm to angstrom
     pairs     = all_distances_indices[1]
 
-    # Create a boolean mask for distances <= MAX_distance_contact
-    mask = distances <= MAX_distance_contact
+    # Create a boolean mask for distances <= MAX_CA_distance
+    mask = distances <= MAX_CA_distance
 
     # Use the mask to filter pairs arrays
     filtered_pairs = pairs[mask]
