@@ -405,7 +405,7 @@ class cys_bridge:
         
         #===== Check the interaction using distance parameters =====
         # compute geometric parameters
-        self.geometry = bridge_geomerty(traj, self.residue_A, self.residue_B)
+        self.geometry = bridge_geomerty(self.traj, self.residue_A, self.residue_B)
 
         # Geometric (distance) checking
         if (self.MIN_distance_CA <= self.geometry.distance_CA) and (self.geometry.distance_CA <= self.MAX_distance_CA) \

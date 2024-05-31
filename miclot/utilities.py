@@ -1069,17 +1069,13 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
     df_filtered_protein_region.replace('support', 'P', inplace=True)
     df_filtered_protein_region.replace('core', 'C', inplace=True)
 
-    # create lists containing only chainID an their identityt (receptor or ligand)
-    list_chainID = list(set(df_filtered_protein_region['chainID'].to_list()))
-    list_chainID_identity = list(set(df_filtered_protein_region['identity'].to_list()))
-
     # initialise the new dataframe
-    df_sequence_protein_region = pd.DataFrame({'chainID':list_chainID,
-                                               'identity':list_chainID_identity,
-                                              })
+    df_sequence_protein_region = df_filtered_protein_region[['chainID', 'identity']].copy()
+    # remove duplicate rows
+    df_sequence_protein_region.drop_duplicates(inplace=True)
 
-    # initialise a list to store all protein_region in sequence format
-    list_sequence_protein_region = []
+    # create lists containing only chainID an their identityt (receptor or ligand)
+    list_chainID = list(df_sequence_protein_region['chainID'].to_list())
 
     # for each method (colum in the 'df_filtered_protein_region') convert get the
     for method in columns_protein_region:

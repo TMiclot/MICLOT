@@ -9,6 +9,8 @@ Description ... It's work so Well
 
 This part provide a brief introduction to the software.
 
+Please follow [installation instructions](__installation.md).
+
 To start exploring the software, you can take look at the [tutorials](../Tutorial/Tutorials.md).
 
 

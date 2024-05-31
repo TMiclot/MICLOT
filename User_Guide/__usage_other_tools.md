@@ -1,6 +1,6 @@
 [User Guide home](Manual.md)
 
-# Prepare a structure
+# Tools
 
 All commands come from `miclot.utilities`
 

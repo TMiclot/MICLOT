@@ -16,6 +16,9 @@ We recommend using a Python environment with [Conda](https://docs.conda.io/proje
 | Pandas |||||
 | scikit-spatial |||||
 | OpenMM |||||
+| PDB2PQR |||||
+| matplotlib |||||
+| pdbfixer |||||
 
 ### 2.1 Simple way: use the *miclot.yml* file
 
