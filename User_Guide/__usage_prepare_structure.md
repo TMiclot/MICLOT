@@ -5,7 +5,7 @@
 All commands come from `miclot.utilities`
 
 
-## 1. Add missing atoms & Rename residues by their protonated state
+## 1. Add missing atoms & Rename residues with their protonation state
 **pbd2pqr_parse**(pdb_file_path, *force_field='AMBER', ph=7.0, write_logfile=True*)
 
 ### Description
@@ -75,49 +75,15 @@ One PDB file containg the added bonds is also saved.
 
 
 
-## 3. Correlate PDB with MDTraj topology
 
-**mdtraj_chainID_2_chainName**(pdb_file_path, *write_outfile=True*)
 
-### Description
 
-Correlates a PDB file with its topology in MDTraj.
-
-The command returns two dictionaries:
-
-- convert chainID to chainName
-- convert chainName to chainID
-
-The command also writes three output files (as CSV):
-
-- correspondence between mdtraj toppology and PDB file
-- chainID and their corresponding chainName
-- chainName and their corresponding chainID
+## 3. Minimize structure using OpenMM
 
 > [!IMPORTANT]
-> Depending on the PDB file, MDTraj may use different IDs for the same chain name in the PDB file.
+> This command perform vaccum minimization. It mean that theit is no explicit/implicit force field define for the minimization process. So it assume their is no solvent (water, ions, ...) in your pdb file.
 
-### Arguments
-
-| Argument | Format | Description | Requirement |
-| -------- | --- | --- | --- |
-| pdb_file_path | string  | Path to the PDB file.  | mandatory |
-| write_outfile | boolean | If you want to write the output CSV files. | optional |
-
-### Returns
-
-The command return two dictionnaries: *dict_chainID_2_chainName, dict_chainName_2_chainID*
-
-| Return | Format | Description |
-| ------ | ------ | --- |
-| dict_chainID_2_chainName | dictionnary | Convert MDTraj chainID to PDB chainName. |
-| dict_chainName_2_chainID | dictionnary | Convert PDB chainName to MDTraj chainID. |
-
-
-
-
-
-## 4. Minimize structure using OpenMM
+**def minimize_pdb**(pdb_file_path, *force_field='amber', max_iterations=100, restrain_heavy_atoms=True, constant=1.0e+5*)
 
 ### Description
 
@@ -126,14 +92,13 @@ The command return two dictionnaries: *dict_chainID_2_chainName, dict_chainName_
 
 This command is a parser to minimize a structure using [openMM](https://openmm.org/). It generate a PDB file and an output file in CSV format containing the energy of the structure at each step of the minimization:
 
-- system energy: the current potential energy of the system
-- restraint energy: the energy of the harmonic restraints
+- system energy: the current potential energy of the system (in kJ/mol)
+- restraint energy: the energy of the harmonic restraints (in kJ/mol)
 - restraint strength: the force constant of the restraints (in kJ/mol/nm^2)
 - max constraint error: the maximum relative error in the length of any constraint
 
 For more details, the options: `nonbondedMethod=NoCutoff, constraints=HBonds` are used. The first ensure all Coulomb and Lennar-Jones force a re calculated without cutoff, the second ensure *the lengths of all bonds that involve a hydrogen atom are constrained*.
 
-**def minimize_pdb**(pdb_file_path, *force_field='amber', max_iterations=100, restrain_heavy_atoms=True, constant=1.0e+5*)
 
 ### Arguments 
 
@@ -141,7 +106,7 @@ For more details, the options: `nonbondedMethod=NoCutoff, constraints=HBonds` ar
 | -------- | --- | --- | --- |
 | pdb_file_path | string  | Path to the PDB file. | mandatory |
 | force_field | string | Force field to use. Values are 'amber' or 'charmm'. <br/> Default value: 'amber' | optional |
-| max_iterations | integer | Maximum number of iterations. <br/> Default value: 100 | optional |
+| max_iterations | integer | Maximum number of iterations. To minimize the structure until the results converge regardless the number of iterations step, you must set the value at 0. <br/> Default value: 100 | optional |
 | restrain_heavy_atoms | Apply restain force to heavy atom to avoid them moving too far from their initial position. It's possible to change the constant force value with the argument 'constant'. <br/> Default value: True | optional |
 | constant | Constant force value (in kJ/nm) for the force used to restrain heavy atoms. <br/> Default value: 1.0e+5 | optional |
 

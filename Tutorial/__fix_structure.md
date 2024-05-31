@@ -57,9 +57,7 @@ traj.save(f'name_noSolvent.pdb')
 
 ## 1. Add missing atoms and hydrogens & Check protonation state
 
-Using PDB2PQR-APBS with Propka (or [OpenMM](https://openmm.org/))
-
-It can be easly (and graphically) done using the PDB2PQR server: [https://server.poissonboltzmann.org/pdb2pqr](https://server.poissonboltzmann.org/pdb2pqr). Or using the script below:
+Using PDB2PQR-APBS with Propka (or [OpenMM](https://openmm.org/)). It can also be easly (and graphically) done using the PDB2PQR server: [https://server.poissonboltzmann.org/pdb2pqr](https://server.poissonboltzmann.org/pdb2pqr). Or using the script below:
 
 **Code**
 

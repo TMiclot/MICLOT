@@ -2,6 +2,8 @@
 
 # Get structure properties
 
+All commands come from `miclot.utilities`
+
 ## 1. Sequence and Secondary structure
 
 **get_sequence_secstruct**(pdb_file_path, *write_outfile=True*)
@@ -76,9 +78,7 @@ It also write 3 output files in CSV format:
 The interface is calculated as follow:
 
 $$
-\begin{equation}
 I = ( {SASA}_{receptor} + {SASA}_{ligand} ) - {SASA}_{complex}
-\end{equation}
 $$
 
 ### Arguments

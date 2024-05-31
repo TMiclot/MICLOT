@@ -38,6 +38,7 @@ This part provide information about the classes and methods available in MICLOT.
 - [Identify Cys-Cys bridge](__usage_identify_CysCys_bridges.md)
 - [Calculate free energy of interacting residues or of a complex](__usage_calculate_free_energy.md)
 - [Atoms & Amino acids Database](__usage_database.md)
+- [Other tools](__usage_other_tools.md)
 
 >[!TIP]
 > For some cases you may want to limit the CPU usage, 2 ways are possible.

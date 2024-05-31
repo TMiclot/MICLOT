@@ -435,7 +435,10 @@ def get_sequence_secstruct(pdb_file_path, write_outfile=True):
 # The class can have any name but it must subclass MinimizationReporter.
 class MyMinimizationReporter(MinimizationReporter):
     # within the class you can declare variables that persist throughout the minimization
-    
+
+    def set_outfile_path(self, outfile_path):
+        self.outfile_path = outfile_path
+
     # you must override the report method and it must have this signature.
     def report(self, iteration, x, grad, args):
         '''
@@ -470,7 +473,7 @@ class MyMinimizationReporter(MinimizationReporter):
         # each iteration of the minimization.
         
         # The 'iteration', 'current energy', 'restraint energy', 'restraint strength' are wrote in an output file.            
-        output_file = open('minimization_out.csv', "a")
+        output_file = open(f"{self.outfile_path}_minimization_log.csv", "a")
         output_file.write(f"{iteration},{args['system energy']},{args['restraint energy']},{args['restraint strength']},{args['max constraint error']}\n")
         output_file.close()
 
@@ -506,19 +509,20 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrai
                                 Default value: 1.0e+5
     """
     #----- Clear existing output file and minimized pdb -----
-    # remove the minimization output file if it exist
-    if os.path.exists("minimization_out.csv"):
-        os.remove("minimization_out.csv")
-        
     # Get the output path with the original PDB name
     file_path = pdb_file_path.replace('.pdb', '') # Replace '.pdb' with an empty string
+
+    # remove the minimization output file if it exist
+    if os.path.exists(f"{file_path}_minimization_log.csv"):
+        os.remove(f"{file_path}_minimization_log.csv")
+        
     # remove the minimized pdb if exist
     if os.path.exists(f'{file_path}_minimized.pdb'):
         os.remove(f'{file_path}_minimized.pdb')
     
     #----- create output file ----
-    out = open('minimization_out.csv', "w")
-    out.write("Iteration,System energy (kJ/mol),Harmonic restraints energy (kJ/mol),Restraint force constant (kJ/mol/nm^2),Constraint maximum relative error\n")
+    out = open(f'{file_path}_minimization_log.csv', "w")
+    out.write("iteration,system_energy,harmonic_restraints_energy,restraint_force_constant,constraint_maximum_relative_error\n")
     out.close()
     
     
@@ -528,8 +532,8 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrai
     pdb = PDBFile(pdb_file_path)
     
     # get the forcefield
-    if ff == 'amber':
-        forcefield = ForceField('amber14/protein.ff14SB.xml')
+    if force_field == 'amber':
+        forcefield = ForceField('amber14-all.xml')
     elif force_field == 'charmm':
         forcefield = ForceField('charmm36.xml')
     else:
@@ -564,6 +568,7 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrai
     
     # set minimization reporter, to export the log file
     reporter = MyMinimizationReporter()
+    reporter.set_outfile_path(outfile_path=file_path)
     
     # perform the minimization
     simulation.minimizeEnergy(maxIterations=max_iterations, reporter=reporter)

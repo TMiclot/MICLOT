@@ -22,6 +22,7 @@ import mdtraj as md
 import pandas as pd
 pd.options.mode.copy_on_write = True
 from tqdm import tqdm
+from itertools import combinations
 
 
 
@@ -393,6 +394,7 @@ class cys_bridge:
         elif self.resiude_A_name != self.resiude_B_name and self.resiude_A_name in ["CYS","SEC"] and self.resiude_B_name in ["CYS","SEC"]:
             self.MAX_distance_XX_default = 2.27
             self.bridge_type = "selenosulfide"
+
             
         
         
@@ -529,7 +531,7 @@ class cys_bridge:
 #===== Function to check bridge into an entire PDB file
 #=====================================================
 
-def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True, use_tqdm=True):
+def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True, use_tqdm=False):
     """
     DESCRIPTION
         This command check a PDB structure to identify all CYS-CYS bridges.
@@ -557,7 +559,7 @@ def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True, use_tqdm=True):
     traj = md.load(pdb_file, top=pdb_file)
 
     #===== Get index of all CYS and SEC in the structure (without redundancy) =====
-    list_all_cys = set(traj.topology.atom(i).residue.index for i in traj.topology.select("protein and element S Se"))
+    list_all_cys = set(traj.topology.atom(i).residue.index for i in traj.topology.select("protein and element S Se and not resname MET MSE"))
 
     #===== create a list of all atom pair without duplicate =====
     list_cys_pair = [tuple(sorted(i)) for i in list(combinations(list_all_cys , 2))]
@@ -655,7 +657,7 @@ def cys_bridges_inPDB(pdb_file, outfile=True, logfile=True, use_tqdm=True):
         name = pdb_file.split('.')[0]
         
         # Export DataFrame to CSV file
-        df.to_csv(f'{name}_log.csv', index=False)  # Set index=False to exclude row indices
+        df.to_csv(f'{name}_CsyCys_bridges_log.csv', index=False)  # Set index=False to exclude row indices
 
 
     
