@@ -7,6 +7,18 @@ This part explains all the geometric (distance, angle) and energetic (when avail
 >[!IMPORTANT]
 >It is important to note that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
 
+## Interaction region
+
+All amino acid can be devided into two region: backbone and side chain. It mean that any interaction can take place in this region, if the nature of the given interaction allows. As consequence it is possible to identify 
+
+| Interaction region      | Description |
+| ----------------------- | ----------- |
+| Backbone - Backbone     | Interaction take place between the backbones of the tow residues. |
+| Side chain - Side chain | Interaction take place between the side chains of the tow residues. |
+| Backbone - Side chain   | Interaction take place between the backbone of one residue and the side chain of the other. |
+
+
+
 
 ## Relation between residue interaction types
 
@@ -18,11 +30,107 @@ This part explains all the geometric (distance, angle) and energetic (when avail
 
 
 
+## 1. $n \rightarrow \pi^*$
 
-## 1. 
+$C=O \cdots C=O$
+
+### 1.1. Description
+
+Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone.
+
+
+### 1.2. Geometric parameters
+
+<img src="./pictures/n-pi.png" width="200"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
+
+- Distance: $d_{O\cdots C} \approx 3.0$ *Å*
+- Angle: $\widehat{OC\cdots O}\approx 102.0$ *degree*
+
+
+### 1.3. Energy
+
+$-0.7 \leq E \leq -0.3$ *kcal/mol*
+
+
+### 1.4. Subtypes
+
+<img src="./pictures/n-pi_subtypes.png" width="400"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
 
 
 
+
+
+## 2. C-bond
+
+$Z-C^{sp3} \cdots O=C$
+
+### 2.1. Description
+
+Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization. <br/> Z is N, C or O.
+
+### 1.2. Geometric parameters
+
+- Distance: $2.5 \leq d_{C \cdots O} \leq 3.6$
+- Angle: $160 \leq \widehat{Z-C\cdots O}\leq 180$
+- Angle: $160 \leq \widehat{C\cdots O=C}\leq 180$
+
+### 1.3. Energy
+
+- Can be up to -4 *kcal/mol*.
+
+The dimerization energy ($D_0$) with zeropoint vibrational energy correction is calculated according to the formula of [Mundlapati *et al.*, 2018]( https://doi.org/10.1002/anie.201811171).
+> [...] can be used to estimate the Z−C⋅⋅⋅O=C C-bond energy very precisely just by knowing the C⋅⋅⋅O distances. [...] The estimated C-bond energies in proteins are in the range of −2 to −22 kJ mol−1.
+
+Values are in kJ/mol.
+
+$$
+D_0 = e^{ \ln(22.2) - 22.2 \times 10^6 \times e^{\frac{-d_{C\dots O}}{0.184}} } -22.2
+$$
+
+### 1.4. Carbon atoms involved in C-bond
+$C^{sp3}$. is a carbon atom in a tetrahedral configuration; it is bonded to four other atoms (or groups) with single bonds [(Muller, P. , 1994)](https://doi.org/10.1351/pac199466051077). For example, the carbon in methan, formula: CH4 is a $C^{sp3}$.
+
+| Amino acid    | $C^{sp3}$ atom names               | Number of $C^{sp3}$ | Carbonyl oxygen | Number of carbonyl oxygen |
+| ------------- | ---------------------------------- | ------------------- | --------------- | ------------------------- |
+| Backbone      | CA                                 | 1                   | O               | 1                         |
+| ALA           | CB                                 | 1                   | O               | 1                         |
+| ARG           | CB, CG, CD                         | 3                   | O               | 1                         |
+| ASN           | CB                                 | 1                   | O, OD1          | 2                         |
+| ASP           | CB                                 | 1                   | O, OD1          | 2                         |
+| CYS           | CB                                 | 1                   | O               | 1                         |
+| GLN           | CB, CG                             | 2                   | O, OE1          | 2                         |
+| GLU           | CB, CG                             | 2                   | O, OE1          | 2                         |
+| GLY           | None                               | 0                   | O               | 1                         |
+| HIS           | CB                                 | 1                   | O               | 1                         |
+| ILE           | CB, CG1, CG2, CD                   | 4                   | O               | 1                         |
+| LEU           | CB, CG, CD1, CD2                   | 4                   | O               | 1                         |
+| LYS           | CB, CG, CD, CE                     | 4                   | O               | 1                         |
+| MET           | CB, CG, CE                         | 3                   | O               | 1                         |
+| PHE           | CB                                 | 1                   | O               | 1                         |
+| PRO           | CB, CG, CD                         | 3                   | O               | 1                         |
+| SER           | CB                                 | 1                   | O               | 1                         |
+| THR           | CB, CG2                            | 2                   | O               | 1                         |
+| TRP           | CB                                 | 1                   | O               | 1                         |
+| TYR           | CB                                 | 1                   | O               | 1                         |
+| VAL           | CB, CG1, CG2                       | 3                   | O               | 1                         |
+
+
+
+
+
+
+<!---
+## 2. 
+
+### 2.1. Description
+
+### 1.2. Geometric parameters
+
+### 1.3. Energy
+
+### 1.4. Subtypes
+
+--->
 
 ## References
 

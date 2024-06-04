@@ -59,6 +59,13 @@ This part provide information about the classes and methods available in MICLOT.
 > os.sched_setaffinity(pid, range(max_cpu)) 
 > ```
 
+>[!TIP]
+> I case you over use your computer ressources, or want to kill the process, you can use this command:
+>
+> ```bash
+> pkill -9 python
+> ```
+
 
 
 * * *

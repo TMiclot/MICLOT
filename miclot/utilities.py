@@ -1320,7 +1320,7 @@ def fix_topology_bonds(pdb_file_path, check_clash=False, save_pdb=True, factor_m
         # Check if the residue has at least two atoms
         if len(list(residue.atoms)) >= 2:
             list_residues_atoms_indices = [i.index for i in residue.atoms]
-            list_atoms_to_link = identiy_unbondeed_atoms_and_clash(trajectory, list_residues_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
+            list_atoms_to_link = identiy_unbondeed_atoms_and_clash(traj, list_residues_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
         
 
     #===== Check for S/Se-S/Se bonds =====
@@ -1332,7 +1332,7 @@ def fix_topology_bonds(pdb_file_path, check_clash=False, save_pdb=True, factor_m
     list_SSE_atoms_indices = traj.topology.select("element S Se")
     
     # Add disulfide, diselenide, selenosulfide bonds to the list, if anny
-    list_atoms_to_link = identiy_unbondeed_atoms_and_clash(trajectory, list_SSE_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
+    list_atoms_to_link = identiy_unbondeed_atoms_and_clash(traj, list_SSE_atoms_indices, list_atoms_to_link, check_clash, factor_max_distance, factor_min_distance)
      
     
     #===== Add new bond to the topology =====

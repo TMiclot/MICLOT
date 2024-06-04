@@ -90,7 +90,9 @@ If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
 
 ## 1. C-bond
 
-**C_bond**(trajectory, res_index_A, res_index_B, *frame=0*)
+**C_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=3.6, MIN_distance=2.5, \
+                 MAX_angle_COC=180.0, MIN_angle_COC=160.0, MAX_angle_ZOC=180.0, MIN_angle_ZOC=160.0, \
+                 MAX_energy=-2.0, MIN_energy=-22.2*)
 
 ### Description
 
@@ -104,6 +106,14 @@ Identify if their is C-bond interaction between C(sp3) with N or O or S.
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
+| MAX_distance  | float | Maximum C-O distance. <br/> Default value: 3.6 angstrom |
+| MIN_distance  | float | Mimimum C-O distance. <br/> Default value: 2.5 angstrom |
+| MAX_angle_COC | float | Maximum C..O=C angle. <br/> Default value: 180.0 degree |
+| MIN_angle_COC | float | Minimum C..O=C angle. <br/> Default value: 160.0 degree |
+| MAX_angle_ZOC | float | Maximum Z-O...C angle. <br/> Default value: 180.0 degree |
+| MIN_angle_ZOC | float | Minimum Z-O...C angle. <br/> Default value: 160.0 degree |
+| MAX_energy    | float | Maximum energy of the interaction. <br/> Default value: -2.0 kJ/mol |
+| MIN_energy    | float | Minimum energy of the interaction. <br/> Default value: -22.0 kJ/mol |
 
 ### Properties
 

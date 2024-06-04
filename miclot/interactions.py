@@ -148,9 +148,10 @@ class C5_hydrogen_bond:
 #=====================================================
 #===== Class for C-bond
 #=====================================================
-
 class C_bond:
-    def __init__(self, trajectory, res_index_A, res_index_B, frame=0):
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=3.6, MIN_distance=2.5, \
+                 MAX_angle_COC=180.0, MIN_angle_COC=160.0, MAX_angle_ZOC=180.0, MIN_angle_ZOC=160.0, \
+                 MAX_energy=-2.0, MIN_energy=-22.2):
         """
         INTERACTION TYPE    C-bond
         SUBTYPE(S)          No
@@ -166,12 +167,40 @@ class C_bond:
        OPTIONAL ARGUMENTS
             frame    Frame ID on which to perform the analysis.
                      Default value: 0
+                     
+            MAX_distance   Maximum C-O distance
+                           Default value: 3.6 angstrom
+            MIN_distance   Mimimum C-O distance
+                           Default value: 2.5 angstrom
+            
+            MAX_angle_COC    Maximum C..O=C angle
+                             Default value: 180.0 degree
+            MIN_angle_COC    Minimum C..O=C angle
+                             Default value: 160.0 degree
+            
+            MAX_angle_ZOC    Maximum Z-O...C angle
+                             Default value: 180.0 degree
+            MIN_angle_ZOC    Minimum Z-O...C angle
+                             Default value: 160.0 degree
+            
+            MAX_energy    Maximum energy of the interaction
+                          Default value: -2.0 kJ/mol
+            MIN_energy    Minimum energy of the interaction
+                          Default value: -22.0 kJ/mol
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
         self.top = self.traj.topology
         self.res_A = res_index_A
         self.res_B = res_index_B
+        self.MAX_distance  = MAX_distance
+        self.MIN_distance  = MIN_distance
+        self.MAX_angle_COC = MAX_angle_COC
+        self.MIN_angle_COC = MIN_angle_COC
+        self.MAX_angle_ZOC = MAX_angle_ZOC
+        self.MIN_angle_ZOC = MIN_angle_ZOC
+        self.MAX_energy = MAX_energy
+        self.MIN_energy = MIN_energy
         
         
         
@@ -224,12 +253,12 @@ class C_bond:
         
 
         #===== Get atoms index for residue A =====
-        self.res_A_name = self.top.residue(self.res_A).name
+        self.res_A_name = self.traj.topology.residue(self.res_A).name
         self.atoms_Csp3_res_A = self.traj.topology.select(f"resid {self.res_A} and name {self.Csp3[self.res_A_name]}")
         self.atoms_O_res_A = self.traj.topology.select(f"resid {self.res_A} and name {self.O_carbonyl[self.res_A_name]}")
         
         #===== Get atoms index for residue B =====
-        self.res_B_name = self.top.residue(self.res_B).name
+        self.res_B_name = self.traj.topology.residue(self.res_B).name
         self.atoms_Csp3_res_B = self.traj.topology.select(f"resid {self.res_B} and name {self.Csp3[self.res_B_name]}")
         self.atoms_O_res_B = self.traj.topology.select(f"resid {self.res_B} and name {self.O_carbonyl[self.res_B_name]}")
         
@@ -267,8 +296,8 @@ class C_bond:
         # *10 is used to convert nm to angstrom
         distance = md.compute_distances(self.traj, [[index_O,index_C]])[0][0] *10
         
-        # Select distance between 2.5 and 3.6 A
-        if 2.5 <= distance and distance <= 3.6:
+        # Select distance between MIN_ MAX_ distances
+        if self.MIN_distance <= distance <= self.MAX_distance:
             
             # Get the O and C atoms in the topology
             atom_O = self.traj.topology.atom(index_O)
@@ -310,7 +339,7 @@ class C_bond:
                     energy = np.exp(np.log(22.2) - 22.2 * 10**6 * np.exp(-distance / 0.184)) - 22.2
                 
                     # Check if geometric and energetic parameters are correct
-                    if 160 <= theta_1 and theta_1 <=180 and 160 <= theta_2 and theta_2 <=180 and -22.2 <= energy and energy <=-2:
+                    if self.MIN_angle_COC <= theta_1 <= self.MAX_angle_COC and self.MIN_angle_ZOC <= theta_2 <= self.MAX_angle_ZOC and self.MIN_energy <= energy <= self.MAX_energy:
                         # create a set of atoms making the interaction
                         set_atoms_index_making_Cbond = {i for i in theta_1_atoms_indices[0] + theta_2_atoms_indices[0]}
                         # create a list containing all theta values
@@ -385,6 +414,7 @@ class C_bond:
         UNIT           kJ/mol
         """
         return [[i[3],i[0]] for i in self.list_Cbond] 
+     
 
 
 
