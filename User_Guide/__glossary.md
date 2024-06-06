@@ -8,7 +8,7 @@ This page ...
 >[!WARNING]
 > Don't confuse with [interaction types](#interaction-types).
 
-Classification of residues in contact, close together but not necessarily in interaction, using their physico-chemical properties. As defined by [Vagone *et al.* (2015)](https://doi.org/10.7554/eLife.07454), the classification can be based on polar/apolar/charged properties:
+Classification of residues in contact, close together but not necessarily in interaction, using their physico-chemical properties. As defined by [Vagone *et al.* (2015)](https://doi.org/10.7554/eLife.07454), the classification can be based on polar/apolar/charged (PAC) properties:
 
 - Apolar-Apolar
 - Apolar-Charged
@@ -17,7 +17,7 @@ Classification of residues in contact, close together but not necessarily in int
 - Charged-Polar
 - Polar-Polar
 
-Or it can be based on hydrophobic/hydrophilic properties:
+Or it can be based on hydrophobic/hydrophilic (HH) properties:
 
 - Hydrophilic-Hydrophilic
 - Hydrophilic-Hydrophobic

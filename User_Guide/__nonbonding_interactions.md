@@ -7,9 +7,10 @@ This part explains all the geometric (distance, angle) and energetic (when avail
 >[!IMPORTANT]
 >It is important to note that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
 
-## Interaction region
 
-All amino acid can be devided into two region: backbone and side chain. It mean that any interaction can take place in this region, if the nature of the given interaction allows. As consequence it is possible to identify 
+## A. Interaction regions
+
+All amino acid can be devided into two region : backbone and side chain. It mean that any interaction can take place in this region, if the nature of the given interaction allows. As consequence it is possible to identify :
 
 | Interaction region      | Description |
 | ----------------------- | ----------- |
@@ -19,32 +20,54 @@ All amino acid can be devided into two region: backbone and side chain. It mean 
 
 
 
+### A.1. Side chaine of aromatig ring
 
-## Relation between residue interaction types
+For aromatic residues, some interaction types can be specifit to the aromatic part of the side chain. This one can be divided into 2 areas : $\pi$ and quadropole. The figure below illustrates the difference.
+
+<img src="pictures/aromatic_ring_area.png" width="200">
+
+Considering the aromatic plane, the quadrupole are is conventionally identified bewteen $0˚ \leq \theta \leq 35.0˚$, while the $\pi$ are is identified between $60.0˚ \leq \theta ' \leq 90.0˚$.
+
+
+
+## B. Relation between residue interaction types
+
+
 
 <img src="pictures/interaction_diagram.png" width="650">
 
 *A hight quality version of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
 
+In this diagram and in the nomenclature used hereafter, the term *intermediate* designates an interaction between two residues whose subtype is not properly identified.
+- This may be due to rigid selection parameters. For example, if the limiting angle is 60.0˚ and the angle between the residues is 60.1°.
+- It's also possible that this is due to the structure not being fully relaxed, as can happen with crystal structures.
+- Finally, it may be due to the flexibility of the structure within which residues may have a slight mobility due to transient interaction between two subtypes.
+
+
+## C. Remark concerning Histidine
 
 
 
 
-## 1. $n \rightarrow \pi^*$
 
-$C=O \cdots C=O$
+##  1. $n \rightarrow \pi^*$
+
 
 ### 1.1. Description
 
-Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone.
+Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone:
+
+**Representation :** $C=O \cdots C=O$
 
 
 ### 1.2. Geometric parameters
 
-<img src="./pictures/n-pi.png" width="200"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
+<img src="pictures/n-pi.png" width="200"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
 
-- Distance: $d_{O\cdots C} \approx 3.0$ *Å*
-- Angle: $\widehat{OC\cdots O}\approx 102.0$ *degree*
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $d_{O\cdots C} \approx 3.0$ | Å |
+| Angle    | $\widehat{OC\cdots O}\approx 102.0$ | degree |
 
 
 ### 1.3. Energy
@@ -54,27 +77,29 @@ $-0.7 \leq E \leq -0.3$ *kcal/mol*
 
 ### 1.4. Subtypes
 
-<img src="./pictures/n-pi_subtypes.png" width="400"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
+<img src="pictures/n-pi_subtypes.png" width="400"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
 
 
 
 
 
-## 2. C-bond
-
-$Z-C^{sp3} \cdots O=C$
+##  2. C-bond
 
 ### 2.1. Description
 
-Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization. <br/> Z is N, C or O.
+Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization. <br/> *Z* is N, C or O.
 
-### 1.2. Geometric parameters
+**Representation :** $Z-C^{sp3} \cdots O=C$
 
-- Distance: $2.5 \leq d_{C \cdots O} \leq 3.6$
-- Angle: $160 \leq \widehat{Z-C\cdots O}\leq 180$
-- Angle: $160 \leq \widehat{C\cdots O=C}\leq 180$
+### 2.2. Geometric parameters
 
-### 1.3. Energy
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $2.5 \leq d_{C \cdots O} \leq 3.6$ | Å |
+| Angle    | $160 \leq \widehat{Z-C\cdots O}\leq 180$ | degree |
+| Angle    | $160 \leq \widehat{C\cdots O=C}\leq 180$ | degree |
+
+### 2.3. Energy
 
 - Can be up to -4 *kcal/mol*.
 
@@ -118,17 +143,78 @@ $C^{sp3}$. is a carbon atom in a tetrahedral configuration; it is bonded to four
 
 
 
+##  3. Chalcogen bond & S/Se mediated H-bond
+
+### 3.1. Description
+
+#### 3.1.1. Chalcogen bond
+
+> [Chalcogen bond is a] net attractive interaction between an electrophilic region associated with a chalcogen atom in a molecular entity and a nucleophilic region in another, or the same, molecular entity. ([Aakeroy *et al.*, 2019](https://doi.org/10.1515/pac-2018-0713))
+
+S/Se of cystein/methionine interact with the oxygen of an carboxnl group: backbone (O), ASN (OD1), ASP (OD1), GLN (OE1), GLU (OE1), or the nitorgen (ND1) of HIS, or the $\pi$ area of aromatic residues.
+
+#### 3.1.2. S/Se mediated H-bond
+
+...
+
+### 3.2. Geometric parameters
+
+Illustration of parameter used, with a sulfure atom as example. Parameters are the same for selenium.
+
+<img src="pictures/chalcogen_bond.png" width="500">
+
+Legend:
+
+- *X* : O or N atom.
+- $a_1$, $a_2$ : Bonded atoms to S.
+- $C_{a_1-a_2}$ : Centroid of the tree atoms $a_1$, $a_2$, S. *It is not the center of mass, but the geometric center.*
+- $x'$ : Projection of the atom *X* on the plane defined by the tree atoms $a_1$, $a_2$, S.
+- $d_{S \cdots X}$ : Distance between S and X.
+- *CSX*  : Angle between the vectors $\overrightarrow{SC}$ and $\overrightarrow{SX}$.
+- $\Phi$ : Angle between the vectors $\overrightarrow{CS}$ and $\overrightarrow{Sx'}$.
+- $\theta$ : Angle between the normal vector of the plan and $\overrightarrow{SX}$.
+- $\sigma$ : Dihedral angle between $\overrightarrow{aC}$, $\overrightarrow{CS}$ and $\overrightarrow{SX}$. It can be calculated as the angle between the planes *a,C,S* and *C,S,X*.
+
+Parameters for chalcogen bonds:
+
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $d_{S/Se \cdots X} \leq 3.6$ | Å |
+| Angle    | $\sigma \leq 50$          | degree |
+| Angle    | $30 \leq \Phi \leq 60$    | degree |
+| Angle    | $\theta \leq 50$          | degree |
+| Angle    | $115 \leq {CSX} \leq 155$ | degree |
+
+Parameters for S/Se mediated H-bonds:
+
+| Type| Value | Unit |
+| --- | --- | --- |
+| Angle    | $50 < \sigma$    | degree |
+| Angle    | ${CSX} \leq 145$ | degree |
+
+For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \cdots A} \approx 136.5$
+
+### 3.3. Energy
+
+- Chalcogen bond: Can be up to -3 *kcal/mol*
+- S-mediated H-bond: $-5.5 \leq E \leq -4.5$ *kcal/mol*
+- Se-mediated H-bond: Can be up to -7 *kcal/mol*
+
+#### 3.4. Segregate chalcogen bond and S/Se mediated H-bond
+
+...
+
+
+
+
+
 
 <!---
-## 2. 
-
-### 2.1. Description
-
-### 1.2. Geometric parameters
-
-### 1.3. Energy
-
-### 1.4. Subtypes
+##  3. 
+### 3.1. Description
+### 3.2. Geometric parameters
+### 3.3. Energy
+### 3.4. Subtypes
 
 --->
 

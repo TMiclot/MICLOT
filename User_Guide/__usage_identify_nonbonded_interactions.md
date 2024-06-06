@@ -96,7 +96,7 @@ If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
 
 ### Description
 
-Identify if their is C-bond interaction between C(sp3) with N or O or S.
+Identify if their is C-bond interaction between C(sp3) with O.
 
 ### Arguments
 
@@ -198,7 +198,7 @@ Identify interaction between tow hydrophobic residue or clash between hydrophili
 
 
 
-## 4. Charge clash & Charge repulsion *****
+## 4. Charge clash & Charge repulsion
 
 **charge_clash_repulsion**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_CA=13.0, MIN_distance_charges=5.0*)
 
