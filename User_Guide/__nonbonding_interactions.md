@@ -28,17 +28,21 @@ For aromatic residues, some interaction types can be specifit to the aromatic pa
 
 Considering the aromatic plane, the quadrupole are is conventionally identified bewteen $0˚ \leq \theta \leq 35.0˚$, while the $\pi$ are is identified between $60.0˚ \leq \theta ' \leq 90.0˚$.
 
+> [!NOTE]
+> An electrostatically driven interaction appears when the distance betwen the COM of the aromatic ring and a target (atom, or other COM of aromatic ring) is $d \leq 4.5$ Å.
+
 
 
 ## B. Relation between residue interaction types
 
-
+Non-binding interactions are not to be considered independently, or in isolation from others. In fact, many types of interaction share identical physico-chemical properties. Likewise, their subtypes may share similar geometric organization.
 
 <img src="pictures/interaction_diagram.png" width="650">
 
 *A hight quality version of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
 
 In this diagram and in the nomenclature used hereafter, the term *intermediate* designates an interaction between two residues whose subtype is not properly identified.
+
 - This may be due to rigid selection parameters. For example, if the limiting angle is 60.0˚ and the angle between the residues is 60.1°.
 - It's also possible that this is due to the structure not being fully relaxed, as can happen with crystal structures.
 - Finally, it may be due to the flexibility of the structure within which residues may have a slight mobility due to transient interaction between two subtypes.
@@ -46,9 +50,24 @@ In this diagram and in the nomenclature used hereafter, the term *intermediate* 
 
 ## C. Remark concerning Histidine
 
+Histidine can participate in $\pi-\pi$ stacking thank to its imidazole group, or in $\pi-$ anion ([Lucas *et al.*, 2016](https://doi.org/10.1039/c5sc01386k) and [Liao *et al.*, 2013](https://doi.org/10.1186/1752-153X-7-44)). In $\pi-$ cation, histidine can participate as a $\pi-$ system or as a cation when protonated: HIP ([Gallivan and Dougherty, 1999](https://doi.org/10.1073/pnas.96.17.9459)).
+
+
+## D. Overview of interaction types
+
+> [!NOTE]
+> Detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
+
+| Interaction type | Energy (kcal/mol) | Distance (Å) | Angle (degree) | Illustration | Description |
+| ---------------- | ----------------- | ------------ | -------------- | ------------ | ----------- |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
 
 
 
+
+# Detailed description of non-bonding interactions
 
 ##  1. $n \rightarrow \pi^*$
 
@@ -70,16 +89,14 @@ Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone:
 | Angle    | $\widehat{OC\cdots O}\approx 102.0$ | degree |
 
 
-### 1.3. Energy
-
-$-0.7 \leq E \leq -0.3$ *kcal/mol*
-
-
-### 1.4. Subtypes
+### 1.3. Subtypes
 
 <img src="pictures/n-pi_subtypes.png" width="400"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
 
 
+### 1.4. Energy
+
+$-0.7 \leq E \leq -0.3$ *kcal/mol*
 
 
 
@@ -87,9 +104,9 @@ $-0.7 \leq E \leq -0.3$ *kcal/mol*
 
 ### 2.1. Description
 
-Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization. <br/> *Z* is N, C or O.
+Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization. 
 
-**Representation :** $Z-C^{sp3} \cdots O=C$
+**Representation :** $Z-C^{sp3} \cdots O=C$ <br/> Where *Z* is N, C or O.
 
 ### 2.2. Geometric parameters
 
@@ -112,32 +129,32 @@ $$
 D_0 = e^{ \ln(22.2) - 22.2 \times 10^6 \times e^{\frac{-d_{C\dots O}}{0.184}} } -22.2
 $$
 
-### 1.4. Carbon atoms involved in C-bond
+### 2.4. Carbon atoms involved in C-bond
 $C^{sp3}$. is a carbon atom in a tetrahedral configuration; it is bonded to four other atoms (or groups) with single bonds [(Muller, P. , 1994)](https://doi.org/10.1351/pac199466051077). For example, the carbon in methan, formula: CH4 is a $C^{sp3}$.
 
-| Amino acid    | $C^{sp3}$ atom names               | Number of $C^{sp3}$ | Carbonyl oxygen | Number of carbonyl oxygen |
-| ------------- | ---------------------------------- | ------------------- | --------------- | ------------------------- |
-| Backbone      | CA                                 | 1                   | O               | 1                         |
-| ALA           | CB                                 | 1                   | O               | 1                         |
-| ARG           | CB, CG, CD                         | 3                   | O               | 1                         |
-| ASN           | CB                                 | 1                   | O, OD1          | 2                         |
-| ASP           | CB                                 | 1                   | O, OD1          | 2                         |
-| CYS           | CB                                 | 1                   | O               | 1                         |
-| GLN           | CB, CG                             | 2                   | O, OE1          | 2                         |
-| GLU           | CB, CG                             | 2                   | O, OE1          | 2                         |
-| GLY           | None                               | 0                   | O               | 1                         |
-| HIS           | CB                                 | 1                   | O               | 1                         |
-| ILE           | CB, CG1, CG2, CD                   | 4                   | O               | 1                         |
-| LEU           | CB, CG, CD1, CD2                   | 4                   | O               | 1                         |
-| LYS           | CB, CG, CD, CE                     | 4                   | O               | 1                         |
-| MET           | CB, CG, CE                         | 3                   | O               | 1                         |
-| PHE           | CB                                 | 1                   | O               | 1                         |
-| PRO           | CB, CG, CD                         | 3                   | O               | 1                         |
-| SER           | CB                                 | 1                   | O               | 1                         |
-| THR           | CB, CG2                            | 2                   | O               | 1                         |
-| TRP           | CB                                 | 1                   | O               | 1                         |
-| TYR           | CB                                 | 1                   | O               | 1                         |
-| VAL           | CB, CG1, CG2                       | 3                   | O               | 1                         |
+| Amino acid    | $C^{sp3}$ atom names | Carbonyl oxygen |
+| ------------- | -------------------- | --------------- |
+| Backbone      | CA                   | O               |
+| ALA           | CB                   | O               |
+| ARG           | CB, CG, CD           | O               |
+| ASN           | CB                   | O, OD1          |
+| ASP           | CB                   | O, OD1          |
+| CYS           | CB                   | O               |
+| GLN           | CB, CG               | O, OE1          |
+| GLU           | CB, CG               | O, OE1          |
+| GLY           | *None*               | O               |
+| HIS           | CB                   | O               |
+| ILE           | CB, CG1, CG2, CD     | O               |
+| LEU           | CB, CG, CD1, CD2     | O               |
+| LYS           | CB, CG, CD, CE       | O               |
+| MET           | CB, CG, CE           | O               |
+| PHE           | CB                   | O               |
+| PRO           | CB, CG, CD           | O               |
+| SER           | CB                   | O               |
+| THR           | CB, CG2              | O               |
+| TRP           | CB                   | O               |
+| TYR           | CB                   | O               |
+| VAL           | CB, CG1, CG2         | O               |
 
 
 
@@ -155,15 +172,21 @@ S/Se of cystein/methionine interact with the oxygen of an carboxnl group: backbo
 
 #### 3.1.2. S/Se mediated H-bond
 
-...
+Sulfur (S) or selenium (Se) are able to perform hydrogen bond and be a or hydorgen donor or hydorgen acceptor.
+
+**Representation (hydrogen donor):** $SH \cdots A$
+
+**Representation (hydrogen acceptor):** $S \cdots HD$
+
+#### 3.1.3. Segregate chalcogen bond and S/Se mediated H-bond
+
+Perfect segregation between the chalcogen bond and the S/Se mediated H-bond is not obvious. The geometric parameters of the two can be quite close, for example there is an overlap of values for the CSX angle. Here, the segregation will essentially take place with the value of the $\sigma$ dihedral angle.
 
 ### 3.2. Geometric parameters
 
 Illustration of parameter used, with a sulfure atom as example. Parameters are the same for selenium.
 
 <img src="pictures/chalcogen_bond.png" width="500">
-
-Legend:
 
 - *X* : O or N atom.
 - $a_1$, $a_2$ : Bonded atoms to S.
@@ -189,24 +212,188 @@ Parameters for S/Se mediated H-bonds:
 
 | Type| Value | Unit |
 | --- | --- | --- |
-| Angle    | $50 < \sigma$    | degree |
-| Angle    | ${CSX} \leq 145$ | degree |
+| Angle | $50 < \sigma$   | degree |
+| Angle | ${CSX} \leq 145$ | degree |
 
-For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \cdots A} \approx 136.5$
+For sulfur, prefered angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \cdots A} \approx 136.5$
+
 
 ### 3.3. Energy
 
-- Chalcogen bond: Can be up to -3 *kcal/mol*
-- S-mediated H-bond: $-5.5 \leq E \leq -4.5$ *kcal/mol*
-- Se-mediated H-bond: Can be up to -7 *kcal/mol*
-
-#### 3.4. Segregate chalcogen bond and S/Se mediated H-bond
-
-...
+| Interaction | Energy |
+| --- | --- |
+| Chalcogen bond     | Can be up to -3 *kcal/mol* |
+| S-mediated H-bond  | $-5.5 \leq E \leq -4.5$ *kcal/mol* |
+| Se-mediated H-bond | Can be up to -7 *kcal/mol* |
 
 
 
 
+##  4. Hydrogen bond
+
+### 4.1. Description
+
+> The hydrogen bond is an attractive interaction between a hydrogen atom from a molecule or amolecular fragment X–H in which X is more electronegative than H, and an atom or a group of atoms in the same or a different molecule, in which there is evidence of bond formation. [(Arunan *et al.*, 2011)](https://doi.org/10.1351/PAC-REC-10-01-02)
+
+### 4.2. Geometric parameters
+
+<img src="pictures/hbond.png" width="300">
+
+- *D*: Donor atom.
+- *H*: Hydrogen atom.
+- *A*: Acceptor atom.
+- *A'*: Bonded atom to acceptor (A) atom.
+
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $d_{D \cdots A} \leq 3 $   | Å |
+| Angle | $120 \leq \widehat{DH \cdots A}$ | degree |
+
+Diffrent method of identification are implemented in MDTraj:
+
+- [Baker-Hubbard](https://mdtraj.org/1.9.7/api/generated/mdtraj.baker_hubbard.html)
+- [Kabsch-Sander](https://mdtraj.org/1.9.7/api/generated/mdtraj.kabsch_sander.html)
+- [Wernet-Nilsson](https://mdtraj.org/1.9.7/api/generated/mdtraj.wernet_nilsson.html)
+
+
+### 4.3. Subtypes
+
+| Interaction subtype | Distance $d_{D\cdots A}$ (Å) |
+| ------------------- | ---------------------------- |
+| Regular             | $d \geq 2.7$                 |
+| Low barrier         | $2.4 \leq d \leq 2.6$        |
+| Single-well         | $d < 2.3$                    |
+
+
+### 4.4. Energy
+
+Can be up to -40 *kcal/mol*
+
+| Interaction subtype | Energy (*kcal/mol*) |
+| ------------------- | ------------------- |
+| Regular     | $-12 \leq E \leq -2.4$ |
+| Low barrier | $-24 \leq E \leq -12$ |
+| Single-well | $E \leq -24$ |
+
+
+### 4.5. Atoms involved in H-bond
+
+| Group      | Donor        | Acceptor    |
+| ---------- | ------------ | ----------- |
+| Backbone      | N            | O           |
+| ARG           | NE, NH1, NH2 |             |
+| ASN           | ND2          | OD1         |
+| ASP           |              | OD1, OD2    |
+| CYS           | SG           |             |
+| CYS (SEC)     | SE           |             |
+| CYS (CYH)     |              | SG (deprotonated) |
+| CYS (???)     |              | SE (deprotonated) |
+| GLN           | NE2          | OE1         |
+| GLU           |              | OE1, OE2    |
+| HIS           | ND1, NE2     | ND1, NE2, $\pi$ area |
+| HIS (HSD/HID) | ND1          | NE2, $\pi$ area      |
+| HIS (HSE/HIE) | NE2          | ND1, $\pi$ area      |
+| HIS (HSP/HIP) | ND1, NE2     |             |
+| LYS           | NZ           |             |
+| MET           |              | SD          |
+| MET (MSE)     |              | SE          |
+| PHE           |              | $\pi$ area  |
+| SER           | OG           | OG          |
+| THR           | OG1          | OG1         |
+| TRP           | NE1          | $\pi$ area  |
+| TYR           | OH           | OH, $\pi$ area |
+
+Modified from [IMGT website](https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/) and [old MDAnalysis guide](https://docs.mdanalysis.org/0.20.1/documentation_pages/analysis/hbond_analysis.html#id3).
+
+>[!WARNING]
+> Most identification methods only consider H-bonds involving O and N atoms as donor or acceptor. S/Se atoms and $\pi$ are not always considered.
+
+
+### 4.6. Non-Canonical H-bonds
+
+#### 4.6.1. Sulfur, or Selenium, mediated H-bond
+
+See the section [3. Chalcogen bond & S/Se mediated H-bond](#3-chalcogen-bond--sse-mediated-h-bond)
+
+
+#### 4.6.2. C5 H-bond
+
+##### 4.6.2.1. Description
+
+Intraresidue H-bond between carbonyl O and amino N atoms of the backbone. <br/> $\phi$ is the backbone dihedral angle $\widehat{CNC_{\alpha}C'}$ and $\phi$ is the backbone dihedral angle $\widehat{NC_{\alpha}C'N'}$.
+
+##### 4.6.2.2. Geometric parameters
+
+<img src="pictures/C5_hbond.png" width="150">
+
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $d_{D \cdots A} \leq 2.7 $  | Å |
+| Angle | $\phi \approx 140$ | degree |
+| Angle | $\psi \approx 140$ | degree |
+
+##### 4.6.2.3. Energy
+
+$E \approx -1.44$ *kcal/mol*
+
+
+#### 4.6.2. $\pi - H$ bond
+
+##### 4.6.2.1. Description
+ 
+Interaction involving the $\pi$ part of an aromatic cycle and an hydrogen (H).
+
+##### 4.6.2.2. Geometric parameters
+
+<img src="pictures/pi_hbond.png" width="200">
+
+- *C*: Center of mass of aromatic C atoms.
+- $H_p$: Projection of the H atom into the aromatic plane.
+
+| Type| Value | Unit |
+| --- | --- | --- |
+| Distance | $d_{D \cdots C} \leq 5.5 $  | Å |
+| Distance | $d_{H \cdots C} \leq 3 $  | Å |
+| Distance | $d_{H_p \cdots C} \leq 1.2 $  | Å |
+| Angle    | $\widehat{CHD} \geq 120$ | degree |
+
+##### 4.6.2.3. Energy
+
+$-2.5 \leq E \leq -1.0$
+
+
+
+
+##  5. Aromatic - Aromatic
+
+### 5.1. $\pi - \pi$ : Parallel & Offset
+
+#### 5.1.1. Description
+
+**Synonym:** *Offset* is also call *Displaced*
+
+#### 5.1.2. Geometric parameters
+
+#### 5.1.3. Energy
+
+$E \approx -3$
+
+
+
+### 5.3. $\pi -$ Quadrupole : T-shaped & Y-shaped
+
+#### 5.4.1. Description
+
+#### 5.4.2. Geometric parameters
+
+
+### 5.5. Quadrupole - Quadrupole
+
+#### 5.5.1. Description
+
+**Synonym:** Coplanar
+
+#### 5.5.2. Geometric parameters
 
 
 <!---
@@ -215,12 +402,12 @@ For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \c
 ### 3.2. Geometric parameters
 ### 3.3. Energy
 ### 3.4. Subtypes
-
 --->
 
-## References
 
-### R.1. General
+# References
+
+## R.1. General
 
 - Adhav, V. A. & Saikrishnan, K. The Realm of Unconventional Noncovalent Interactions in Proteins: Their Significance in Structure and Function. *ACS Omega* 8, 22268–22284 (2023). [https://doi.org/10.1021/acsomega.3c00205](https://doi.org/10.1021/acsomega.3c00205)
 - Protein interactions: the molecular basis of interactomics. (Wiley-VCH, 2023). ISBN: [978-3-527-83052-7](https://www.wiley.com/en-us/Protein+Interactions:+The+Molecular+Basis+of+Interactomics-p-9783527830527)
@@ -234,28 +421,28 @@ For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \c
 	- Řezáč, J. Non-Covalent Interactions Atlas benchmark data sets 5: London dispersion in an extended chemical space. *Phys. Chem. Chem. Phys.* 24, 14780–14793 (2022). [https://doi.org/10.1039/D2CP01602H ](https://doi.org/10.1039/D2CP01602H )
 
 
-### R.2. Hydrogen bond
+## R.2. Hydrogen bond
 
 - Arunan, E. et al. Definition of the hydrogen bond (IUPAC Recommendations 2011). *Pure and Applied Chemistry* 83, 1637–1641 (2011).[https://doi.org/10.1351/PAC-REC-10-01-02](https://doi.org/10.1351/PAC-REC-10-01-02)
 - McDonald, I. & Thornton, J. M. Atlas of Side-Chain and Main-Chain Hydrogen Bonding. [https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/](https://web.archive.org/web/20030811125954/http://www.biochem.ucl.ac.uk/~mcdonald/atlas/) (1994).
 	- McDonald, I. K. & Thornton, J. M. Satisfying Hydrogen Bonding Potential in Proteins. *Journal of Molecular Biology* 238, 777–793 (1994). [https://doi.org/10.1006/jmbi.1994.1334](https://doi.org/10.1006/jmbi.1994.1334)
 
-#### R.2.1. Water mediated H-bond
+### R.2.1. Water mediated H-bond
 
 - Petukhov, M., Rychkov, G., Firsov, L. & Serrano, L. H‐bonding in protein hydration revisited. *Protein Science* 13, 2120–2129 (2004). [https://doi.org/10.1110/ps.04748404](https://doi.org/10.1110/ps.04748404)
 
-#### R.2.2. $\pi-$ hydrogen bond 
+### R.2.2. $\pi-$ hydrogen bond 
 
 - Wang, J. & Yao, L. Dissecting C−H∙∙∙π and N−H∙∙∙π Interactions in Two Proteins Using a Combined Experimental and Computational Approach. *Sci Rep* 9, 20149 (2019). [https://doi.org/10.1038/s41598-019-56607-4](https://doi.org/10.1038/s41598-019-56607-4)
 
-#### R.2.3. C5 H-bond
+### R.2.3. C5 H-bond
 
 - Mundlapati, V. R. et al. N–H⋯X interactions stabilize intra-residue C5 hydrogen bonded conformations in heterocyclic α-amino acid derivatives. *Chem. Sci.* 12, 14826–14832 (2021). [https://doi.org/10.1039/D1SC05014A ](https://doi.org/10.1039/D1SC05014A )
 - Kumar, S. et al. Observation of a weak intra-residue C5 hydrogen-bond in a dipeptide containing Gly-Pro sequence. *The Journal of Chemical Physics* 151, 104309 (2019). [https://doi.org/10.1063/1.5115040](https://doi.org/10.1063/1.5115040)
 - Newberry, R. W. & Raines, R. T. A prevalent intraresidue hydrogen bond stabilizes proteins. *Nat Chem Biol* 12, 1084–1088 (2016). [https://doi.org/10.1038/nchembio.2206](https://doi.org/10.1038/nchembio.2206)
 
 
-### R.3. Aromatic involved interactions
+## R.3. Aromatic involved interactions
 
 - Cabaleiro-Lago, E. M. & Rodríguez-Otero, J. On the Nature of σ–σ, σ–π, and π–π Stacking in Extended Systems. *ACS Omega* 3, 9348–9359 (2018). [https://doi.org/10.1021%2Facsomega.8b01339](https://doi.org/10.1021%2Facsomega.8b01339)
 - Martinez, C. R. & Iverson, B. L. Rethinking the term “pi-stacking”. *Chem. Sci.* 3, 2191 (2012). [https://doi.org/10.1039/C2SC20045G](https://doi.org/10.1039/C2SC20045G)
@@ -264,45 +451,45 @@ For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \c
 - Brocchieri, L. & Karlin, S. Geometry of interplanar residue contacts in protein structures. *Proc. Natl. Acad. Sci. U.S.A.* 91, 9297–9301 (1994). [https://doi.org/10.1073/pnas.91.20.9297](https://doi.org/10.1073/pnas.91.20.9297)
 - Dalkas, G. A., Teheux, F., Kwasigroch, J. M. & Rooman, M. Cation–π, amino–π, π–π, and H‐bond interactions stabilize antigen–antibody interfaces. *Proteins* 82, 1734–1746 (2014). [https://doi.org/10.1002/prot.24527](https://doi.org/10.1002/prot.24527)
 
-#### R.3.1. Cation-$\pi$
+### R.3.1. Cation-$\pi$
 
 - Crowley, P. B. & Golovin, A. Cation–π interactions in protein–protein interfaces. *Proteins* 59, 231–239 (2005). [https://doi.org/10.1002/prot.20417](https://doi.org/10.1002/prot.20417)
 - Dougherty, D. A. The Cation−π Interaction. *Acc. Chem. Res.* 46, 885–893 (2013). [https://doi.org/10.1021/ar300265y](https://doi.org/10.1021/ar300265y)
 - Mahadevi, A. S. & Sastry, G. N. Cation−π Interaction: Its Role and Relevance in Chemistry, Biology, and Material Science. *Chem. Rev.* 113, 2100–2138 (2013). [https://doi.org/10.1021/cr300222d](https://doi.org/10.1021/cr300222d)
 - Gallivan, J. P. & Dougherty, D. A. Cation-π interactions in structural biology. *Proc. Natl. Acad. Sci. U.S.A.* 96, 9459–9464 (1999). [https://doi.org/10.1073/pnas.96.17.9459](https://doi.org/10.1073/pnas.96.17.9459)
 
-#### R.3.2. Anion-$\pi$
+### R.3.2. Anion-$\pi$
 
 - Lucas, X., Bauzá, A., Frontera, A. & Quiñonero, D. A thorough anion–π interaction study in biomolecules: on the importance of cooperativity effects. *Chem. Sci.* 7, 1038–1050 (2016). [https://doi.org/10.1039/C5SC01386K](https://doi.org/10.1039/C5SC01386K)
 - Schottel, B. L., Chifotides, H. T. & Dunbar, K. R. Anion-π interactions. *Chem. Soc. Rev.* 37, 68–83 (2008). [https://doi.org/10.1039/B614208G](https://doi.org/10.1039/B614208G)
 - Chakravarty, S., Ung, A. R., Moore, B., Shore, J. & Alshamrani, M. A Comprehensive Analysis of Anion–Quadrupole Interactions in Protein Structures. *Biochemistry* 57, 1852–1867 (2018). [https://doi.org/10.1021/acs.biochem.7b01006](https://doi.org/10.1021/acs.biochem.7b01006)
 
-#### R.3.3. HIS involved
+### R.3.3. HIS involved
 
 - Liao, S.-M., Du, Q.-S., Meng, J.-Z., Pang, Z.-W. & Huang, R.-B. The multiple roles of histidine in protein interactions. *Chemistry Central Journal* 7, 44 (2013). [https://doi.org/10.1186/1752-153X-7-44](https://doi.org/10.1186/1752-153X-7-44)
 - Heyda, J., Mason, P. E. & Jungwirth, P. Attractive Interactions between Side Chains of Histidine-Histidine and Histidine-Arginine-Based Cationic Dipeptides in Water. *J. Phys. Chem. B* 114, 8744–8749 (2010). [https://doi.org/10.1021/jp101031v](https://doi.org/10.1021/jp101031v)
 
 
-### R.4. Charge involved interactions (excluding $\pi-$ interactions)
+## R.4. Charge involved interactions (excluding $\pi-$ interactions)
 
-#### R.4.1. Salt bridge
+### R.4.1. Salt bridge
 
 - Kumar, S. & Nussinov, R. Close-Range Electrostatic Interactions in Proteins. ChemBioChem 3, 604 (2002). [https://doi.org/10.1002/1439-7633(20020703)3:7<604::AID-CBIC604>3.0.CO;2-X](https://doi.org/10.1002/1439-7633(20020703)3:7<604::AID-CBIC604>3.0.CO;2-X)
 - Ferreira De Freitas, R. & Schapira, M. A systematic analysis of atomic protein–ligand interactions in the PDB. *Med. Chem. Commun.* 8, 1970–1981 (2017). [https://doi.org/10.1039/C7MD00381A](https://doi.org/10.1039/C7MD00381A)
 - Donald, J. E., Kulp, D. W. & DeGrado, W. F. Salt bridges: Geometrically specific, designable interactions. *Proteins* 79, 898–915 (2011). [https://doi.org/10.1002/prot.22927](https://doi.org/10.1002/prot.22927)
 - Pylaeva, S., Brehm, M. & Sebastiani, D. Salt Bridge in Aqueous Solution: Strong Structural Motifs but Weak Enthalpic Effect. *Sci Rep* 8, 13626 (2018). [https://doi.org/10.1038/s41598-018-31935-z](https://doi.org/10.1038/s41598-018-31935-z)
 
-#### R.4.2.  ARG-ARG stacking
+### R.4.2.  ARG-ARG stacking
 
 - Lee, D., Lee, J. & Seok, C. What stabilizes close arginine pairing in proteins? *Phys. Chem. Chem. Phys.* 15, 5844 (2013). [https://doi.org/10.1039/C3CP00160A](https://doi.org/10.1039/C3CP00160A)
 - Magalhaes, A., Maigret, B., Hoflack, J., Gomes, J. N. F. & Scheraga, H. A. Contribution of unusual Arginine-Arginine short-range interactions to stabilization and recognition in proteins. *J Protein Chem* 13, 195–215 (1994). [https://doi.org/10.1007/BF01891978](https://doi.org/10.1007/BF01891978)
 
-#### R.4.3. Charge-Charge repulsion
+### R.4.3. Charge-Charge repulsion
 
 - Norouzy, A., Assaf, K. I., Zhang, S., Jacob, M. H. & Nau, W. M. Coulomb Repulsion in Short Polypeptides. *J. Phys. Chem. B* 119, 33–43 (2015). [https://doi.org/10.1021/jp508263a](https://doi.org/10.1021/jp508263a)
 
 
-### R.5. van der Waals
+## R.5. van der Waals
 
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Tsai, J., Taylor, R., Chothia, C. & Gerstein, M. The packing density in proteins: standard radii and volumes 1 1Edited by J. M. Thornton. *Journal of Molecular Biology* 290, 253–266 (1999). [https://doi.org/10.1006/jmbi.1999.2829](https://doi.org/10.1006/jmbi.1999.2829)
@@ -310,13 +497,13 @@ For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \c
 - Li, A.-J. & Nussinov, R. A set of van der Waals and coulombic radii of protein atoms for molecular and solvent-accessible surface calculation, packing evaluation, and docking. *Proteins* 32, 111–127 (1998). [https://doi.org/10.1002/(SICI)1097-0134(19980701)32:1<111::AID-PROT12>3.0.CO;2-H](https://doi.org/10.1002/(SICI)1097-0134(19980701)32:1<111::AID-PROT12>3.0.CO;2-H)
 
 
-### R.6. $\sigma-$ hole
+## R.6. $\sigma-$ hole
 
-#### R.6.1. Carbon bond (C-bond)
+### R.6.1. Carbon bond (C-bond)
 
 - Mundlapati, V. R. et al. Noncovalent Carbon‐Bonding Interactions in Proteins. *Angew Chem Int Ed* 57, 16496–16500 (2018). [https://doi.org/10.1002/anie.201811171]( https://doi.org/10.1002/anie.201811171)
 
-#### R.6.2. Chalcogen bond
+### R.6.2. Chalcogen bond
 
 - Aakeroy, C. B. et al. Definition of the chalcogen bond (IUPAC Recommendations 2019). *Pure and Applied Chemistry* 91, 1889–1892 (2019). [https://doi.org/10.1515/pac-2018-0713](https://doi.org/10.1515/pac-2018-0713)
 - Pal, D. & Chakrabarti, P. Non-hydrogen Bond Interactions Involving the Methionine Sulfur Atom. *Journal of Biomolecular Structure and Dynamics* 19, 115–128 (2001). [https://doi.org/10.1080/07391102.2001.10506725](https://doi.org/10.1080/07391102.2001.10506725)
@@ -326,23 +513,23 @@ For sulfur, angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \c
 - Adhav, V. A., Shelke, S. S., Balanarayan, P. & Saikrishnan, K. Sulfur-mediated chalcogen versus hydrogen bonds in proteins: a see-saw effect in the conformational space. *QRB Discovery* 4, e5 (2023). [https://doi.org/10.1017/qrd.2023.3 ](https://doi.org/10.1017/qrd.2023.3 )
 
 
-### R.7. Hydrophobic interaction
+## R.7. Hydrophobic interaction
 
 - Onofrio, A. et al. Distance-dependent hydrophobic–hydrophobic contacts in protein folding simulations. *Phys. Chem. Chem. Phys.* 16, 18907–18917 (2014). [https://doi.org/10.1039/C4CP01131G](https://doi.org/10.1039/C4CP01131G)
 
 
-### R.8. Non-bonding involving Sulfur and Selenium
+## R.8. Non-bonding involving Sulfur and Selenium
 
 - Kojasoy, V. & Tantillo, D. J. Impacts of noncovalent interactions involving sulfur atoms on protein stability, structure, folding, and bioactivity. *Org. Biomol. Chem.* 21, 11–23 (2023). [https://doi.org/10.1039/D2OB01602H](https://doi.org/10.1039/D2OB01602H)
 
-#### R.8.1 Sulfur/Selenium - Aromatic
+### R.8.1 Sulfur/Selenium - Aromatic
 
 - Ringer, A. L., Senenko, A. & Sherrill, C. D. Models of S/π interactions in protein structures: Comparison of the H 2 S–benzene complex with PDB data. *Protein Science* 16, 2216–2223 (2007). [https://doi.org/10.1110/ps.073002307](https://doi.org/10.1110/ps.073002307)
 - Pal, D. & Chakrabarti, P. Non-hydrogen Bond Interactions Involving the Methionine Sulfur Atom. *Journal of Biomolecular Structure and Dynamics* 19, 115–128 (2001). [https://doi.org/10.1080/07391102.2001.10506725](https://doi.org/10.1080/07391102.2001.10506725)
 - Senćanski, M., Djordjević, I. & Grubišić, S. Assessing the dispersive and electrostatic components of the selenium–aromatic interaction energy by DFT. *J Mol Model* 23, 162 (2017). [https://doi.org/10.1007/s00894-017-3330-z](https://doi.org/10.1007/s00894-017-3330-z)
 - Hartman, I., Raia, C. A. & Zauhar, R. J. Evidence for a strong selenium–aromatic interaction derived from crystallographic data and ab initio quantum chemical calculations. *Biopolymers* 83, 595–613 (2006). [https://doi.org/10.1002/bip.20592]( https://doi.org/10.1002/bip.20592)
 
-#### R.8.2. Sulfur/Selenium mediated H-bond
+### R.8.2. Sulfur/Selenium mediated H-bond
 
 - Antonijević, I. S., Janjić, Goran. V., Milčić, M. K. & Zarić, S. D. Preferred Geometries and Energies of Sulfur–Sulfur Interactions in Crystal Structures. *Crystal Growth & Design* 16, 632–639 (2016). [https://doi.org/10.1021/acs.cgd.5b01058](https://doi.org/10.1021/acs.cgd.5b01058)
 - Gregoret, L. M., Rader, S. D., Fletterick, R. J. & Cohen, F. E. Hydrogen bonds involving sulfur atoms in proteins. *Proteins* 9, 99–107 (1991). [https://doi.org/10.1002/prot.340090204](https://doi.org/10.1002/prot.340090204)

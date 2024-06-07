@@ -41,13 +41,16 @@ Here, an interaction network represents a motif consisting of residue pairs, the
 
 
 
-## Repulsion
+## Repulsion & Clash
 
-**Synonym:** clash
+Repulsion and clash involve a pair of close residues with same charge or different hydropathy (hydrophile or hydrophobe).
 
-A repulsion, or clash, is a pair of close residues with same charge or diffrerent hydropathy (hydrophile or hydrophobe).
+If the distance between the backbones is close but the side chains are far apart, then repulsion occurs.
 
-List of all repulsion types:
+If the distance between the backbones is close and the side chains are close, then there's a clash.
+
+
+List of all repulsion/clash types:
 
 - Anion-Anion
 - Cation-Cation

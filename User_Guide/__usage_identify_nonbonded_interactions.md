@@ -8,12 +8,15 @@ All commands come from `miclot.interactions`
 > Each non-bonded interaction type is designed to be a [Classes](https://docs.python.org/3/tutorial/classes.html).
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
+> [!IMPORTANT]
+> Keep in mind that protonation state name is not always used in a structure file. Depending on the context, it may be useful to use PDB2PQR to get this information.
+
 > [!WARNING]
 > 1. If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files. 
 > Alternatively you can use the [`fix_topology_bonds`](__usage_prepare_structure.md#2-create-a-trajectory-with-correct-bonds-in-the-topology) to generate a corrected topology.
 > <br/> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file don't containt the information about connectivity between atoms.
 >
-> 2. It is also necessary to have hydrogens atoms.
+> 2. It is also necessary to have hydrogens atoms to identify hydrogen bonds, else for the S/Se mediated H-bond.
 
 
 
