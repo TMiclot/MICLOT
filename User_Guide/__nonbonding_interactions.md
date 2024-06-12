@@ -24,9 +24,9 @@ All amino acid can be devided into two region : backbone and side chain. It mean
 
 For aromatic residues, some interaction types can be specifit to the aromatic part of the side chain. This one can be divided into 2 areas : $\pi$ and quadropole. The figure below illustrates the difference.
 
-<img src="pictures/aromatic_ring_area.png" width="200">
+<img src="pictures/aromatic_ring_area.png" width="250">
 
-Considering the aromatic plane, the quadrupole are is conventionally identified bewteen $0˚ \leq \theta \leq 35.0˚$, while the $\pi$ are is identified between $60.0˚ \leq \theta ' \leq 90.0˚$.
+Considering the aromatic plane, the quadrupole are is conventionally identified bewteen $0˚ \leq \theta \leq 35˚$, while the $\pi$ are is identified between $60˚ \leq \theta ' \leq 90˚$.
 
 > [!NOTE]
 > An electrostatically driven interaction appears when the distance betwen the COM of the aromatic ring and a target (atom, or other COM of aromatic ring) is $d \leq 4.5$ Å.
@@ -324,7 +324,7 @@ Intraresidue H-bond between carbonyl O and amino N atoms of the backbone. <br/> 
 
 ##### 4.6.2.2. Geometric parameters
 
-<img src="pictures/C5_hbond.png" width="150">
+<img src="pictures/C5_hbond.png" width="200">
 
 | Type| Value | Unit |
 | --- | --- | --- |
@@ -345,7 +345,7 @@ Interaction involving the $\pi$ part of an aromatic cycle and an hydrogen (H).
 
 ##### 4.6.2.2. Geometric parameters
 
-<img src="pictures/pi_hbond.png" width="200">
+<img src="pictures/pi_hbond.png" width="250">
 
 - *C*: Center of mass of aromatic C atoms.
 - $H_p$: Projection of the H atom into the aromatic plane.
@@ -359,12 +359,22 @@ Interaction involving the $\pi$ part of an aromatic cycle and an hydrogen (H).
 
 ##### 4.6.2.3. Energy
 
-$-2.5 \leq E \leq -1.0$
+$-2.5 \leq E \leq -1.0$ *kcal/mol*
 
 
 
 
 ##  5. Aromatic - Aromatic
+
+### 5.0. Geometric parameters
+
+<img src="pictures/aromatic_aromatic_parameters.png" width="700">
+
+Legend:
+
+- 
+
+
 
 ### 5.1. $\pi - \pi$ : Parallel & Offset
 
@@ -372,20 +382,35 @@ $-2.5 \leq E \leq -1.0$
 
 **Synonym:** *Offset* is also call *Displaced*
 
+Interaction between the $\pi$ part of two aromatic residues.
+
+<img src="pictures/aromatic_aromatic_parallel-offset.png" width="300">
+
 #### 5.1.2. Geometric parameters
+
+| Type| Value | Unit |
+| --- | --- | --- |
+|  |  |  |
 
 #### 5.1.3. Energy
 
-$E \approx -3$
+$E \approx -3$ *kcal/mol*
 
 
 
 ### 5.3. $\pi -$ Quadrupole : T-shaped & Y-shaped
 
-#### 5.4.1. Description
+#### 5.3.1. Description
 
-#### 5.4.2. Geometric parameters
+Interaction between the $\pi$ part of one aromatic residue and the quadruploe part of another.
 
+<img src="pictures/aromatic_aromatic_TYshaped.png" width="250">
+
+#### 5.3.2. Geometric parameters
+
+| Type| Value | Unit |
+| --- | --- | --- |
+|  |  |  |
 
 ### 5.5. Quadrupole - Quadrupole
 
@@ -393,8 +418,15 @@ $E \approx -3$
 
 **Synonym:** Coplanar
 
+Interaction between the quadrupole part of two aromatic residues. In this configuration the aromatic cycles are (approximatively) on the same plane.
+
+<img src="pictures/aromatic_aromatic_coplanar.png" width="200">
+
 #### 5.5.2. Geometric parameters
 
+| Type| Value | Unit |
+| --- | --- | --- |
+|  |  |  |
 
 <!---
 ##  3. 
