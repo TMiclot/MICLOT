@@ -1950,7 +1950,7 @@ class aromatic_aromatic:
             and self.MIN_distance_offset <= self.distance_COM_projected <= self.MAX_distance_offset:
                 return True, 'offset'
             
-            # identify coplanar parameters
+            # identify T/Y-shaped parameters
             elif self.MIN_pi_angle <= self.angle_plane_plane \
             and ((self.MIN_pi_angle <= self.angle_plane_A_COMCOM and self.angle_plane_B_COMCOM <= self.MAX_quadrupole_angle) or (self.MIN_pi_angle <= self.angle_plane_B_COMCOM and self.angle_plane_A_COMCOM <= self.MAX_quadrupole_angle)):
                 

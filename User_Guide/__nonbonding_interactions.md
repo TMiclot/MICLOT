@@ -20,9 +20,9 @@ All amino acid can be devided into two region : backbone and side chain. It mean
 
 
 
-### A.1. Side chaine of aromatig ring
+## B. Side chaine of aromatig ring
 
-For aromatic residues, some interaction types can be specifit to the aromatic part of the side chain. This one can be divided into 2 areas : $\pi$ and quadropole. The figure below illustrates the difference.
+Some interaction types can be specific to the aromatic area of the side chain. This one can be divided into 2 areas : $\pi$ and quadropole. The figure below illustrates the difference.
 
 <img src="pictures/aromatic_ring_area.png" width="250">
 
@@ -33,7 +33,7 @@ Considering the aromatic plane, the quadrupole are is conventionally identified 
 
 
 
-## B. Relation between residue interaction types
+## C. Relation between residue interaction types
 
 Non-binding interactions are not to be considered independently, or in isolation from others. In fact, many types of interaction share identical physico-chemical properties. Likewise, their subtypes may share similar geometric organization.
 
@@ -48,12 +48,12 @@ In this diagram and in the nomenclature used hereafter, the term *intermediate* 
 - Finally, it may be due to the flexibility of the structure within which residues may have a slight mobility due to transient interaction between two subtypes.
 
 
-## C. Remark concerning Histidine
+## D. Remark concerning Histidine
 
 Histidine can participate in $\pi-\pi$ stacking thank to its imidazole group, or in $\pi-$ anion ([Lucas *et al.*, 2016](https://doi.org/10.1039/c5sc01386k) and [Liao *et al.*, 2013](https://doi.org/10.1186/1752-153X-7-44)). In $\pi-$ cation, histidine can participate as a $\pi-$ system or as a cation when protonated: HIP ([Gallivan and Dougherty, 1999](https://doi.org/10.1073/pnas.96.17.9459)).
 
 
-## D. Overview of interaction types
+## E. Overview of interaction types
 
 > [!NOTE]
 > Detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
@@ -212,7 +212,7 @@ Parameters for S/Se mediated H-bonds:
 
 | Type| Value | Unit |
 | --- | --- | --- |
-| Angle | $50 < \sigma$   | degree |
+| Angle | $50 < \sigma$    | degree |
 | Angle | ${CSX} \leq 145$ | degree |
 
 For sulfur, prefered angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \cdots A} \approx 136.5$
@@ -347,6 +347,7 @@ Interaction involving the $\pi$ part of an aromatic cycle and an hydrogen (H).
 
 <img src="pictures/pi_hbond.png" width="250">
 
+- *D*: Hydrogen (H) donnor.
 - *C*: Center of mass of aromatic C atoms.
 - $H_p$: Projection of the H atom into the aromatic plane.
 
@@ -372,9 +373,18 @@ $-2.5 \leq E \leq -1.0$ *kcal/mol*
 
 Legend:
 
-- 
+- *COM*: Center of mass of an aromatic cycle.
+- *pCOM*: Point corresponting to the projection of COM of an aromatic cycle to the plane of the other aromatic cycle.
+- $d_{COM-COM}$: Distance between the COM of each aromatic cycle.
+- $v_{COM-COM}$: Vector passing through each aromatic COM.
+- $v_{normal}$: Normal vector of the aromatic plane.
+- $v_{COM-C}$: Vector passing through the COM and an aromatic carbon atom.
+- $\theta_{plane-COM}$: Angle between the aromatic plane and the vector $v_{COM-COM}$.
+- $\theta_{shaped}$: Angle between vectors $v_{normal}$ and $v_{COM-C}$.
+- $\theta_{planarity}$: Angle between the two aromatic plane.
 
-
+>[!IMPORTANT]
+> Here, and everywhere in this documentation page, the aromatic COM is calculated only by selecting carbon atoms.
 
 ### 5.1. $\pi - \pi$ : Parallel & Offset
 
@@ -386,11 +396,27 @@ Interaction between the $\pi$ part of two aromatic residues.
 
 <img src="pictures/aromatic_aromatic_parallel-offset.png" width="300">
 
+
 #### 5.1.2. Geometric parameters
 
-| Type| Value | Unit |
-| --- | --- | --- |
-|  |  |  |
+##### 5.1.2.1. Parallel
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM - COM} \leq 5.5 $  | Å |
+| Distance | $d_{COM - pCOM} < 1.6 $  | Å |
+| Angle | $\theta_{planarity} \leq 30$ | Degree |
+| Angle | $60 \leq \theta_{plane_A-COM}$ <br/> $60 \leq \theta_{plane_B-COM}$ | Degree |
+
+##### 5.1.2.2. Offset
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM - COM} \leq 5.5 $  | Å |
+| Distance | $1.6 \leq d_{COM - pCOM} \leq 2.0 $  | Å |
+| Angle | $\theta_{planarity} \leq 30$ | Degree |
+| Angle | $60 \leq \theta_{plane_A-COM}$ <br/> $60 \leq \theta_{plane_B-COM}$ | Degree |
+
 
 #### 5.1.3. Energy
 
@@ -398,23 +424,39 @@ $E \approx -3$ *kcal/mol*
 
 
 
-### 5.3. $\pi -$ Quadrupole : T-shaped & Y-shaped
+### 5.2. $\pi -$ Quadrupole : T-shaped & Y-shaped
 
-#### 5.3.1. Description
+#### 5.2.1. Description
 
 Interaction between the $\pi$ part of one aromatic residue and the quadruploe part of another.
 
 <img src="pictures/aromatic_aromatic_TYshaped.png" width="250">
 
-#### 5.3.2. Geometric parameters
+#### 5.2.2. Geometric parameters
 
-| Type| Value | Unit |
-| --- | --- | --- |
-|  |  |  |
+##### 5.2.2.1. T-shaped
 
-### 5.5. Quadrupole - Quadrupole
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM - COM} \leq 5.5 $ | Å |
+| Angle | $\theta_{plane_B-COM} \leq 35$ | Degree |
+| Angle | $60 \leq \theta_{plane_A-COM}$ | Degree |
+| Angle | $60 \leq \theta_{planarity}$   | Degree |
+| Angle | $\theta_{shaped} \leq 5 $ | Degree |
 
-#### 5.5.1. Description
+##### 5.2.2.2. Y-shaped
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM - COM} \leq 5.5 $ | Å |
+| Angle | $\theta_{plane_B-COM} \leq 35$ | Degree |
+| Angle | $60 \leq \theta_{plane_A-COM}$ | Degree |
+| Angle | $60 \leq \theta_{planarity}$   | Degree |
+| Angle | $5 < \theta_{shaped}$ | Degree |
+
+### 5.3. Quadrupole - Quadrupole
+
+#### 5.3.1. Description
 
 **Synonym:** Coplanar
 
@@ -422,11 +464,54 @@ Interaction between the quadrupole part of two aromatic residues. In this config
 
 <img src="pictures/aromatic_aromatic_coplanar.png" width="200">
 
-#### 5.5.2. Geometric parameters
+#### 5.3.2. Geometric parameters
 
-| Type| Value | Unit |
-| --- | --- | --- |
-|  |  |  |
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM - COM} \leq 5.5 $ | Å |
+| Angle | $\theta_{planarity} \leq 30$ | Degree |
+| Angle | $\theta_{plane_A-COM} \leq 35 $ <br/> $\theta_{plane_B-COM} \leq 35$ | Degree |
+
+
+>[!IMPORTANT]
+>If $d_{COM - COM} \leq 5.5 $ but other parameters do not correspond to those written previously the interaction is called *intermediate*.
+
+
+
+##  6. Amino $- \pi$
+
+### 6.1. Description
+
+Interaction between the $\pi$ part of an aromatic cycle and the amino group of a ASN (ND2) or GLN (NE2).
+
+### 6.2. Geometric parameters
+
+<img src="pictures/amino-pi.png" width="400">
+
+Legend:
+
+- $d_{COM-N}$: Distance between the aromatic COM and the nitorgen (ND2 or NE2).
+- $v_{COM-N}$: Vector between the aromatic COM and the nitorgen (ND2 or NE2).
+- $\theta$: Angle between the $v_{COM-N}$ and the aromatic plane$.
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM-N} \leq 5.5 $ | Å |
+| Angle | $60 \leq \theta \leq 90$ | Degree |
+
+
+
+
+##  7. Aromatic - Charge
+
+### 7.1. Description
+
+### 7.2. Geometric parameters
+
+### 7.3. Energy
+
+### 7.4. Subtypes
+
 
 <!---
 ##  3. 
@@ -463,7 +548,7 @@ Interaction between the quadrupole part of two aromatic residues. In this config
 
 - Petukhov, M., Rychkov, G., Firsov, L. & Serrano, L. H‐bonding in protein hydration revisited. *Protein Science* 13, 2120–2129 (2004). [https://doi.org/10.1110/ps.04748404](https://doi.org/10.1110/ps.04748404)
 
-### R.2.2. $\pi-$ hydrogen bond 
+### R.2.2. $\pi -$ hydrogen bond 
 
 - Wang, J. & Yao, L. Dissecting C−H∙∙∙π and N−H∙∙∙π Interactions in Two Proteins Using a Combined Experimental and Computational Approach. *Sci Rep* 9, 20149 (2019). [https://doi.org/10.1038/s41598-019-56607-4](https://doi.org/10.1038/s41598-019-56607-4)
 
@@ -483,14 +568,14 @@ Interaction between the quadrupole part of two aromatic residues. In this config
 - Brocchieri, L. & Karlin, S. Geometry of interplanar residue contacts in protein structures. *Proc. Natl. Acad. Sci. U.S.A.* 91, 9297–9301 (1994). [https://doi.org/10.1073/pnas.91.20.9297](https://doi.org/10.1073/pnas.91.20.9297)
 - Dalkas, G. A., Teheux, F., Kwasigroch, J. M. & Rooman, M. Cation–π, amino–π, π–π, and H‐bond interactions stabilize antigen–antibody interfaces. *Proteins* 82, 1734–1746 (2014). [https://doi.org/10.1002/prot.24527](https://doi.org/10.1002/prot.24527)
 
-### R.3.1. Cation-$\pi$
+### R.3.1. Cation $- \pi$
 
 - Crowley, P. B. & Golovin, A. Cation–π interactions in protein–protein interfaces. *Proteins* 59, 231–239 (2005). [https://doi.org/10.1002/prot.20417](https://doi.org/10.1002/prot.20417)
 - Dougherty, D. A. The Cation−π Interaction. *Acc. Chem. Res.* 46, 885–893 (2013). [https://doi.org/10.1021/ar300265y](https://doi.org/10.1021/ar300265y)
 - Mahadevi, A. S. & Sastry, G. N. Cation−π Interaction: Its Role and Relevance in Chemistry, Biology, and Material Science. *Chem. Rev.* 113, 2100–2138 (2013). [https://doi.org/10.1021/cr300222d](https://doi.org/10.1021/cr300222d)
 - Gallivan, J. P. & Dougherty, D. A. Cation-π interactions in structural biology. *Proc. Natl. Acad. Sci. U.S.A.* 96, 9459–9464 (1999). [https://doi.org/10.1073/pnas.96.17.9459](https://doi.org/10.1073/pnas.96.17.9459)
 
-### R.3.2. Anion-$\pi$
+### R.3.2. Anion $- \pi$
 
 - Lucas, X., Bauzá, A., Frontera, A. & Quiñonero, D. A thorough anion–π interaction study in biomolecules: on the importance of cooperativity effects. *Chem. Sci.* 7, 1038–1050 (2016). [https://doi.org/10.1039/C5SC01386K](https://doi.org/10.1039/C5SC01386K)
 - Schottel, B. L., Chifotides, H. T. & Dunbar, K. R. Anion-π interactions. *Chem. Soc. Rev.* 37, 68–83 (2008). [https://doi.org/10.1039/B614208G](https://doi.org/10.1039/B614208G)
