@@ -4,8 +4,8 @@
 
 This part explains all the geometric (distance, angle) and energetic (when available) parameters used to identify the types of interactions between two residues.
 
->[!IMPORTANT]
->It is important to note that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
+>[!NOTE]
+>Remember that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
 
 
 ## A. Interaction regions
@@ -41,11 +41,12 @@ Non-binding interactions are not to be considered independently, or in isolation
 
 *A hight quality version of this diagram can be fond in [PDF format](pictures/interaction_diagram.pdf), but it is not formated as A4 paper.*
 
-In this diagram and in the nomenclature used hereafter, the term *intermediate* designates an interaction between two residues whose subtype is not properly identified.
-
-- This may be due to rigid selection parameters. For example, if the limiting angle is 60.0˚ and the angle between the residues is 60.1°.
-- It's also possible that this is due to the structure not being fully relaxed, as can happen with crystal structures.
-- Finally, it may be due to the flexibility of the structure within which residues may have a slight mobility due to transient interaction between two subtypes.
+>[!IMPORTANT]
+>In this diagram and in the nomenclature used hereafter, the term **intermediate** designates an interaction between two residues whose subtype is not properly identified.
+>
+>- This may be due to rigid selection parameters. For example, if the limiting angle is 60.0˚ and the angle between the residues is 60.1°.
+>- It's also possible that this is due to the structure not being fully relaxed, as can happen with crystal structures.
+>- Finally, it may be due to the flexibility of the structure within which residues may have a slight mobility due to transient interaction between two subtypes.
 
 
 ## D. Remark concerning Histidine
@@ -91,7 +92,7 @@ Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone:
 
 ### 1.3. Subtypes
 
-<img src="pictures/n-pi_subtypes.png" width="400"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
+<img src="pictures/n-pi_subtypes.png" width="300"> Redraw from [Adhav *et al.* (2023)](https://doi.org/10.1021/acsomega.3c00205)
 
 
 ### 1.4. Energy
@@ -379,11 +380,11 @@ Legend:
 - $v_{COM-COM}$: Vector passing through each aromatic COM.
 - $v_{normal}$: Normal vector of the aromatic plane.
 - $v_{COM-C}$: Vector passing through the COM and an aromatic carbon atom.
-- $\theta_{plane-COM}$: Angle between the aromatic plane and the vector $v_{COM-COM}$.
-- $\theta_{shaped}$: Angle between vectors $v_{normal}$ and $v_{COM-C}$.
-- $\theta_{planarity}$: Angle between the two aromatic plane.
+- $\theta_{plane-COM}$: Angle between the aromatic plane and the vector $v_{COM-COM}$. *Values range is 0-90.*
+- $\theta_{shaped}$: Angle between vectors $v_{normal}$ and $v_{COM-C}$. *Values range is 0-90.*
+- $\theta_{planarity}$: Angle between the two aromatic plane. *Values range is 0-90.*
 
->[!IMPORTANT]
+>[!WARNING]
 > Here, and everywhere in this documentation page, the aromatic COM is calculated only by selecting carbon atoms.
 
 ### 5.1. $\pi - \pi$ : Parallel & Offset
@@ -486,13 +487,13 @@ Interaction between the $\pi$ part of an aromatic cycle and the amino group of a
 
 ### 6.2. Geometric parameters
 
-<img src="pictures/amino-pi.png" width="400">
+<img src="pictures/amino-pi.png" width="300">
 
 Legend:
 
 - $d_{COM-N}$: Distance between the aromatic COM and the nitorgen (ND2 or NE2).
 - $v_{COM-N}$: Vector between the aromatic COM and the nitorgen (ND2 or NE2).
-- $\theta$: Angle between the $v_{COM-N}$ and the aromatic plane$.
+- $\theta$: Angle between the $v_{COM-N}$ and the aromatic plane$. *Values range is 0-90.*
 
 | Type | Value | Unit |
 | ---- | --- | --- |
@@ -506,12 +507,55 @@ Legend:
 
 ### 7.1. Description
 
+Charged amino acid can interact with the $\pi$ area or the quadrupole are of an aromatic cycle.
+
+Below an illustration showing the interaction between one aromatic cycle and a negatively charged side chain.
+
+<img src="pictures/charge_aromatic_types.png" width="400">
+
 ### 7.2. Geometric parameters
+
+<img src="pictures/charge_aromatic_parameters.png" width="400">
+
+*For more visibility, one hydrogen (H) of the charged side chain is not shown, and the charge symbol has been shifted.*
+
+Legend:
+
+- *X atom*: Atom use as reference for the charge. It is ammonium nitrogen (NZ) of the LYS, the guanidinium carbon (CZ) of the ARG, the protonated nitrogen (ND1) in the imidazol group of HIP, the carboxyl carbon (CG) of the ASP or (CD) of the GLU.
+- $d_{COM-X}$: The distance is measured between between the X atom and the COM of the aromatic ring.
+- $v_{COM-X}$: Vector between the COM of the aromatic ring and the X atom.
+- $\theta$: Angle between the vector $v_{COM-X}$ and the plane of the aromatic cycle. *Values range is 0-90.*
+
+#### 7.2.1. $\pi -$ Charge
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM-X} \leq 5.5 $ | Å |
+| Angle | $60 \leq \theta$ | Degree |
+
+#### 7.2.2. Quadrupole - Charge
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM-X} \leq 5.5 $ | Å |
+| Angle | $\theta \leq 35$ | Degree |
 
 ### 7.3. Energy
 
+Quadrupole - Anion: Can be up to -8 *kcal/mol*
+
 ### 7.4. Subtypes
 
+- $\pi - $ Cation
+- $\pi - $ Anion
+- Quadrupole - Cation
+- Quadrupole - Anion
+
+### 7.5. Special cases of Arginine
+
+<img src="pictures/pi-arg_subtypes.png" width="400">
+
+#### 7.5.1. 
 
 <!---
 ##  3. 
