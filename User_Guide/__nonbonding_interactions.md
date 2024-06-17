@@ -57,13 +57,13 @@ Histidine can participate in $\pi-\pi$ stacking thank to its imidazole group, or
 ## E. Overview of interaction types
 
 > [!NOTE]
-> Detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
+> This is a general overview. For detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
 
-| Interaction type | Energy (kcal/mol) | Distance (Å) | Angle (degree) | Illustration | Description |
-| ---------------- | ----------------- | ------------ | -------------- | ------------ | ----------- |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
+| Interaction type | Description | Energy (kcal/mol) | Distance (Å) | Angle (degree) |
+| ---------------- | ----------- | ----------------- | ------------ | -------------- |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
 
 
 
@@ -387,6 +387,19 @@ Legend:
 >[!WARNING]
 > Here, and everywhere in this documentation page, the aromatic COM is calculated only by selecting carbon atoms.
 
+#### 5.0.1. Atoms use to determie aromatic plane
+
+| Amino acid | Atoms defining aromatic plane|
+| --- | --- |
+| TYR | CG CD1 CD2 CE1 CE2 CZ | 
+| TRP | CD2 CE2 CE3 CZ2 CZ3 CH2 | 
+| PHE | CG CD1 CD2 CE1 CE2 CZ | 
+| HIS | CG ND1 CD2 CE1 NE2 | 
+| HID | CG ND1 CD2 CE1 NE2 | 
+| HIE | CG ND1 CD2 CE1 NE2 | 
+| HSD | CG ND1 CD2 CE1 NE2 | 
+| HSE | CG ND1 CD2 CE1 NE2 | 
+
 ### 5.1. $\pi - \pi$ : Parallel & Offset
 
 #### 5.1.1. Description
@@ -507,7 +520,7 @@ Legend:
 
 ### 7.1. Description
 
-Charged amino acid can interact with the $\pi$ area or the quadrupole are of an aromatic cycle.
+Positively and negatively charged amino acids can interact with the $\pi$ area or the quadrupole are of an aromatic cycle.
 
 Below an illustration showing the interaction between one aromatic cycle and a negatively charged side chain.
 
@@ -555,17 +568,197 @@ Quadrupole - Anion: Can be up to -8 *kcal/mol*
 
 <img src="pictures/pi-arg_subtypes.png" width="400">
 
-#### 7.5.1. 
+#### 7.5.1. Geometric parameters
 
-<!---
-##  3. 
-### 3.1. Description
-### 3.2. Geometric parameters
-### 3.3. Energy
-### 3.4. Subtypes
---->
+<img src="pictures/aromatic-ARG.png" width="300">
+
+Legend:
+
+- Arg plane: Plane defined by the NE, NH1, NH2 atoms.
+- $v_{normal-arg}$: Normale vector of the Arg plane.
+- $v_{normal-aromatic}$: Normale vector of the aromatic plane.
+- $\theta$: Angle between the two vectors $v_{normal-arg}$ and $v_{normal-aromatic}$.
 
 
+| | Type | Value | Unit |
+| --- | ---- | --- | --- |
+| Parallel | Angle | $\theta \leq 35$ | Degree |
+| Perpendicular | Angle | $60 \leq \theta$ | Degree |
+
+
+
+
+
+##  8. van der Waals
+
+### 8.1. Description
+
+>Noncovalent interactions (weak as compared to covalent bonds) due to dipole-induced dipole and dispersion forces acting at molecules and atoms. [(Minkin, 1999)](https://doi.org/10.1351/pac199971101919) 
+
+### 8.2. Geometric parameters
+
+Use the sum of the vander waals radius of both atoms plus a constant N, where N is in the range 0 Å to 0.6 Å :
+
+$$
+radii_{vdw \space atom \space 1} + radii_{vdw \space atom \space 1} + N
+$$
+
+All values for van der Waals radii can be found in the [Element properties](__element_properties.md) page.
+
+### 8.4. Subtypes
+
+Their is not properly wdW subtypes but contacts because the identification is based only using distances. But is is possible to categorize diffrents [contact types](__glossary.md#contact-types) using amino acid properties.
+
+
+
+
+##  9. Hydrophobic interaction
+
+### 9.1. Description
+
+Interaction between tow close hydrophobic residues.
+
+### 9.2. Geometric parameters
+
+Distances between the CA atoms and the COMs of the side chains.
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM-COM} \leq 5 $ | Å |
+| Distance | $d_{CA-CA} \leq 9.5 $ | Å |
+
+
+
+
+## 10. Hydrophobe - Hydrophile clash / repulsion
+
+### 10.1. Description
+
+Proximity between a hydrophobic residue and a hydrophilic residue can lead to clash or a respustion, depending on their side chains COM-COM distance.
+
+### 10.2. Geometric parameters
+
+Distances between the CA atoms and the COMs of the side chains.
+
+### 10.2.1. Clash
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{COM-COM} \leq 5 $ | Å |
+| Distance | $d_{CA-CA} \leq 9.5 $ | Å |
+
+### 10.2.2. Repulsion
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $5 \leq d_{COM-COM} $ | Å |
+| Distance | $d_{CA-CA} \leq 9.5 $ | Å |
+
+
+
+
+##  11. Salt bridge
+
+### 11.1. Description
+
+Strong electrostatic interaction involving an H-bond and an ionic bond between amino acids with opposite charges.
+
+<img src="pictures/salt_bridge.png" width="300"> *Simplified scheme for ionic bond.* 
+
+### 11.2. Geometric parameters
+
+For the H-bond part, please take look at [4. Hydrogen bond](#4-hydrogen-bond).
+
+| Residue | Charge | Charge location (*Not charged atoms*) | Atoms able to perform H-bond |
+| ------- | ------ | --- | --- |
+| LYS     | +      | NZ  | NZ HZ1 HZ2 HZ3 |
+| ARG     | +      | CZ  | HE NE NH1 HH11 HH12 NH2 HH21 HH22 |
+| HIP     | +      | ND1 | ND1 NE2 HE2 HD1 |
+| HSP     | +      | ND1 | ND1 NE2 HE2 HD1 |
+| ASP     | -      | CG  | OD1 OD2 HD2 |
+| GLU     | -      | CD  | OE1 OE2 HE2 |
+
+- *X atom*: Atom use as charge location, see table above.
+- $d_{CA - CA}$: Distance between CA atoms.
+- $d_{X \cdots X}$: Distance between the *X* atoms.
+- $d_{D \cdots A}$: Distance between hydrogen donnor and acceptor.
+- $\widehat{DH \cdots A}$: Angle
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{CA - CA} \leq 13$ | Å |
+| Distance | $d_{X \cdots X} \leq 4 $ | Å |
+| Distance | $d_{D \cdots A} \leq 3 $   | Å |
+| Angle | $120 \leq \widehat{DH \cdots A}$ | degree |
+
+
+
+
+##  12. Charge clash / repulsion
+
+### 12.1. Description
+
+Proximity between same charged residues can lead to clash or a respustion, depending on their side chains COM-COM distance.
+
+### 12.2. Geometric parameters
+
+Distances between the CA atoms and the *X* atoms.
+
+For more information concerning charges (*X* atoms), please see [11. Salt bridge](#11-salt-bridge).
+
+### 12.2.1. Clash
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{X-X} \leq 5 $ | Å |
+| Distance | $d_{CA-CA} \leq 13 $ | Å |
+
+### 12.2.2. Repulsion
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $5 \leq d_{X-X} $ | Å |
+| Distance | $d_{CA-CA} \leq 13 $ | Å |
+
+### 12.3. Subtypes
+
+- Cation - Cation
+- Anion - Anion
+
+### 12.4. Special cases of Arginine
+
+#### 12.4.1. Description
+
+Arginine can stack with another arginine. Technically this corresponds to a charge collision, but this specific case is stable and can favor the protein-protein interaction.
+
+<img src="pictures/ARG-ARG_stacking_subtypes.png" width="400"> 
+
+#### 12.4.2. Geometric parameters
+
+<img src="pictures/ARG-ARG_stacking.png" width="250">
+
+Legend:
+
+- $d_{CZ \cdots CZ}$: Distance between the CZ atoms.
+- Arg plane: Plane defined by the NE, NH1, NH2 atoms.
+- $\theta$: Angle between the tow Arg planes.
+
+##### 12.4.2.1. Parallel
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{CZ \cdots CZ} \leq 6 $ | Å |
+| Angle    | $\theta \leq 35 $ | degree |
+
+##### 12.4.2.2. Perpendicular
+
+| Type | Value | Unit |
+| ---- | --- | --- |
+| Distance | $d_{CZ \cdots CZ} \leq 6 $ | Å |
+| Angle    | $60 \leq \theta $ | degree |
+
+
+<!--- --->
 # References
 
 ## R.1. General
@@ -580,6 +773,7 @@ Quadrupole - Anion: Can be up to -8 *kcal/mol*
 	- Kříž, K., Nováček, M. & Řezáč, J. Non-Covalent Interactions Atlas Benchmark Data Sets 3: Repulsive Contacts. *J. Chem. Theory Comput.* 17, 1548–1561 (2021). [https://doi.org/10.1021/acs.jctc.0c01341](https://doi.org/10.1021/acs.jctc.0c01341)
 	- Kříž, K. & Řezáč, J. Non-covalent interactions atlas benchmark data sets 4: σ-hole interactions. *Phys. Chem. Chem. Phys.* 24, 14794–14804 (2022). [https://doi.org/10.1039/D2CP01600A](https://doi.org/10.1039/D2CP01600A)
 	- Řezáč, J. Non-Covalent Interactions Atlas benchmark data sets 5: London dispersion in an extended chemical space. *Phys. Chem. Chem. Phys.* 24, 14780–14793 (2022). [https://doi.org/10.1039/D2CP01602H ](https://doi.org/10.1039/D2CP01602H )
+- ~~Hou, Q., Bourgeas, R., Pucci, F. & Rooman, M. Computational analysis of the amino acid interactions that promote or decrease protein solubility. *Sci Rep* 8, 14661 (2018). [https://doi.org/10.1038/s41598-018-32988-w](https://doi.org/10.1038/s41598-018-32988-w)~~
 
 
 ## R.2. Hydrogen bond

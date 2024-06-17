@@ -34,10 +34,10 @@ Here, an interaction network represents a motif consisting of residue pairs, the
 
 ## Interaction types
 
-...
-
 >[!WARNING]
 > Don't confuse with [contact types](#contact-types).
+
+Physico-chemical attraction or repulsion between amino acids. For more information, please look at the page: [Non-bonding interactions](__nonbonding_interactions.md)
 
 
 
@@ -45,9 +45,9 @@ Here, an interaction network represents a motif consisting of residue pairs, the
 
 Repulsion and clash involve a pair of close residues with same charge or different hydropathy (hydrophile or hydrophobe).
 
-If the distance between the backbones is close but the side chains are far apart, then repulsion occurs.
+**Repulsion:** If the distance between the backbones is close but the side chains are far apart, then repulsion occurs. The presence of a pepulsion is certainly not optimal, but is not necessarily an important bad factor for the protein-protein interaction.
 
-If the distance between the backbones is close and the side chains are close, then there's a clash.
+**Clash:** If the distance between the backbones is close and the side chains are close, then there's a clash. The presence of a clash can be an important bad factor for the protein-protein interaction.
 
 
 List of all repulsion/clash types:

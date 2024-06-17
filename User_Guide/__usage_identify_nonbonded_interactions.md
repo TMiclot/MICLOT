@@ -164,7 +164,7 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 
 ## 3. Hydrophobic interaction & Hydrophobe/Hydrophile clash
 
-**hydrophobic**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_COM=5.0, MAX_distance_CA=9.5, MIN_distance_CA=3.8*)
+**hydrophobic**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance_COM=5.0, MAX_distance_CA=9.5*)
 
 ### Description
 
@@ -186,9 +186,8 @@ Identify interaction between tow hydrophobic residue or clash between hydrophili
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional |
-| MAX_distance_COM  | float | Maximum distance between center of mass of each residue. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
+| MAX_distance_COM  | float | Maximum distance between center of mass of each residue to identify interaction/clash. <br/> Unit: Å <br/> Default value: 5.0 | optional  |
 | MAX_distance_CA  | float | Maximum distance between CA of each residue. <br/> Unit: Å <br/> Default value: 9.5 | optional  |
-| MIN_distance_CA  | float | Minimum distance between CA of each residue to consider as clash. <br/> Unit: Å <br/> Default value: 3.8 | optional  |
 
 ### Properties
 
@@ -472,7 +471,7 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 
 ## 11. ARG involved
 
-**arg_involved**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=6.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0*)
+**arg_involved**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=6.0, MIN_perpendicular_angle=60.0, MAX_parallel_angle=35.0*)
 
 ### Description
 
@@ -487,8 +486,8 @@ A specific class to precise the ARG-Aromatic and ARG-ARG interaction. It is poss
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
 | MAX_distance | float | Distance between the CZ atom of the ARG and COM of and aromatic ring or CZ of another ARG. <br/> Default value: 6.0 Å | optional |
-| MIN_pi_angle | float | Minimum angle defining the Pi area (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
-| MAX_quadrupole_angle | float | Maximum angle defining the quadrupole area (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
+| MIN_perpendicular_angle | float | Minimum angle defining if the planes are perpendicular or not (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
+| MAX_parallel_angle | float | Maximum angle defining if the planes are parallel or not (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
 
 ### Properties
 

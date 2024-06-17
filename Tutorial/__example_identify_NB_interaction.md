@@ -143,7 +143,7 @@ print(interaction.get_distance)
 (7.733982801437378, 4.12462471880705)
 ```
 
-### 2.4. Hydrophobe/Hydrophile without clash
+### 2.4. Hydrophobe/Hydrophile repulsion
 
 **Code**
 
@@ -158,7 +158,7 @@ print(interaction.get_distance)
 **Result**
 
 ```
-(False, False, None)
+(True, False, 'repulsion')
 (8.182007074356079, 7.443699842878453)
 ```
 

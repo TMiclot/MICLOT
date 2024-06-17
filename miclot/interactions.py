@@ -425,7 +425,7 @@ class C_bond:
 #=====================================================
 
 class hydrophobic:
-    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance_COM=5.0, MAX_distance_CA=9.5, MIN_distance_CA=3.8):
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance_COM=5.0, MAX_distance_CA=9.5):
         """
         INTERACTION TYPE    Hydrophobic or Hydrophobic/Hydrophilic repulsion
         SUBTYPE(S)          hydrophobic, clash
@@ -451,8 +451,6 @@ class hydrophobic:
                                 Default value: 5.0
             MAX_distance_CA     Maximum distance between the CA, in angstrom.
                                 Default value: 9.5
-            MIN_distance_CA     Minimum distance between the CA, in angstrom.
-                                Default value: 3.8
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
@@ -461,7 +459,6 @@ class hydrophobic:
         self.res_B = res_index_B
         self.MAX_distance_COM = MAX_distance_COM
         self.MAX_distance_CA = MAX_distance_CA
-        self.MIN_distance_CA = MIN_distance_CA
         
         #===== Create a list of hydrophobic amino acids =====
         self.aa_hydrophobic = ['ALA','CYS','ILE','LEU','MET','PHE','TRP','TYR','VAL']
@@ -497,20 +494,26 @@ class hydrophobic:
         
         RETURN
             True, True, hydrophobic      The interaction exist, and is: hydrophobic
-            True, False, clash           The interaction exist, and is: hydrophobic/hydrophilic repulsion
+            True, False, clash           The interaction exist, and is: hydrophobic/hydrophilic clash
+            True, False, repulsion       The interaction exist, and is: hydrophobic/hydrophilic repulsion
             False, False, None           The interaction don't exist.
         """
         # check if the residues are hydrophobic or hydrophilic.
         if (self.res_A_name not in self.list_aa_hydrophobic_hydrophilic) or (self.res_B_name not in self.list_aa_hydrophobic_hydrophilic):
             return False, False, None
         
-        elif self.distance_COM <= self.MAX_distance_COM and self.MIN_distance_CA <= self.distance_CA and self.distance_CA <= self.MAX_distance_CA \
+        elif self.distance_COM <= self.MAX_distance_COM and self.distance_CA <= self.MAX_distance_CA \
              and self.res_A_name in self.aa_hydrophobic and self.res_B_name in self.aa_hydrophobic:
             return True, True, "hydrophobic"
         
-        elif self.distance_COM <= self.MAX_distance_COM and self.MIN_distance_CA <= self.distance_CA and self.distance_CA <= self.MAX_distance_CA \
+        elif self.distance_COM <= self.MAX_distance_COM and self.distance_CA <= self.MAX_distance_CA \
              and ((self.res_A_name in self.aa_hydrophobic and self.res_B_name in self.aa_hydrophilic) or (self.res_A_name in self.aa_hydrophilic and self.res_B_name in self.aa_hydrophobic)):
             return True, False, "clash"
+        
+        # if the COM-COM distance is more than the MAX_distance_COM, interactioinis considered as repulsion.
+        elif self.MAX_distance_COM <= self.distance_COM and self.distance_CA <= self.MAX_distance_CA \
+             and ((self.res_A_name in self.aa_hydrophobic and self.res_B_name in self.aa_hydrophilic) or (self.res_A_name in self.aa_hydrophilic and self.res_B_name in self.aa_hydrophobic)):
+            return True, False, "repulsion"
         
         else:
             return False, False, None
@@ -1994,7 +1997,7 @@ class aromatic_aromatic:
 #===== Class for Arg-Arg & Arg-Aromatic
 #=====================================================    
 class arg_involved:
-    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=6.0, MIN_pi_angle=60.0, MAX_quadrupole_angle=35.0):
+    def __init__(self, trajectory, res_index_A, res_index_B, frame=0, MAX_distance=6.0, MIN_perpendicular_angle=60.0, MAX_parallel_angle=35.0):
         """
         INTERACTION TYPE    Arginine involved stacking: Arg-Aromatic, Arg-Arg
         SUBTYPE(S)          perpendicular, parallel, intermediate
@@ -2015,18 +2018,18 @@ class arg_involved:
             MAX_distance    Distance between the CZ atom of the ARG and COM of and aromatic ring or CZ of another ARG.
                             Default value: 6.0 Å
 
-            MIN_pi_angle    Minimum angle defining the Pi area (the maximum is 90˚).
-                            Default value: 60.0˚
+            MIN_perpendicular_angle    Minimum angle defining if the planes are perpendicular or not (the maximum is 90˚).
+                                       Default value: 60.0˚
 
-            MAX_quadrupole_angle    Maximum angle defining the quadrupole area (the maximum is 0˚).
-                                    Default value: 35.0˚
+            MAX_parallel_angle    Maximum angle defining if the planes are parallel or not (the maximum is 0˚).
+                                  Default value: 35.0˚
         """
         #===== Initialise variable =====
         self.traj = trajectory[frame]
         self.top = self.traj.topology
         self.MAX_distance = MAX_distance
-        self.MIN_pi_angle = MIN_pi_angle
-        self.MAX_quadrupole_angle = MAX_quadrupole_angle
+        self.MIN_perpendicular_angle = MIN_perpendicular_angle
+        self.MAX_parallel_angle = MAX_parallel_angle
 
         
         #===== Create dictionaries of aromatic ring and corresponding plans =====
@@ -2195,10 +2198,10 @@ class arg_involved:
             return False, False, False
         
         else:
-            if self.angle <= self.MAX_quadrupole_angle:
+            if self.angle <= self.MAX_parallel_angle:
                 return True, self.type, "parallel"
             
-            elif self.MIN_pi_angle <= self.angle:
+            elif self.MIN_perpendicular_angle <= self.angle:
                 return True, self.type, "perpendicular"
             
             else:
