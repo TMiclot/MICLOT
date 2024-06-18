@@ -21,12 +21,18 @@ __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion'
 #===== Import modules
 #=====================================================
 
+import os
+import shutil
+import time
+import glob
+
 import numpy as np
 from skspatial.objects import Plane, Vector, Points
 import mdtraj as md
 import pandas as pd
 
 from multiprocessing import Pool
+
 from itertools import combinations
 from tqdm import tqdm
 
@@ -3028,6 +3034,8 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
         
         Exception for salt bridges, it return 1 if bothe h-bond and distance between
         charges are identified, or return 0.5 if only one of them is identified.
+
+        It also return intra-residue C5-Hbond interaction, for each residue.
     
     ARGUMENTS
         pair          pair of residues. The format is a list of MDTraj indices.
@@ -3053,6 +3061,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_c_bond = 0
     
     except:
+        cbond = None
         is_c_bond = np.nan
     
     # add the interaction result to the list_interaction_pair
@@ -3070,6 +3079,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_amino_pi = 0
     
     except:
+        aminoPi = None
         is_amino_pi = np.nan
     
     # add the interaction result to the list_interaction_pair
@@ -3112,6 +3122,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_arg_arg_intermediate = 1 
     
     except:
+        argInvolved = None
         is_arg_aromatic_parallel      = np.nan
         is_arg_aromatic_perpendicular = np.nan
         is_arg_aromatic_intermediate  = np.nan
@@ -3158,6 +3169,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_aromatic_aromatic_intermediate = 1
     
     except:
+        aromaticAromatic = None
         is_aromatic_aromatic_parallel = np.nan
         is_aromatic_aromatic_offset   = np.nan
         is_aromatic_aromatic_coplanar = np.nan
@@ -3204,6 +3216,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_anion_quadrupole = 1
     
     except:
+        chargeAromatic = None
         is_cation_pi = np.nan
         is_cation_intermediate = np.nan
         is_cation_quadrupole = np.nan
@@ -3234,6 +3247,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_charge_clash = 1
     
     except:
+        chargeClashRepulsion = None
         is_charge_repulsion = np.nan
         is_charge_clash = np.nan
     
@@ -3252,6 +3266,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_hydrogen_bond = 0
     
     except:
+        hbond = None
         is_hydrogen_bond = np.nan
     
     # add the interaction result to the list_interaction_pair
@@ -3262,25 +3277,32 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
     #----- check interaction: hydrophobic interaction & hydrophobe/hydrophile clash -----
     try:
         # get the interaction
-        hydrophobic = hydrophobic(trajectory, pair[0], pair[1], frame=frame)
+        hydrophobic_ClashRepulsion = hydrophobic(trajectory, pair[0], pair[1], frame=frame)
         
         # initialise variable
         is_hydrophobic_interaction = 0
-        is_hydrophobe_or_hydrophile_clash = 0
+        is_hydrophobe_hydrophile_clash = 0
+        is_hydrophobe_hydrophile_repulsion = 0
         
         # check which type is it
-        if hydrophobic.check_interaction[2] == 'hydrophobic':
+        if hydrophobic_ClashRepulsion.check_interaction[2] == 'hydrophobic':
             is_hydrophobic_interaction = 1
         
-        elif hydrophobic.check_interaction[2] == 'clash':
-            is_hydrophobe_or_hydrophile_clash = 1
+        elif hydrophobic_ClashRepulsion.check_interaction[2] == 'clash':
+            is_hydrophobe_hydrophile_clash = 1
+
+        elif hydrophobic_ClashRepulsion.check_interaction[2] == 'repulsion':
+            is_hydrophobe_hydrophile_repulsion = 1
     
     except:
+        hydrophobic_ClashRepulsion = None
         is_hydrophobic_interaction = np.nan
-        is_hydrophobe_or_hydrophile_clash = np.nan
-    
+        is_hydrophobe_hydrophile_clash = np.nan
+        is_hydrophobe_hydrophile_repulsion = np.nan
+
+
     # add the interaction result to the list_interaction_pair
-    list_interaction_pair.extend([is_hydrophobic_interaction, is_hydrophobe_or_hydrophile_clash])
+    list_interaction_pair.extend([is_hydrophobic_interaction, is_hydrophobe_hydrophile_clash, is_hydrophobe_hydrophile_repulsion])
     
     
     
@@ -3301,6 +3323,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_n_pi_reciprocal = 1  
     
     except:
+        npi = None
         is_n_pi_regular = np.nan
         is_n_pi_reciprocal = np.nan
     
@@ -3319,6 +3342,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_pi_hbond = 0
 
     except:
+        piHbond = None
         is_pi_hbond = np.nan
 
     
@@ -3344,6 +3368,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_salt_bridge = 0
 
     except:
+        saltbridge = None
         is_salt_bridge = np.nan
 
     # add the interaction result to the list_interaction_pair
@@ -3384,6 +3409,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_Se_quadrupole = 1            
 
     except:
+        SSeAromatic = None
         is_S_pi = np.nan
         is_S_intermediate = np.nan
         is_S_quadrupole = np.nan
@@ -3412,6 +3438,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_sse_chalcogen = 1
 
     except:
+        SSE_hbond_chalcogen = None
         is_sse_hbond = np.nan
         is_sse_chalcogen = np.nan
 
@@ -3430,47 +3457,95 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
             is_van_der_waals = 0
 
     except:
+        vdw = None
         is_van_der_waals = np.nan
 
     # add the interaction result to the list_interaction_pair
     list_interaction_pair.append(is_van_der_waals)
 
+
+    #===== Perform intra-residue C5 Hbonds =====
+    #----- check if residues 1 and 2 have C5-Hbond (intra-residue H-bond) -----
+        #..... Residue 1
+    try:
+        # search C5-Hbond
+        residue_1_C5Hbond = C5_hydrogen_bond(trajectory, pair[0], frame=frame)
+        
+        # check if exist for residue 1 or not
+        if residue_1_C5Hbond.check_interaction == True:
+            is_residue_1_C5Hbond = 1
+        else:
+            is_residue_1_C5Hbond = 0
     
-    #===== return relust =====
+    except:
+        residue_1_C5Hbond = None
+        is_residue_1_C5Hbond = np.nan
+    
+    #..... Residue 2
+    try:
+        # search C5-Hbond
+        residue_2_C5Hbond = C5_hydrogen_bond(trajectory, pair[1], frame=frame)
+        
+        # check if exist for residue 2 or not
+        if residue_2_C5Hbond.check_interaction == True:
+            is_residue_2_C5Hbond = 1
+        else:
+            is_residue_2_C5Hbond = 0
+    
+    except:
+        residue_2_C5Hbond = None
+        is_residue_2_C5Hbond = np.nan 
+
+    
+    #===== return result =====
     #Check if the list_interaction_pair contain at least one 1 or one 0.5
     array_interaction_pair = np.array(list_interaction_pair)
     
     # Check if the array contains at least one 1
-    if 1 in array_interaction_pair or 0.5 in array_interaction_pair:
+    if 0 < np.nansum(array_interaction_pair):
 
         #----- Get information in the topology, concerning the two residues -----
         # for residue 1
         residue_1 = trajectory.topology.residue(pair[0])
-        residue_1_resseq = trajectory.topology.residue(pair[0]).resSeq
-        residue_1_name = trajectory.topology.residue(pair[0]).name
-        residue_1_chain = trajectory.topology.residue(pair[0]).chain.index
+        residue_1_resseq = residue_1.resSeq
+        residue_1_name   = residue_1.name
+        residue_1_chain  = residue_1.chain.index
         
         # for residue 2
         residue_2 = trajectory.topology.residue(pair[1])
-        residue_2_resseq = trajectory.topology.residue(pair[1]).resSeq
-        residue_2_name = trajectory.topology.residue(pair[1]).name
-        residue_2_chain = trajectory.topology.residue(pair[1]).chain.index
+        residue_2_resseq = residue_2.resSeq
+        residue_2_name   = residue_2.name
+        residue_2_chain  = residue_2.chain.index
+
+        # check if the two residues are consecutive or not: residue i and residue i+1
+        residues_index_difference = abs(pair[0] - pair[1])
+        
+        if residue_1_chain == residue_2_chain and residues_index_difference == 1:
+            consecutive = 1
+        else:
+            consecutive = 0
+
         
         #----- calculate the number of interaction in the pair -----
         # np.ceil is used to up 0.5 to 1 for the salt bridge
         # np.nansum is used to calculate the sum without taking in account the np.nan
         number_interactions = np.nansum( np.ceil( array_interaction_pair ) )
         
-        #----- create a pandas dataframe and return it -----
-        df = pd.DataFrame([{"residue_1_index" : pair[0],
+        #----- create a pandas dataframe of interactions -----
+        df = pd.DataFrame([{"residue_1_chain" : residue_1_chain,
+                            "residue_1_index" : pair[0],
                             "residue_1_resSeq": residue_1_resseq,
                             "residue_1_name"  : residue_1_name,
-                            "residue_1_chain" : residue_1_chain,
+                            #
+                            "residue_2_chain" : residue_2_chain,
                             "residue_2_index" : pair[1],
                             "residue_2_resSeq": residue_2_resseq,
                             "residue_2_name"  : residue_2_name,
-                            "residue_2_chain" : residue_2_chain,
                             #
+                            "residue_1_C5Hbond": is_residue_1_C5Hbond,
+                            "residue_2_C5Hbond": is_residue_2_C5Hbond,
+                            #
+                            "consecutive_residues" : consecutive,
                             "number_interactions" : number_interactions,
                             #
                             "c_bond" : is_c_bond,
@@ -3503,8 +3578,9 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
                             #
                             "hydrogen_bond" : is_hydrogen_bond,
                             #
-                            "hydrophobic_interaction"        : is_hydrophobic_interaction,
-                            "hydrophobe_or_hydrophile_clash" : is_hydrophobe_or_hydrophile_clash,
+                            "hydrophobic_interaction"     : is_hydrophobic_interaction,
+                            "hydrophobe_hydrophile_clash" : is_hydrophobe_hydrophile_clash,
+                            "hydrophobe_hydrophile_repulsion" : is_hydrophobe_hydrophile_repulsion,
                             #
                             "n_pi_regular"    : is_n_pi_regular,
                             "n_pi_reciprocal" : is_n_pi_reciprocal,
@@ -3526,7 +3602,33 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
                             "van_der_waals" : is_van_der_waals,
         }])
         
-        return df
+
+        #----- create a pandas dataframe of resulting classes (python object) -----
+        df_class = pd.DataFrame({ 
+            "residue_1_index" : pair[0],
+            "residue_2_index" : pair[1],
+            "residue_1_C5Hbond" : residue_1_C5Hbond,
+            "residue_2_C5Hbond" : residue_2_C5Hbond,
+            "c_bond"   : cbond,
+            "amino_pi" : aminoPi,
+            "arg_involved" : argInvolved,
+            "aromatic_aromatic" : aromaticAromatic,
+            "charge_aromatic"   : chargeAromatic,
+            "charge_clash_repulsion" : chargeClashRepulsion,
+            "hydrogen-bond" : hbond,
+            "hydrophobic"   : hydrophobic_ClashRepulsion,
+            "n_pi" : npi,
+            "pi_hydrogen_bond" : piHbond,
+            "salt_bridge"  : saltbridge,
+            "sse_aromatic" : SSeAromatic,
+            "sse_hydrogen_chalcogen_bond" : SSE_hbond_chalcogen,
+            "van_der_waals" : vdw,
+        }, index=[0])
+
+        return df, df_class
+    
+    else:
+        return None, None
 
 
 
@@ -3544,13 +3646,14 @@ def task(trajectory, pair, frame):
     """
     #----- Check which interaction types are performed between the two residues -----
     interactions = identify_all_interaction_pair(trajectory, pair, frame=frame)
+    df_interactions = interactions[0]
+    df_class_interactions = interactions[1]
 
     # if their is not interaction, pass an go to next item in 'iterable'
-    if not isinstance(interactions, pd.DataFrame):
-        return None
+    if not isinstance(df_interactions, pd.DataFrame) or not isinstance(df_class_interactions, pd.DataFrame):
+        return None, None
 
     else:
-
         #----- Calculate Coulomb and LJ energies using AMBER and CHARMM -----
         try:
             energy = omm_coulomb_lj(trajectory, pair[0], pair[1], frame=frame)
@@ -3564,67 +3667,38 @@ def task(trajectory, pair, frame):
             energy_lj_charmm      = energy.get_energy_LJ[1]
 
         except:
+            energy = None
+            #
             energy_total_amber   = np.nan
             energy_coulomb_amber = np.nan
             energy_lj_amber      = np.nan
             #
             energy_total_charmm   = np.nan
             energy_coulomb_charmm = np.nan
-            energy_lj_charmm      = np.nan
-
-
-        #----- check if residues 1 and 2 have C5-Hbond (intra-residue H-bond) -----
-        #..... Residue 1
-        try:
-            # search C5-Hbond
-            residue_1_C5Hbond = C5_hydrogen_bond(trajectory, pair[0], frame=frame)
-
-            # check if exist for residue 1 or not
-            if residue_1_C5Hbond.check_interaction == True:
-                is_residue_1_C5Hbond = 1
-            else:
-                is_residue_1_C5Hbond = 0
-
-        except:
-            is_residue_1_C5Hbond = np.nan
-
-        #..... Residue 2
-        try:
-            # search C5-Hbond
-            residue_2_C5Hbond = C5_hydrogen_bond(trajectory, pair[1], frame=frame)
-
-            # check if exist for residue 2 or not
-            if residue_2_C5Hbond.check_interaction == True:
-                is_residue_2_C5Hbond = 1
-            else:
-                is_residue_2_C5Hbond = 0
-
-        except:
-            is_residue_2_C5Hbond = np.nan    
+            energy_lj_charmm      = np.nan   
 
             
-        #----- Add energies and C5-Hbond to the row -----
-        interactions["energy_total_charmm"] = energy_total_charmm
-        interactions["energy_coulomb_charmm"] = energy_coulomb_charmm
-        interactions["energy_lj_charmm"] = energy_lj_charmm
-        interactions["energy_total_amber"] = energy_total_amber
-        interactions["energy_coulomb_amber"] = energy_coulomb_amber
-        interactions["energy_lj_amber"] = energy_lj_amber
-        interactions["residue_1_C5_Hbond"] = is_residue_1_C5Hbond
-        interactions["residue_2_C5_Hbond"] = is_residue_2_C5Hbond
+        #----- Add energies and C5-Hbond to the 'df_interactions' row -----
+        df_interactions["energy_total_charmm"] = energy_total_charmm
+        df_interactions["energy_coulomb_charmm"] = energy_coulomb_charmm
+        df_interactions["energy_lj_charmm"] = energy_lj_charmm
+        df_interactions["energy_total_amber"] = energy_total_amber
+        df_interactions["energy_coulomb_amber"] = energy_coulomb_amber
+        df_interactions["energy_lj_amber"] = energy_lj_amber
 
-        return interactions
+        return [df_interactions, df_class_interactions]
         
 
 
 #----- Function to analyse the whole system -----
-def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"):
+def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, \
+                                   write_outfile=True, path_table_outfile="interaction_table_whole_system.csv", \
+                                   path_class_outfile="class_table_whole_system.pkl.gz"):
     """
     DESCRIPTION
         In a system (protein/complex) analyse all possible pairs (or given pairs) and return a complete table of their interaction types,
         with: 
             - Coulomb and Lennard-Jones energyes as calculated by openMM using both AMBER and CHARMM,
-            - Presence/Absence of C5-Hbond for each residue perfoming the pair.
 
     ARGUMENTS
         trajectory    MDTraj trajectory.
@@ -3643,13 +3717,20 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
         use_tqdm            Display tqdm proggress bar (True/False).
                             Default value: False
 
-        write_outfile       Write the finale interaction table in CSV format (True/False).
+        write_outfile       Write the finale interaction table in CSV format
+                            and the class containing table in pickle format compressed in gz.
+                            (True/False)
                             Default value: True
 
-        path_name_outfile   Path, containing the name, of the exported CSV table.
+        path_table_outfile   Path, containing the name, of the exported CSV table.
                             By default the file is exported in the curent location
                             and the name: "interaction_table_whole_system.csv"
                             Custom: "my/path/interaction_table_whole_system.csv"
+
+        path_class_outfile   Path, containing the name, of the exported computed class table.
+                            By default the file is exported in the curent location
+                            and the name: "class_table_whole_system.pkl.gz"
+                            Custom: "my/path/class_table_whole_system.pkl.gz"
     """
     #===== Initialize trajectory variable =====
     trajectory = trajectory[frame]
@@ -3690,20 +3771,24 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
             results = pool.starmap(task, tqdm(items, total=len(items)))
         else:
             results = pool.starmap(task, items)
-    
+
+
     
     #===== Return results =====
-    # Initialize the final table
+    # Initialize final tables
     df = pd.DataFrame()
+    df_class = pd.DataFrame()
     
     # Append the final table with the row 
-    df = pd.concat([i for i in results if isinstance(i, pd.DataFrame)], ignore_index=True)
+    df = pd.concat([i[0] for i in results if isinstance(i[0], pd.DataFrame)], ignore_index=True)
+    df_class = pd.concat([i[1] for i in results if isinstance(i[1], pd.DataFrame)], ignore_index=True)
     
     if write_outfile == True:
-        df.to_csv(path_name_outfile, index=False)
+        df.to_csv(path_table_outfile, index=False)
+        df_class.to_pickle(path_class_outfile)
     
     # return the complete dataframe
-    return df
+    return df, df_class
     
 
 

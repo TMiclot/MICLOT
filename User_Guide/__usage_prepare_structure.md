@@ -81,7 +81,7 @@ One PDB file containg the added bonds is also saved.
 ## 3. Minimize structure using OpenMM
 
 > [!IMPORTANT]
-> This command perform vaccum minimization. It mean that theit is no explicit/implicit force field define for the minimization process. So it assume their is no solvent (water, ions, ...) in your pdb file.
+> This command perform vaccum minimization. It mean that theit is no explicit/implicit solvent force field define for the minimization process. So it assume their is no solvent (water, ions, ...) in your pdb file.
 
 **def minimize_pdb**(pdb_file_path, *force_field='amber', max_iterations=100, restrain_heavy_atoms=True, constant=1.0e+5*)
 
