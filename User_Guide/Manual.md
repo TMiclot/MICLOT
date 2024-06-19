@@ -2,36 +2,30 @@
 
 # User guide :notebook_with_decorative_cover:
 
-Description ... It's work so Well
-
-
-## Introduction
-
-This part provide a brief introduction to the software.
+## Installation
 
 Please follow [installation instructions](__installation.md).
 
-To start exploring the software, you can take look at the [tutorials](../Tutorial/Tutorials.md).
 
 
 ## Theory behind MICLOT
 
-This part
+This part explain all the theory behind the development of the script. It it a key for a better understanding of how to use it.
 
 - [Element properties](__element_properties.md)
 - [Amino acids properties](__amino_acids_properties.md)
 - [Cysteine bridges: Cys-Cys](__CysCys_bridges.md)
 - [Non-bonding interactions](__nonbonding_interactions.md)
 - [Free energy of residue pairs & Complex binding energy](__free_energy.md)
-- Surface shape analysis
-- Network analysis
 - [Glossary](__glossary.md)
 
 
 
 ## Usage
 
-This part provide information about the classes and methods available in MICLOT.
+This part provide information about the classes and methods available in MICLOT and how to use them.
+
+To start exploring the software, you can take also look at the [tutorials](../Tutorial/Tutorials.md).
 
 - [Installation guide](__installation.md)
 - [Prepare a structure](__usage_prepare_structure.md)

@@ -6,6 +6,9 @@
 > [!NOTE] 
 > For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
 
+> [!WARNING]
+> If you use molecular dynamic software, hydrogen names can change depending of the force field you use (Amber, CHARMM, ...).
+
 ### 1.1. Backbone
 
 <img src="pictures/backbone.png" width="200"> OR <img src="pictures/backbone-1.png" width="200">
@@ -183,6 +186,38 @@ Reproduced from [Peters et *al.* (2014)](https://doi.org/10.1002/prot.24582).
 
 ## 5. Secondary structure
 
+### 5.1. Secondary structure preference
+
+Amino acids can have some preferences for secondary structure type, helix or $\beta -$ sheet. This can be expressed in terms of their ability to be former or not of a secondary structure.
+
+| Amino acid | Charge | Helical region | Helical assignment | $\beta -$ sheet region | $\beta -$ sheet assignment |
+| --- | --- | --- | --- | --- | --- |
+| Glu | - | 1.53 | Strong former  | 0.26 | Strong breaker |
+| Pro |   | 0.59 | Strong breaker | 0.62 | Breaker |
+| Asn |   | 0.73 | Breaker        | 0.65 | Breaker |
+| His | + | 1.24 | Former         | 0.71 | Breaker |
+| Ser |   | 0.79 | Indifferent    | 0.72 | Breaker |
+| Lys | + | 1.07 | Weak           | 0.74 | Breaker |
+| Asp | - | 0.98 | Indifferent    | 0.80 | Indifferent |
+| Gly |   | 0.53 | Strong breaker | 0.81 | Indifferent |
+| Arg | + | 0.79 | Indifferent    | 0.90 | Indifferent |
+| Ala |   | 1.45 | Strong former  | 0.97 | Weak   |
+| Trp |   | 1.14 | Former         | 1.19 | Former |
+| Thr |   | 0.82 | Indifferent    | 1.20 | Former |
+| Leu |   | 1.34 | Strong former  | 1.22 | Former |
+| Gln |   | 1.17 | Former         | 1.23 | Former |
+| Phe |   | 1.12 | Former         | 1.28 | Former |
+| Tyr |   | 0.61 | Breaker        | 1.29 | Former |
+| Cys |   | 0.77 | Indifferent    | 1.30 | Former |
+| Ile |   | 1.00 | Weak           | 1.60 | Strong former |
+| Val |   | 1.14 | Former         | 1.65 | Strong former |
+| Met |   | 1.20 | Former         | 1.67 | Strong former |
+
+Table adapted from [Chou and Fasman, 1974](https://doi.org/10.1021/bi00699a002)
+
+
+### 5.2. Secondary structure assignment methods
+
 Secondary structure of each residue is assigned using the DSSP 2.2.0 written by Maarten L. Hekkelman and implemented in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This implementation eliminates the need for the user to install, or compile, third-party software. This increases the module's ease of installation and portability between OS. It also avoids the need to read/write numerous output files.
 
 > [!IMPORTANT] 
@@ -190,7 +225,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 > - DSSP [version 4 and latter](https://github.com/PDB-REDO/dssp), or the [version 2.0](https://github.com/MDAnalysis/dssp), with the wraper [PDB.DSSP](https://biopython.org/docs/1.75/api/Bio.PDB.DSSP.html) implemented in [Biopython](https://biopython.org).
 > - STRIDE, source aviable [here](https://github.com/MDAnalysis/stride),  with the wraper [pySTRIDE](https://github.com/MDAnalysis/pystride) created by [MDAnalysis](https://docs.mdanalysis.org/stable/index.html) team.
 
-### 5.1. Complete assignment code
+#### 5.2.1. Complete assignment code
 
 | Code | Description                                  |
 | ---- | -------------------------------------------- |
@@ -204,7 +239,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 | C    | Loops and irregular elements                 |
 | N    | "residue" in the topology which isn't actually a protein residue. |
 
-### 5.2. Simplified assignment code
+#### 5.2.2. Simplified assignment code
 
 | Code | Description | Corresponding complete code |
 | ---- | ----------- | --------------------------- |
@@ -215,6 +250,7 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 ### 5.3. References
 
+- Chou, P. Y., & Fasman, G. D. (1974). Prediction of protein conformation. *Biochemistry*, 13(2), 222–245. [https://doi.org/10.1021/bi00699a002](https://doi.org/10.1021/bi00699a002)
 - Kabsch, W. & Sander, C. Dictionary of protein secondary structure: Pattern recognition of hydrogen‐bonded and geometrical features. *Biopolymers* 22, 2577–2637 (1983). [https://doi.org/10.1002/bip.360221211](https://doi.org/10.1002/bip.360221211)
 - Frishman, D. & Argos, P. Knowledge‐based protein secondary structure assignment. *Proteins* 23, 566–579 (1995). [https://doi.org/10.1002/prot.340230412](https://doi.org/10.1002/prot.340230412)
 

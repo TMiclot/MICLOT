@@ -22,7 +22,6 @@ MICLOT contains many tools.
 ```mermaid
 mindmap
     root)**MICLOT**(
-        id{{**Surface & Interface topology**}}
         id{{**Protein region**}}
         id{{**Energy calculation**}}
             Contacts-based method
