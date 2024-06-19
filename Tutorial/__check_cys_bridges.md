@@ -9,7 +9,26 @@ We will use the structure [5azz](https://www.rcsb.org/structure/5azz) of the sel
 ## First step: load required modules
 
 ```python
-import ***
+# Define the path to of the package
+package_dir = '/path/to/MICLOT'
+
+# Add the 'miclot' package directory to sys.path
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
+```
+
+Now you can import the package:
+
+```python
+import miclot.cys_bridges as mcc
+```
+
+Using this way, all commands to analyse an interaction type are callable using *mcc*. For example: mcc.cys_bridge()
+
+Or you can import directly all command, so it wil be not necessary to use *mcc.*:
+
+```python
+from miclot.cys_bridges import *
 ```
 
 

@@ -2,6 +2,26 @@
 
 # Get energetic properties
 
+## First step: load required modules
+
+```python
+# Define the path to of the package
+package_dir = '/path/to/MICLOT'
+
+# Add the 'miclot' package directory to sys.path
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
+```
+
+Now you can import the packages:
+
+```python
+from miclot.coulomb_lj import coulomb_lj
+from miclot.complex_binding import compute_binding_energy
+```
+
+
+
 ## 1. Coulomb & Lennard-Jones
 
 **Code**
