@@ -2,7 +2,9 @@
 
 # Tutorial: How to identify non-bonded interaction ?
 
-This tutorial give you working example on how to identify non-bonded interaction between two residue, or indide one residue: only for C5 H-bond.
+This tutorial give you working example on how to identify all non-bonded interaction into a system of interest and in a pair only. Then all individial commands will be shown.
+
+
 
 ## First step: load required modules
 
@@ -27,6 +29,142 @@ Or you can import directly all command, so it wil be not necessary to use *mci.*
 
 ```python
 from miclot.interactions import *
+```
+
+
+
+## A. Identify all interfactions in a protein, or a complex
+
+### A.1. Analyse a system
+
+**Code**
+
+```python
+import mdtraj as md
+
+# trajectory (or structure) to use
+pdb_file = '5azz.pdb'
+
+# Load molecular structure using MDTraj
+traj = md.load(pdb_file, top=pdb_file)
+
+# remove solvent
+traj.remove_solvent(inplace=True)
+
+# analyse the whole system
+df_interaction, df_class = mci.interaction_table_whole_system(traj)
+```
+
+### A.2. Recover raw information
+
+To recover raw information of the analysis, you can:
+
+- Directly use the 'df_class', in the same script.
+- Read the *.pkl.gz* file as Pandas dataframe, at a later inspection.
+
+As you will see each cell of the dataframe contain the output as `<miclot.interactions>` object. This means that properties can be used as if they were the normal output of an analysis command, as you can see below:
+
+**Code**
+
+```python
+import miclot.interactions as mci
+import pandas as pd
+
+result = pd.read_pickle("class_table_whole_system.pkl.gz")
+
+# loop over all ceels in the "hydrophobic" command
+for i in result["hydrophobic"]:
+
+    # extract information using the poperties '.check_interaction' and '.get_distance' as usual.
+    try:
+        print(i.check_interaction)
+        print(i.get_distance)
+    except:
+        pass
+```
+
+**Result**
+
+```
+(False, False, None)
+(3.806639611721039, 6.108064998445996)
+(True, False, 'repulsion')
+(5.545051693916321, 8.142675867155958)
+(True, False, 'repulsion')
+(5.140817165374756, 8.291636803448867)
+(False, False, None)
+(5.635319352149963, 5.125583707709749)
+(True, False, 'repulsion')
+(7.829961180686951, 8.181915776194057)
+(True, False, 'repulsion')
+(9.408645629882812, 9.748772673630256)
+...
+```
+
+
+
+## B. Identify all interfactions for a pair of residues
+
+Insted of analyse a complete protein you can also check all possibilities for a single pair of residues.
+
+**Code**
+
+```python
+# trajectory (or structure) to use
+pdb_file = '5azz.pdb'
+
+# Load molecular structure using MDTraj
+traj = md.load(pdb_file, top=pdb_file)
+
+# remove solvent
+traj.remove_solvent(inplace=True)
+
+# analyse between residues IDs 0 and 1
+df_result, df_class = mci.identify_all_interaction_pair(traj, [0,1])
+
+print(df_result)
+print(df_class)
+```
+
+**Result**
+
+```
+   residue_1_chain  residue_1_index  residue_1_resSeq residue_1_name  \
+0                0                0                 1            GLY   
+
+   residue_2_chain  residue_2_index  residue_2_resSeq residue_2_name  \
+0                0                1                 2            ILE   
+
+   residue_1_C5Hbond  residue_2_C5Hbond  ...  salt_bridge  S_pi  \
+0                NaN                NaN  ...          NaN   NaN   
+
+   S_intermediate  S_quadrupole  Se_pi  Se_intermediate  Se_quadrupole  \
+0             NaN           NaN    NaN              NaN            NaN   
+
+   sse_hbond  sse_chalcogen  van_der_waals  
+0          0              0              1  
+
+[1 rows x 51 columns]
+   residue_1_index  residue_2_index residue_1_C5Hbond residue_2_C5Hbond  \
+0                0                1              None              None   
+
+                                              c_bond amino_pi arg_involved  \
+0  <miclot.interactions.C_bond object at 0x72fe94...     None         None   
+
+  aromatic_aromatic charge_aromatic charge_clash_repulsion  \
+0              None            None                   None   
+
+                                       hydrogen-bond hydrophobic  \
+0  <miclot.interactions.hydrogen_bond object at 0...        None   
+
+                                                n_pi pi_hydrogen_bond  \
+0  <miclot.interactions.n_pi object at 0x72fe9012...             None   
+
+  salt_bridge sse_aromatic                        sse_hydrogen_chalcogen_bond  \
+0        None         None  <miclot.interactions.sse_hydrogen_chalcogen_bo...   
+
+                                       van_der_waals  
+0  <miclot.interactions.van_der_waals object at 0...  
 ```
 
 
@@ -1053,7 +1191,7 @@ print(interaction.get_angle)
 
 ## 14. Arg-Arg & Arg-aromatic
 
-### 14.1.
+### 14.1. Arg-Aromatic - Parallel
 
 **Code**
 
@@ -1074,7 +1212,7 @@ print(interaction.get_angle)
 6.318758521316121
 ```
 
-### 14.2.
+### 14.2. Arg-Aromatic - Perpendicular
 
 **Code**
 
@@ -1095,7 +1233,7 @@ print(interaction.get_angle)
 83.06692941259753
 ```
 
-### 14.3.
+### 14.3. Arg-Arg - Parallel
 
 **Code**
 
@@ -1116,7 +1254,7 @@ print(interaction.get_angle)
 72.61663724626918
 ```
 
-### 14.4.
+### 14.4. Arg-Arg - Perpendicular
 
 **Code**
 

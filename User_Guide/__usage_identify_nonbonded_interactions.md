@@ -22,18 +22,19 @@ All commands come from `miclot.interactions`
 
 ## Identify all interfactions in a protein, or a complex
 
-**interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_distance_contact=14.0, use_tqdm=False, write_outfile=True, path_name_outfile="interaction_table_whole_system.csv"*):
+**interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, write_outfile=True, path_table_outfile="interaction_table_whole_system.csv", path_class_outfile="class_table_whole_system.pkl.gz"*):
     
 ### Description
 
 *Here a protein or a protein complex is named system, without difference.*
 
-In a system analyse all possible pairs (or given pairs) and return a complete table of their interaction types, with: 
+In a system analyse all possible pairs (or given pairs) and return a complete table of their interaction types, with Coulomb and Lennard-Jones energyes as calculated by openMM using both AMBER and CHARMM,
 
-- Coulomb and Lennard-Jones energyes as calculated by openMM using both AMBER and CHARMM,
-- Presence/Absence of C5-Hbond for each residue perfoming the pair.
+The command return:
 
-The command return a Pandas DataFrame with all data and write it as CSV file.
+- a Pandas DataFrame with all interactions and write it as CSV file.
+- a Pandas Dataframe containing all output as class object and write it as [pickle](https://docs.python.org/3/library/pickle.html) file (other information on pickle file can be found in the [Pandas documentation](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_pickle.html)), compressed into gz file. <br/> This fille allow user to recover the raw information, as `<miclot.interactions>` object, without performing a new analysis.
+
 
 
 >[!TIP]
@@ -62,7 +63,8 @@ The command return a Pandas DataFrame with all data and write it as CSV file.
 | list_pairs  | list | List of pair of residue. By default take all possible pair in the system. Else can be set by user, using this format: [[id1,id2], [id3,id4], ...] | optional |
 | MAX_CA_distance | float | Maximum distance between CA atom of the two residue. Pairs with a greater distance will be ignored. <br/> Default value: 14.0 angstrom | optional |
 | write_outfile | boolean | Write the finale interaction table in CSV format (True/False). <br/> Default value: True | optional |
-| path_name_outfile | string | Path, containing the name, of the exported CSV table. By default the file is exported in the curent location and the name: "interaction_table_whole_system.csv" <br/> Custom: "my/path/interaction_table_whole_system.csv" | optional |
+| path_table_outfile | string | Path, containing the name, of the exported CSV table. By default the file is exported in the curent location and the name: "interaction_table_whole_system.csv" <br/> Custom: "my/path/interaction_table_whole_system.csv" | optional |
+| path_class_outfile | string | Path, containing the name, of the exported computed class table. By default the file is exported in the curent location and the name: "class_table_whole_system.pkl.gz" <br/> Custom: "my/path/class_table_whole_system.pkl.gz" | optional |
 | use_tqdm | boolean | Display tqdm proggress bar (True/False). <br/> Default value: False | optional |
 
 
@@ -72,10 +74,15 @@ The command return a Pandas DataFrame with all data and write it as CSV file.
 
 ### Description
 
-A fucntion to identify all interaction between residues forming a pair.
+A fucntion to identify all interaction between residues forming a pair. Including presence/absence of inter-residue C5-Hbond for each residue perfoming the pair.
 
 It run all interaction commands (with default parameters) and return a Pandas DataFrame with informations of each residue, the number of interaction doing by the pair, a detail of the interaction type and subtype.
 If the interaction exist: 1, else 0. If the interaction can't exist: NaN.
+
+The command return:
+
+- a Pandas DataFrame with all interactions.
+- a Pandas Dataframe containing all output as class object.
 
 >[!IMPORTANT]
 > Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
@@ -109,14 +116,14 @@ Identify if their is C-bond interaction between C(sp3) with O.
 | res_index_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | res_index_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
-| MAX_distance  | float | Maximum C-O distance. <br/> Default value: 3.6 angstrom |
-| MIN_distance  | float | Mimimum C-O distance. <br/> Default value: 2.5 angstrom |
-| MAX_angle_COC | float | Maximum C..O=C angle. <br/> Default value: 180.0 degree |
-| MIN_angle_COC | float | Minimum C..O=C angle. <br/> Default value: 160.0 degree |
-| MAX_angle_ZOC | float | Maximum Z-O...C angle. <br/> Default value: 180.0 degree |
-| MIN_angle_ZOC | float | Minimum Z-O...C angle. <br/> Default value: 160.0 degree |
-| MAX_energy    | float | Maximum energy of the interaction. <br/> Default value: -2.0 kJ/mol |
-| MIN_energy    | float | Minimum energy of the interaction. <br/> Default value: -22.0 kJ/mol |
+| MAX_distance  | float | Maximum C-O distance. <br/> Default value: 3.6 angstrom | optional  |
+| MIN_distance  | float | Mimimum C-O distance. <br/> Default value: 2.5 angstrom | optional  |
+| MAX_angle_COC | float | Maximum C..O=C angle. <br/> Default value: 180.0 degree | optional  |
+| MIN_angle_COC | float | Minimum C..O=C angle. <br/> Default value: 160.0 degree | optional  |
+| MAX_angle_ZOC | float | Maximum Z-O...C angle. <br/> Default value: 180.0 degree | optional  |
+| MIN_angle_ZOC | float | Minimum Z-O...C angle. <br/> Default value: 160.0 degree | optional  |
+| MAX_energy    | float | Maximum energy of the interaction. <br/> Default value: -2.0 kJ/mol | optional  |
+| MIN_energy    | float | Minimum energy of the interaction. <br/> Default value: -22.0 kJ/mol | optional  |
 
 ### Properties
 

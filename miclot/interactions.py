@@ -3776,16 +3776,16 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
     
     #===== Return results =====
     # Initialize final tables
-    df = pd.DataFrame()
-    df_class = pd.DataFrame()
+    df = pd.DataFrame() # table containing the analysis result summary
+    df_class = pd.DataFrame() # pandas table containing the original output of calsses
     
-    # Append the final table with the row 
+    # Append the final tables with the row 
     df = pd.concat([i[0] for i in results if isinstance(i[0], pd.DataFrame)], ignore_index=True)
     df_class = pd.concat([i[1] for i in results if isinstance(i[1], pd.DataFrame)], ignore_index=True)
     
     if write_outfile == True:
         df.to_csv(path_table_outfile, index=False)
-        df_class.to_pickle(path_class_outfile)
+        df_class.to_pickle(path_class_outfile) # save as pickle to ensure class can be resused as it when read
     
     # return the complete dataframe
     return df, df_class

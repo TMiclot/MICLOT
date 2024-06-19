@@ -79,7 +79,7 @@ package_dir = '/home/user/analysis/MICLOT/'
 
 # Add the 'miclot' package directory to sys.path
 if package_dir not in sys.path:
-    sys.path.insert(0, package_dir
+    sys.path.insert(0, package_dir)
 
 # import function and classes from MICLOT
 import miclot.interactions as mci

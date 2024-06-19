@@ -51,19 +51,33 @@ Non-binding interactions are not to be considered independently, or in isolation
 
 ## D. Remark concerning Histidine
 
-Histidine can participate in $\pi-\pi$ stacking thank to its imidazole group, or in $\pi-$ anion ([Lucas *et al.*, 2016](https://doi.org/10.1039/c5sc01386k) and [Liao *et al.*, 2013](https://doi.org/10.1186/1752-153X-7-44)). In $\pi-$ cation, histidine can participate as a $\pi-$ system or as a cation when protonated: HIP ([Gallivan and Dougherty, 1999](https://doi.org/10.1073/pnas.96.17.9459)).
+Histidine can participate in $\pi-\pi$ stacking thank to its imidazole group, or in $\pi-$ anion ([Lucas *et al.*, 2016](https://doi.org/10.1039/c5sc01386k) and [Liao *et al.*, 2013](https://doi.org/10.1186/1752-153X-7-44)). In $\pi-$ cation, histidine can participate as a $\pi-$ system or as a cation when protonated: HIP/HSP ([Gallivan and Dougherty, 1999](https://doi.org/10.1073/pnas.96.17.9459)).
 
 
 ## E. Overview of interaction types
 
 > [!NOTE]
-> This is a general overview. For detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
+> This is a general overview without too much detail. For detailed information of all parameters and subtypes [go below](#detailed-description-of-non-bonding-interactions) this table.
 
 | Interaction type | Description | Energy (kcal/mol) | Distance (Å) | Angle (degree) |
 | ---------------- | ----------- | ----------------- | ------------ | -------------- |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| $n \rightarrow \pi^*$ | Interaction between C and O of tow carbonyl group $(C=O)$ of the backbone: $C=O \cdots C=O$ | $-0.7 \leq E \leq -0.3$ | $d_{O\cdots C} \approx 3.0$ | $\widehat{OC\cdots O}\approx 102.0$ |
+| C-bond | Interaction of $C^{sp3}$ (donnor) with carbonyl O (acceptor) through $n \rightarrow \sigma^*$ electron delocalization: $Z-C^{sp3} \cdots O=C$. Where *Z* is N, C or O. | $2.5 \leq d_{C \cdots O} \leq 3.6$ | $160 \leq \widehat{Z-C\cdots O}\leq 180$ <br/> $160 \leq \widehat{C\cdots O=C}\leq 180$ | Can be up to -4 |
+| Chalcogen bond | [Chalcogen bond is a] net attractive interaction between an electrophilic region associated with a chalcogen atom in a molecular entity and a nucleophilic region in another, or the same, molecular entity. ([Aakeroy *et al.*, 2019](https://doi.org/10.1515/pac-2018-0713)) | Can be up to -3 | $d_{S/Se \cdots X} \leq 3.6$ | $\sigma \leq 50$ <br/> $30 \leq \Phi \leq 60$ <br/> $\theta \leq 50$ <br/> $115 \leq {CSX} \leq 155$ |
+| S/Se mediated H-bond | Sulfur (S) or selenium (Se) are able to perform hydrogen bond and be a or hydorgen donor or hydorgen acceptor: $SH \cdots A$ or $S \cdots HD$ | S-mediated H-bond: $-5.5 \leq E \leq -4.5$ <br/> Se-mediated H-bond: Can be up to -7 | | $50 < \sigma$ <br/> $\widehat{CSX} \leq 145$ |
+| Hydrogen bond | The hydrogen bond is an attractive interaction between a hydrogen atom from a molecule or amolecular fragment X–H in which X is more electronegative than H, and an atom or a group of atoms in the same or a different molecule, in which there is evidence of bond formation. [(Arunan *et al.*, 2011)](https://doi.org/10.1351/PAC-REC-10-01-02) | Can be up to -40 | $d_{D \cdots A} \leq 3$ | $120 \leq \widehat{DH \cdots A}$ |
+| C5 H-bond | Intraresidue H-bond between carbonyl O and amino N atoms of the backbone. <br/> $\phi$ is the backbone dihedral angle $\widehat{CNC_{\alpha}C'}$ and $\phi$ is the backbone dihedral angle $\widehat{NC_{\alpha}C'N'}$. | $E \approx -1.44$ | $d_{D \cdots A} \leq 2.7 $ | $\phi \approx 140$ <br/> $\psi \approx 140$ |
+| $\pi - H$ bond | Interaction involving the $\pi$ part of an aromatic cycle and an hydrogen (H). | $-2.5 \leq E \leq -1.0$ | $d_{D \cdots C} \leq 5.5 $ <br/> $d_{H \cdots C} \leq 3 $ <br/> $d_{H_p \cdots C} \leq 1.2 $ | $\widehat{CHD} \geq 120$ |
+| $\pi - \pi$ | Interaction between the $\pi$ part of two aromatic residues. | $E \approx -3$ | $d_{COM - COM} \leq 5.5 $ | $\theta_{planarity} \leq 30$ |
+| $\pi -$ Quadrupole | Interaction between the $\pi$ part of one aromatic residue and the quadrupole part of another. |  | $d_{COM - COM} \leq 5.5 $ | $60 \leq \theta_{planarity}$ |
+| Quadrupole - Quadrupole | Interaction between the quadrupole part of two aromatic residues. In this configuration the aromatic cycles are (approximatively) on the same plane. |  | $d_{COM - COM} \leq 5.5 $ | $\theta_{planarity} \leq 30$ <br/> $\theta_{plane_A-COM} \leq 35 $ <br/> $\theta_{plane_B-COM} \leq 35$ |
+| Amino $- \pi$ | Interaction between the $\pi$ part of an aromatic cycle and the amino group of a ASN (ND2) or GLN (NE2). |  | $d_{COM-N} \leq 5.5 $ | $60 \leq \theta \leq 90$ |
+| Aromatic - Charge | Positively and negatively charged amino acids can interact with the $\pi$ area or the quadrupole are of an aromatic cycle. | Quadrupole - Anion: Can be up to -8 | $d_{COM-X} \leq 5.5 $ | $60 \leq \theta$ <br/> or $\theta \leq 35$ |
+| van der Waals | Noncovalent interactions (weak as compared to covalent bonds) due to dipole-induced dipole and dispersion forces acting at molecules and atoms. [(Minkin, 1999)](https://doi.org/10.1351/pac199971101919) |  | $radii_{vdw \space atom \space 1} + radii_{vdw \space atom \space 1} + N$ | No |
+| Hydrophobic | Interaction between tow close hydrophobic residues. |  | $d_{COM-COM} \leq 5 $ <br/> $d_{CA-CA} \leq 9.5 $ |  |
+| Hydrophobe - Hydrophile clash / repulsion | Proximity between a hydrophobic residue and a hydrophilic residue can lead to clash or a respustion, depending on their side chains COM-COM distance. |  | $d_{COM-COM} \leq 5 $ <br/> or $5 \leq d_{COM-COM} $ | No |
+| Salt bridge | Strong electrostatic interaction involving an H-bond and an ionic bond between amino acids with opposite charges. |  | $d_{X \cdots X} \leq 4 $ |  |
+| Charge clash / repulsion | Proximity between same charged residues can lead to clash or a respustion, depending on their side chains COM-COM distance. |  | $d_{X-X} \leq 5 $ <br/> or $5 \leq d_{X-X} $ | No |
 
 
 
@@ -181,7 +195,7 @@ Sulfur (S) or selenium (Se) are able to perform hydrogen bond and be a or hydorg
 
 #### 3.1.3. Segregate chalcogen bond and S/Se mediated H-bond
 
-Perfect segregation between the chalcogen bond and the S/Se mediated H-bond is not obvious. The geometric parameters of the two can be quite close, for example there is an overlap of values for the CSX angle. Here, the segregation will essentially take place with the value of the $\sigma$ dihedral angle.
+Perfect segregation between the chalcogen bond and the S/Se mediated H-bond is not obvious. The geometric parameters of the two can be quite close, for example there is an overlap of values for the $\widehat{CSX}$ angle. Here, the segregation will essentially take place with the value of the $\sigma$ dihedral angle.
 
 ### 3.2. Geometric parameters
 
@@ -194,7 +208,7 @@ Illustration of parameter used, with a sulfure atom as example. Parameters are t
 - $C_{a_1-a_2}$ : Centroid of the tree atoms $a_1$, $a_2$, S. *It is not the center of mass, but the geometric center.*
 - $x'$ : Projection of the atom *X* on the plane defined by the tree atoms $a_1$, $a_2$, S.
 - $d_{S \cdots X}$ : Distance between S and X.
-- *CSX*  : Angle between the vectors $\overrightarrow{SC}$ and $\overrightarrow{SX}$.
+- $\widehat{CSX}$  : Angle between the vectors $\overrightarrow{SC}$ and $\overrightarrow{SX}$.
 - $\Phi$ : Angle between the vectors $\overrightarrow{CS}$ and $\overrightarrow{Sx'}$.
 - $\theta$ : Angle between the normal vector of the plan and $\overrightarrow{SX}$.
 - $\sigma$ : Dihedral angle between $\overrightarrow{aC}$, $\overrightarrow{CS}$ and $\overrightarrow{SX}$. It can be calculated as the angle between the planes *a,C,S* and *C,S,X*.
@@ -207,14 +221,14 @@ Parameters for chalcogen bonds:
 | Angle    | $\sigma \leq 50$          | degree |
 | Angle    | $30 \leq \Phi \leq 60$    | degree |
 | Angle    | $\theta \leq 50$          | degree |
-| Angle    | $115 \leq {CSX} \leq 155$ | degree |
+| Angle    | $115 \leq \widehat{CSX} \leq 155$ | degree |
 
 Parameters for S/Se mediated H-bonds:
 
 | Type| Value | Unit |
 | --- | --- | --- |
 | Angle | $50 < \sigma$    | degree |
-| Angle | ${CSX} \leq 145$ | degree |
+| Angle | $\widehat{CSX} \leq 145$ | degree |
 
 For sulfur, prefered angle are: $\widehat{DH \cdots S} \approx 141.1$ and $\widehat{SH \cdots A} \approx 136.5$
 
@@ -442,7 +456,7 @@ $E \approx -3$ *kcal/mol*
 
 #### 5.2.1. Description
 
-Interaction between the $\pi$ part of one aromatic residue and the quadruploe part of another.
+Interaction between the $\pi$ part of one aromatic residue and the quadrupole part of another.
 
 <img src="pictures/aromatic_aromatic_TYshaped.png" width="250">
 
