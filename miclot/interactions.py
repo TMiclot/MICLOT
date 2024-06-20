@@ -3450,15 +3450,18 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
     #----- check interaction: van der Waals -----
     try:
         vdw = van_der_waals(trajectory, pair[0], pair[1], frame=frame)
-
-        if vdw.check_interaction[0] == True:
-            is_van_der_waals = 1
-        else:
-            is_van_der_waals = 0
+        # get number of vdw contacts
+        van_der_waals_nb_contacts = vdw.get_number_contacts
 
     except:
         vdw = None
+        van_der_waals_nb_contacts = np.nan
         is_van_der_waals = np.nan
+
+    if 0 < van_der_waals_nb_contacts:
+        is_van_der_waals = 1
+    else:
+        is_van_der_waals = 0
 
     # add the interaction result to the list_interaction_pair
     list_interaction_pair.append(is_van_der_waals)
@@ -3500,135 +3503,128 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
     #===== return result =====
     #Check if the list_interaction_pair contain at least one 1 or one 0.5
     array_interaction_pair = np.array(list_interaction_pair)
+
+    #----- Get information in the topology, concerning the two residues -----
+    # for residue 1
+    residue_1 = trajectory.topology.residue(pair[0])
+    residue_1_resseq = residue_1.resSeq
+    residue_1_name   = residue_1.name
+    residue_1_chain  = residue_1.chain.index
     
-    # Check if the array contains at least one 1
-    if 0 < np.nansum(array_interaction_pair):
-
-        #----- Get information in the topology, concerning the two residues -----
-        # for residue 1
-        residue_1 = trajectory.topology.residue(pair[0])
-        residue_1_resseq = residue_1.resSeq
-        residue_1_name   = residue_1.name
-        residue_1_chain  = residue_1.chain.index
-        
-        # for residue 2
-        residue_2 = trajectory.topology.residue(pair[1])
-        residue_2_resseq = residue_2.resSeq
-        residue_2_name   = residue_2.name
-        residue_2_chain  = residue_2.chain.index
-
-        # check if the two residues are consecutive or not: residue i and residue i+1
-        residues_index_difference = abs(pair[0] - pair[1])
-        
-        if residue_1_chain == residue_2_chain and residues_index_difference == 1:
-            consecutive = 1
-        else:
-            consecutive = 0
-
-        
-        #----- calculate the number of interaction in the pair -----
-        # np.ceil is used to up 0.5 to 1 for the salt bridge
-        # np.nansum is used to calculate the sum without taking in account the np.nan
-        number_interactions = np.nansum( np.ceil( array_interaction_pair ) )
-        
-        #----- create a pandas dataframe of interactions -----
-        df = pd.DataFrame([{"residue_1_chain" : residue_1_chain,
-                            "residue_1_index" : pair[0],
-                            "residue_1_resSeq": residue_1_resseq,
-                            "residue_1_name"  : residue_1_name,
-                            #
-                            "residue_2_chain" : residue_2_chain,
-                            "residue_2_index" : pair[1],
-                            "residue_2_resSeq": residue_2_resseq,
-                            "residue_2_name"  : residue_2_name,
-                            #
-                            "residue_1_C5Hbond": is_residue_1_C5Hbond,
-                            "residue_2_C5Hbond": is_residue_2_C5Hbond,
-                            #
-                            "consecutive_residues" : consecutive,
-                            "number_interactions" : number_interactions,
-                            #
-                            "c_bond" : is_c_bond,
-                            #
-                            "amino_pi" : is_amino_pi,
-                            #
-                            "arg_aromatic_parallel"      : is_arg_aromatic_parallel,    
-                            "arg_aromatic_perpendicular" : is_arg_aromatic_perpendicular,
-                            "arg_aromatic_intermediate " : is_arg_aromatic_intermediate,
-                            "arg_arg_parallel"      : is_arg_arg_parallel,     
-                            "arg_arg_perpendicular" : is_arg_arg_perpendicular,     
-                            "arg_arg_intermediate"  : is_arg_arg_intermediate, 
-                            #
-                            "aromatic_aromatic_parallel" : is_aromatic_aromatic_parallel,
-                            "aromatic_aromatic_offset"   : is_aromatic_aromatic_offset,  
-                            "aromatic_aromatic_coplanar" : is_aromatic_aromatic_coplanar,
-                            "aromatic_aromatic_Yshaped"  : is_aromatic_aromatic_Yshaped, 
-                            "aromatic_aromatic_Tshaped"  : is_aromatic_aromatic_Tshaped,
-                            "aromatic_aromatic_intermediate" : is_aromatic_aromatic_intermediate, 
-                            #
-                            "cation_pi"           : is_cation_pi,
-                            "cation_intermediate" : is_cation_intermediate,
-                            "cation_quadrupole"   : is_cation_quadrupole,
-                            "anion_pi"            : is_anion_pi,
-                            "anion_intermediate"  : is_anion_intermediate,
-                            "anion_quadrupole"    : is_anion_quadrupole,
-                            #
-                            "charge_repulsion" : is_charge_repulsion,
-                            "charge_clash"     : is_charge_clash,
-                            #
-                            "hydrogen_bond" : is_hydrogen_bond,
-                            #
-                            "hydrophobic_interaction"     : is_hydrophobic_interaction,
-                            "hydrophobe_hydrophile_clash" : is_hydrophobe_hydrophile_clash,
-                            "hydrophobe_hydrophile_repulsion" : is_hydrophobe_hydrophile_repulsion,
-                            #
-                            "n_pi_regular"    : is_n_pi_regular,
-                            "n_pi_reciprocal" : is_n_pi_reciprocal,
-                            #
-                            "pi_hbond" : is_pi_hbond,
-                            #
-                            "salt_bridge" : is_salt_bridge,
-                            #
-                            "S_pi"            : is_S_pi,
-                            "S_intermediate"  : is_S_intermediate,
-                            "S_quadrupole"    : is_S_quadrupole,
-                            "Se_pi"           : is_Se_pi,
-                            "Se_intermediate" : is_Se_intermediate,
-                            "Se_quadrupole"   : is_Se_quadrupole,
-                            #
-                            "sse_hbond"     : is_sse_hbond,
-                            "sse_chalcogen" : is_sse_chalcogen,
-                            #
-                            "van_der_waals" : is_van_der_waals,
-        }])
-        
-
-        #----- create a pandas dataframe of resulting classes (python object) -----
-        df_class = pd.DataFrame({ 
-            "residue_1_index" : pair[0],
-            "residue_2_index" : pair[1],
-            "residue_1_C5Hbond" : residue_1_C5Hbond,
-            "residue_2_C5Hbond" : residue_2_C5Hbond,
-            "c_bond"   : cbond,
-            "amino_pi" : aminoPi,
-            "arg_involved" : argInvolved,
-            "aromatic_aromatic" : aromaticAromatic,
-            "charge_aromatic"   : chargeAromatic,
-            "charge_clash_repulsion" : chargeClashRepulsion,
-            "hydrogen-bond" : hbond,
-            "hydrophobic"   : hydrophobic_ClashRepulsion,
-            "n_pi" : npi,
-            "pi_hydrogen_bond" : piHbond,
-            "salt_bridge"  : saltbridge,
-            "sse_aromatic" : SSeAromatic,
-            "sse_hydrogen_chalcogen_bond" : SSE_hbond_chalcogen,
-            "van_der_waals" : vdw,
-        }, index=[0])
-
-        return df, df_class
+    # for residue 2
+    residue_2 = trajectory.topology.residue(pair[1])
+    residue_2_resseq = residue_2.resSeq
+    residue_2_name   = residue_2.name
+    residue_2_chain  = residue_2.chain.index
     
+    # check if the two residues are consecutive or not: residue i and residue i+1
+    residues_index_difference = abs(pair[0] - pair[1])
+    
+    if residue_1_chain == residue_2_chain and residues_index_difference == 1:
+        consecutive = 1
     else:
-        return None, None
+        consecutive = 0
+    
+    
+    #----- calculate the number of interaction in the pair -----
+    # np.ceil is used to up 0.5 to 1 for the salt bridge
+    # np.nansum is used to calculate the sum without taking in account the np.nan
+    number_interactions = np.nansum( np.ceil( array_interaction_pair ) )
+    
+    #----- create a pandas dataframe of interactions -----
+    df = pd.DataFrame([{"residue_1_chain" : residue_1_chain,
+                        "residue_1_index" : pair[0],
+                        "residue_1_resSeq": residue_1_resseq,
+                        "residue_1_name"  : residue_1_name,
+                        #
+                        "residue_2_chain" : residue_2_chain,
+                        "residue_2_index" : pair[1],
+                        "residue_2_resSeq": residue_2_resseq,
+                        "residue_2_name"  : residue_2_name,
+                        #
+                        "consecutive_residues": consecutive,
+                        "number_interactions" : number_interactions,
+                        #
+                        "residue_1_C5Hbond": is_residue_1_C5Hbond,
+                        "residue_2_C5Hbond": is_residue_2_C5Hbond,
+                        #
+                        "c_bond" : is_c_bond,
+                        #
+                        "amino_pi" : is_amino_pi,
+                        #
+                        "arg_aromatic_parallel"      : is_arg_aromatic_parallel,    
+                        "arg_aromatic_perpendicular" : is_arg_aromatic_perpendicular,
+                        "arg_aromatic_intermediate " : is_arg_aromatic_intermediate,
+                        "arg_arg_parallel"      : is_arg_arg_parallel,     
+                        "arg_arg_perpendicular" : is_arg_arg_perpendicular,     
+                        "arg_arg_intermediate"  : is_arg_arg_intermediate, 
+                        #
+                        "aromatic_aromatic_parallel" : is_aromatic_aromatic_parallel,
+                        "aromatic_aromatic_offset"   : is_aromatic_aromatic_offset,  
+                        "aromatic_aromatic_coplanar" : is_aromatic_aromatic_coplanar,
+                        "aromatic_aromatic_Yshaped"  : is_aromatic_aromatic_Yshaped, 
+                        "aromatic_aromatic_Tshaped"  : is_aromatic_aromatic_Tshaped,
+                        "aromatic_aromatic_intermediate" : is_aromatic_aromatic_intermediate, 
+                        #
+                        "cation_pi"           : is_cation_pi,
+                        "cation_intermediate" : is_cation_intermediate,
+                        "cation_quadrupole"   : is_cation_quadrupole,
+                        "anion_pi"            : is_anion_pi,
+                        "anion_intermediate"  : is_anion_intermediate,
+                        "anion_quadrupole"    : is_anion_quadrupole,
+                        #
+                        "charge_repulsion" : is_charge_repulsion,
+                        "charge_clash"     : is_charge_clash,
+                        #
+                        "hydrogen_bond" : is_hydrogen_bond,
+                        #
+                        "hydrophobic_interaction"     : is_hydrophobic_interaction,
+                        "hydrophobe_hydrophile_clash" : is_hydrophobe_hydrophile_clash,
+                        "hydrophobe_hydrophile_repulsion" : is_hydrophobe_hydrophile_repulsion,
+                        #
+                        "n_pi_regular"    : is_n_pi_regular,
+                        "n_pi_reciprocal" : is_n_pi_reciprocal,
+                        #
+                        "pi_hbond" : is_pi_hbond,
+                        #
+                        "salt_bridge" : is_salt_bridge,
+                        #
+                        "S_pi"            : is_S_pi,
+                        "S_intermediate"  : is_S_intermediate,
+                        "S_quadrupole"    : is_S_quadrupole,
+                        "Se_pi"           : is_Se_pi,
+                        "Se_intermediate" : is_Se_intermediate,
+                        "Se_quadrupole"   : is_Se_quadrupole,
+                        #
+                        "sse_hbond"     : is_sse_hbond,
+                        "sse_chalcogen" : is_sse_chalcogen,
+                        #
+                        "van_der_waals_nb_contacts" : van_der_waals_nb_contacts,
+    }])
+    
+    #----- create a pandas dataframe of resulting classes (python object) -----
+    df_class = pd.DataFrame({ 
+        "residue_1_index" : pair[0],
+        "residue_2_index" : pair[1],
+        "residue_1_C5Hbond" : residue_1_C5Hbond,
+        "residue_2_C5Hbond" : residue_2_C5Hbond,
+        "c_bond"   : cbond,
+        "amino_pi" : aminoPi,
+        "arg_involved" : argInvolved,
+        "aromatic_aromatic" : aromaticAromatic,
+        "charge_aromatic"   : chargeAromatic,
+        "charge_clash_repulsion" : chargeClashRepulsion,
+        "hydrogen_bond" : hbond,
+        "hydrophobic"   : hydrophobic_ClashRepulsion,
+        "n_pi" : npi,
+        "pi_hydrogen_bond" : piHbond,
+        "salt_bridge"  : saltbridge,
+        "sse_aromatic" : SSeAromatic,
+        "sse_hydrogen_chalcogen_bond" : SSE_hbond_chalcogen,
+        "van_der_waals" : vdw,
+    }, index=[0])
+
+    return df, df_class
 
 
 
