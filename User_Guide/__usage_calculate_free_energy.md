@@ -70,14 +70,13 @@ Sometime using this function avoid some error due to residues/atoms encountered 
 
 ### Arguments
 
-| Argument | Description | Format | Requirement |
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
 | trajectory      | mdtraj | MDTraj trajectory.  | mandatory |
 | index_residue_A | integer | Index of residue A in MDTraj topology. | mandatory |
 | index_residue_B | integer | Index of residue B in MDTraj topology. | mandatory |
 | method          | openmm keyword  | Method used to calculate the energy. Allowed values: NoCutoff, CutoffNonPeriodic, CutoffPeriodic, Ewald, PME, or LJPME <br/> Default value: NoCutoff | optional |
-| nonbonded_cutoff | float | Cutoff applied to nonbonded interactions. <br/> Unit: Å <br/> Default value: 10 | optional |
+| nonbonded_cutoff | float | Cutoff applied to nonbonded interactions.  <br/> Unit: Å <br/> Default value: 10 | optional |
 | frame           | integer | Frame ID on which to perform the analysis. <br/> Default value: 0 | optional |
 
 ### Properties
