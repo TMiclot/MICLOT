@@ -3501,9 +3501,6 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
 
     
     #===== return result =====
-    #Check if the list_interaction_pair contain at least one 1 or one 0.5
-    array_interaction_pair = np.array(list_interaction_pair)
-
     #----- Get information in the topology, concerning the two residues -----
     # for residue 1
     residue_1 = trajectory.topology.residue(pair[0])
@@ -3527,6 +3524,9 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
     
     
     #----- calculate the number of interaction in the pair -----
+    #Check if the list_interaction_pair contain at least one 1 or one 0.5
+    array_interaction_pair = np.array(list_interaction_pair)
+
     # np.ceil is used to up 0.5 to 1 for the salt bridge
     # np.nansum is used to calculate the sum without taking in account the np.nan
     number_interactions = np.nansum( np.ceil( array_interaction_pair ) )
@@ -3635,7 +3635,7 @@ def identify_all_interaction_pair(trajectory, pair, frame=0):
 #=====================================================
 
 #----- Function used by multiprocessing -----
-def task(trajectory, pair, frame):
+def task(trajectory, pair, frame, path_class_outfile, write_class_outfile):
     """
     Is function is defined to be used by 'interaction_table_whole_system()' with multiprocessing.
     Not designed to be used by user !
@@ -3682,14 +3682,18 @@ def task(trajectory, pair, frame):
         df_interactions["energy_coulomb_amber"] = energy_coulomb_amber
         df_interactions["energy_lj_amber"] = energy_lj_amber
 
-        return [df_interactions, df_class_interactions]
+        if write_class_outfile == True:
+            class_outfile = f"{path_class_outfile}_{pair[0]}_{pair[1]}.pkl.gz"
+            df_class_interactions.to_pickle(class_outfile)
+
+        return df_interactions
         
 
 
 #----- Function to analyse the whole system -----
 def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, \
                                    write_outfile=True, path_table_outfile="interaction_table_whole_system.csv", \
-                                   path_class_outfile="class_table_whole_system.pkl.gz"):
+                                   write_class_outfile=False, path_class_outfile="class_"):
     """
     DESCRIPTION
         In a system (protein/complex) analyse all possible pairs (or given pairs) and return a complete table of their interaction types,
@@ -3713,20 +3717,24 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
         use_tqdm            Display tqdm proggress bar (True/False).
                             Default value: False
 
-        write_outfile       Write the finale interaction table in CSV format
-                            and the class containing table in pickle format compressed in gz.
+        write_outfile       Write the complete interaction table in CSV format.
                             (True/False)
                             Default value: True
 
         path_table_outfile   Path, containing the name, of the exported CSV table.
-                            By default the file is exported in the curent location
-                            and the name: "interaction_table_whole_system.csv"
-                            Custom: "my/path/interaction_table_whole_system.csv"
+                             By default the file is exported in the curent location
+                             and the name: "interaction_table_whole_system.csv"
+                             Custom: "my/path/interaction_table_whole_system.csv"
 
-        path_class_outfile   Path, containing the name, of the exported computed class table.
-                            By default the file is exported in the curent location
-                            and the name: "class_table_whole_system.pkl.gz"
-                            Custom: "my/path/class_table_whole_system.pkl.gz"
+        write_class_outfile  Write all computed interaction classes in pickle format,
+                             compressed in gz.
+                             (True/False)
+                             Default value: False
+
+        path_class_outfile   Path, without the name, of the exported computed classes.
+                             By default the files are exported in the curent location
+                             not the name, nor the file format.
+                             Custom: "my/path/system_class"
     """
     #===== Initialize trajectory variable =====
     trajectory = trajectory[frame]
@@ -3760,7 +3768,7 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
     with Pool() as pool:
         
         # prepare arguments
-        items = [(trajectory, i, frame) for i in filtered_pairs]
+        items = [(trajectory, i, frame, path_class_outfile, write_class_outfile) for i in filtered_pairs]
         
         # loop over all residue pair to analyse their interactions
         if use_tqdm == True:
@@ -3773,18 +3781,15 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
     #===== Return results =====
     # Initialize final tables
     df = pd.DataFrame() # table containing the analysis result summary
-    df_class = pd.DataFrame() # pandas table containing the original output of calsses
     
     # Append the final tables with the row 
     df = pd.concat([i[0] for i in results if isinstance(i[0], pd.DataFrame)], ignore_index=True)
-    df_class = pd.concat([i[1] for i in results if isinstance(i[1], pd.DataFrame)], ignore_index=True)
     
     if write_outfile == True:
         df.to_csv(path_table_outfile, index=False)
-        df_class.to_pickle(path_class_outfile) # save as pickle to ensure class can be resused as it when read
     
     # return the complete dataframe
-    return df, df_class
+    return df
     
 
 

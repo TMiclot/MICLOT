@@ -33,6 +33,7 @@ To start exploring the software, you can take also look at the [tutorials](../Tu
 - [Identify non-bonded interaction](__usage_identify_nonbonded_interactions.md)
 - [Identify Cys-Cys bridge](__usage_identify_CysCys_bridges.md)
 - [Calculate free energy of interacting residues or of a complex](__usage_calculate_free_energy.md)
+- [Dana analysis](__usage_data_analysis.md)
 - [Atoms & Amino acids Database](__usage_database.md)
 - [Other tools](__usage_other_tools.md)
 

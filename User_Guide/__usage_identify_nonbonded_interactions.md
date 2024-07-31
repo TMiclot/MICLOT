@@ -22,7 +22,7 @@ All commands come from `miclot.interactions`
 
 ## Identify all interfactions in a protein, or a complex
 
-**interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, write_outfile=True, path_table_outfile="interaction_table_whole_system.csv", path_class_outfile="class_table_whole_system.pkl.gz"*):
+**interaction_table_whole_system**(trajectory, *list_pairs="all", frame=0, MAX_CA_distance=14.0, use_tqdm=False, write_outfile=True, path_table_outfile="interaction_table_whole_system.csv", write_class_outfile=False, path_class_outfile="class_"*):
     
 ### Description
 
@@ -33,7 +33,7 @@ In a system analyse all possible pairs (or given pairs) and return a complete ta
 The command return:
 
 - a Pandas DataFrame with all interactions and write it as CSV file.
-- a Pandas Dataframe containing all output as class object and write it as [pickle](https://docs.python.org/3/library/pickle.html) file (other information on pickle file can be found in the [Pandas documentation](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_pickle.html)), compressed into gz file. <br/> This fille allow user to recover the raw information, as `<miclot.interactions>` object, without performing a new analysis.
+- optionally it can export class object and write it as [pickle](https://docs.python.org/3/library/pickle.html) file (other information on pickle file can be found in the [Pandas documentation](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_pickle.html)), compressed into gz file. <br/> This fille allow user to recover the raw information, as `<miclot.interactions>` object, without performing a new analysis. <br/> :warning: Please take look at point 3. in the caution box.
 
 
 
@@ -53,6 +53,7 @@ The command return:
 > [!CAUTION]
 > 1. This command use all CPUs seen by Python, so it can use all CPUs of your computer. To ensure avoid any crash, be sure to limit the number of CPUs used by: Jupyter, or your script. To do this, you can take look at this [Tip](Manual.md#usage)
 > 2. This command can increase the memory usage by ~ 2/3 Go. Be sure your computer has enough free memory.
+> 3. Depending on your system and the number of selected pairs, exporting computed interaction classes as pickle files can generate many files and Go or To of data. 
 
 ### Arguments
 
@@ -62,9 +63,10 @@ The command return:
 | frame       | integer | Frame ID on which to perform the analysis. </br> Default value: 0 | optional  |
 | list_pairs  | list | List of pair of residue. By default take all possible pair in the system. Else can be set by user, using this format: [[id1,id2], [id3,id4], ...] | optional |
 | MAX_CA_distance | float | Maximum distance between CA atom of the two residue. Pairs with a greater distance will be ignored. <br/> Default value: 14.0 angstrom | optional |
-| write_outfile | boolean | Write the finale interaction table in CSV format (True/False). <br/> Default value: True | optional |
+| write_outfile | boolean | Write the complete interaction table in CSV format (True/False). <br/> Default value: True | optional |
 | path_table_outfile | string | Path, containing the name, of the exported CSV table. By default the file is exported in the curent location and the name: "interaction_table_whole_system.csv" <br/> Custom: "my/path/interaction_table_whole_system.csv" | optional |
-| path_class_outfile | string | Path, containing the name, of the exported computed class table. By default the file is exported in the curent location and the name: "class_table_whole_system.pkl.gz" <br/> Custom: "my/path/class_table_whole_system.pkl.gz" | optional |
+| write_class_outfile | boolean | :warning: For each pair, write it class as computed by [identify_all_interaction_pair](#identify-all-interfactions-for-a-pair-of-residues) in pickle format, compressed in gz. (True/False). <br/> Default value: False | optional |
+| path_class_outfile | string | Path, without the name, where to export computed classes in pickle file. By default the files are exported in the curent location not the name, nor the file format. <br/> Custom: "my/path/system_class" | optional |
 | use_tqdm | boolean | Display tqdm proggress bar (True/False). <br/> Default value: False | optional |
 
 
