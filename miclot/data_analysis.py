@@ -1,5 +1,5 @@
 # functions to generate clened data, final, tables, and analysis graphs, etc
-# functions to clean generated csv (of cleaned data) and png files
+# functions to delete generated csv (of cleaned data) and png files
 
 
 

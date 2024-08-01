@@ -19,7 +19,7 @@ __author__ = 'Tom MICLOT  <tom.miclot@jh-inst.cas.cz>'
 __license__ = "xxxx"
 __version__ = "Version: 1.0 -- jj/mm/2024"
 
-__all__ = ['database', 'complex_binding', 'utilities', 'cys_bridges', 'interactions', 'coulomb_lj']
+__all__ = ['database', 'complex_binding', 'utilities', 'cys_bridges', 'interactions', 'coulomb_lj', 'data_analysis']
 
 
 #=====| Import all scripts|=====
@@ -29,6 +29,7 @@ from . import complex_binding
 from . import cys_bridges
 from . import interactions
 from . import coulomb_lj
+from . import data_analysis
 
 
 
