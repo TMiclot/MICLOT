@@ -10,10 +10,9 @@ MICLOT contains many tools.
 - A **database** contining the physical and chemical proterties of the amino acids. It also contain physical properties of elements (atoms) found in amino acids.
 - Protocols for **energy calculation**. One to calculate the Coulomb and Lennard-Jonnes energies of a pair of residues. And another to compute the binding energy between of a protein complex.
 - Identification of the **canonical and non-canonical interactions** formed by a pair of residues.
-- A tool to detect **Cys-Cys bridges** in a structure. It's contain tow protocol to detect disulfid bridges. But it is also able to identify non-canonical bridges involving: diselenium bond (Se-Se) and selenosulfide bond (Se-S).
-- The ability to return the **physico-chemical properties of an interface**, in a protein-protein complex.
-
-(- Statistical and AI based tool to cacacterise the binding between two protein.)
+- Functions to detect **Cys-Cys bridges** in a structure. It's contain tow protocol to detect disulfid bridges. But it is also able to identify non-canonical bridges involving: diselenium bond (Se-Se) and selenosulfide bond (Se-S).
+- Set of utilities to work with structures.
+- Tools to help user in **data analysis**.
 
 
 
@@ -32,10 +31,17 @@ mindmap
             Selenosulfide
         id{{**Interaction network**}}
             Non-bonded interaction types
-            Residues and Pairs neighborhood
+            Residues & Pairs neighborhood
         id{{**Database**}}
             Amino acids
             Atoms
+        id{{**Data analysis**}}
+            Plot
+            Clustered heatmap
+            Graph
+        id{{**Scoring**}}
+            Interacting pairs
+            Interface
 ```
 
 
