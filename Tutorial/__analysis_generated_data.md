@@ -21,13 +21,121 @@ Now you can import the packages:
 import miclot.analysis as mca
 ```
 
+## A. Clean data
+
+### A.1. Clean structure information
+
+Use the file 
+
+**Code**
+
+```python
+cleaning.structure('/Data/1acb')
+```
+
+**Result**
 
 
 
 
-## 1. Plot minimization energies
 
-### 1.1. Normal usage
+## B. Concatenate CSV files
+
+### B.1. Concatenate any CSV files, based on name (or motif in name)
+
+**Code**
+
+```python
+concatenate.csv_file('/Data', 'uniprot', use_tqdm=True)
+```
+
+**Result**
+
+Concatenate all CSV file contained 'uniprot' in their name and located in subdirectories of '/Data', and display progress bar. The final file is written as 'final_uniprot.csv' and logfile name 'concatenate_uniprot.log' is created.
+
+
+
+### B.2. Concatenate all files containing ASA information
+
+**Code**
+
+```python
+df = concatenate.ASA('/Data')
+print(df)
+```
+
+**Result**
+
+The final CSV file is written. 
+
+```python
+        complex      receptor       ligand    interface   PDB
+0  13146.739273  10505.114157  4322.435392  1680.810276  1acb
+1  10313.511142   5628.519333  6421.277673  1736.285864  1i8k
+2  10064.572511   5926.323958  5809.856860  1671.608307  4h5s
+...
+```
+
+
+### B.3. Concatenate all *interaction_table* files
+
+**Code**
+
+```python
+concatenate.interaction_table('/Data')
+```
+
+**Result**
+
+The final CSV file is written. 
+
+
+### B.4. Concatenate all *neighbor_residues* files
+
+**Code**
+
+```python
+concatenate.neighbor_residues('/Data')
+```
+
+**Result**
+
+The final CSV file is written.
+
+
+### B.5. Concatenate all *neighbor_pairs* files
+
+**Code**
+
+```python
+concatenate.neighbor_pairs('/Data')
+```
+
+**Result**
+
+The final CSV file is written.
+
+
+### B.6. Concatenate all *structure* files
+
+**Code**
+
+```python
+concatenate.structure('/Data')
+```
+
+**Result**
+
+The final CSV file is written.
+
+
+
+
+# C. Class `plot`
+
+## C.1. Plot minimization energies
+
+### C.1.1. Normal usage
 
 It is possible to prive directory or file path in the command.
 
@@ -43,7 +151,7 @@ a = plot.minimization('/Data/1acb/1acb_noHETATM_pqr_fixed_minimization_log.csv')
 a.show()
 ```
 
-### 1.2. Change the structure name in the title
+### C.1.2. Change the structure name in the title
 
 If you want to change the name in the title, you can modify it using `pdb_name` argument.
 
@@ -52,13 +160,13 @@ a = plot.minimization('/Data/1acb/1acb_noHETATM_pqr_fixed_minimization_log.csv',
 a.show()
 ```
 
-### 1.3. Saving the graph
+### C.1.3. Saving the graph
 
 ```python
 plot.minimization('/Data/1acb/1acb_noHETATM_pqr_fixed_minimization_log.csv', save_graph=True)
 ```
 
-### 1.4. Example of output
+### C.1.4. Example of output
 
 <img src="tuto_pictures/minimization_energies.png" width="1000">
 
@@ -66,14 +174,14 @@ plot.minimization('/Data/1acb/1acb_noHETATM_pqr_fixed_minimization_log.csv', sav
 
 
 
-## C. Remove files
+## D. Remove files
 
-### C.1. Remove all generated plots
+### D.1. Remove all generated plots
 
 **Code**
 
 ```python
-removed_files, error = mca.remove('/Data/1acb').plots
+removed_files, error = remove.plots('/Data/1acb')
 print(removed_files)
 print(error)
 ```
@@ -86,12 +194,12 @@ print(error)
 ```
 
 
-### C.2. Remove all generated clean data
+### D.2. Remove all generated clean data
 
 **Code**
 
 ```python
-mca.remove.clean_data('/Data/1acb')
+remove.clean_data('/Data/1acb')
 ```
 
 **Result**
@@ -100,12 +208,12 @@ Remove all CSV files with 'clean' in their name.
 
 
 
-### C.3. Remove all generated saved class files
+### D.3. Remove all generated saved class files
 
 **Code**
 
 ```python
-mca.remove.pickles('/Data/1acb')
+remove.pickles('/Data/1acb')
 ```
 
 **Result**
@@ -115,12 +223,12 @@ Remove all pkl.gz files with 'class' in their name.
 
 
 
-### C.4. Remove any file(s)
+### D.4. Remove any file(s)
 
 **Code**
 
 ```python
-mca.remove.files('/Data/1acb', name='hydrolase', file_format='pdb')
+remove.files('/Data/1acb', name='hydrolase', file_format='pdb')
 ```
 
 **Result**

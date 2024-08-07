@@ -32,8 +32,11 @@ from tqdm import tqdm
 
 from skspatial.objects import Vector
 import seaborn as sns
+import numpy as np
+
 import pandas as pd
 pd.options.mode.copy_on_write = True
+
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, Normalize, LogNorm
 
@@ -65,6 +68,9 @@ dict_protein_region_1code = {
 #===== Function to convert string to numpy array
 #=====================================================
 def string_to_array(s):
+    """
+    Convert string like '[0.23 456.5 98.0]' to numpy array.
+    """
     # Remove square brackets and split the string
     s = s.strip('[]')
     # Convert to numpy array
@@ -80,7 +86,8 @@ def string_to_array(s):
 #=====================================================
 def find_neighbor_couples(list_neighbor, list_couple):
     """
-    return dataframe
+    return dataframe of neighbor couples bas on list of couple and list of neighbord.
+    couples are neighbor if one of their respective component are neighbors.
     
     list_neighbor = ["0_5", "3_4", "10_3", "1_9"]
     list_couple = ["0_1", "3_5", "10_12", "14_15"]
@@ -172,8 +179,125 @@ def rm(directory, name, file_format):
 ###################################################### Cleaning & Concatenate
 
 #=====================================================
+#===== Function to clean structure information
+#=====================================================
+def clean_structure(directory, file_name_structure='residues_secondaryStructure_and_COMs', \
+                    file_name_protein_region='residues_protein_region', pdb_name=None, save=True):
+    """
+    DESCRIPTION
+        Use CSV files: *residues_secondaryStructure_and_COMs.csv
+                       *residues_protein_region.csv    (if it don't exist, protein_region and identity will be replaced by 'No')
+        
+        Clean structure information and write a table containing:
+            chainID, index, name, secondary structure,
+            protein region (for complex), identity (for complex),
+            code complete, code simplified,
+            distances: COM_COMsidechain, COM_COMbackbone, COMsidechain_COMbackbone
+    
+    ARGUMENTS
+        directory     directory where CSV files are located
+        
+    OPTINAL ARGUMENTS
+        file_name_structure         Name of file containing secondary structure and COMs information.
+                                    Default value: 'residues_secondaryStructure_and_COMs'
+                               
+        file_name_protein_region    Name of file containing protein region and identity information.
+                                    Default value: 'residues_protein_region'
+                                    
+        pdb_name    structure name to use in the clened file: {pdb_name}_clean_structure.csv
+                    Default value: directory name
+                    
+        save        save cleaned file as CSV in the directory
+                    Default value: True
+    """    
+    
+    #===== Read structure file as dataframe =====
+    file_structure = glob.glob(os.path.join(directory, f'*{file_name_structure}*.csv'))[0]
+    df_structure = pd.read_csv(file_structure) # will be use as final dataframe
+    
+    
+    #===== Read protein region file as dataframe, if any =====
+    try:
+        file_protein_region = glob.glob(os.path.join(directory, f'*{file_name_protein_region}*.csv'))[0]
+        df_protein_region = pd.read_csv(file_protein_region)
+    
+    except:
+        file_protein_region = None
+        
+        
+    #===== Add protein region and identity information, if any =====
+    if file_protein_region != None:
+        # Select all columns containing "_protein_region"
+        columns_protein_region = df_protein_region.filter(like='_protein_region')
+        
+        # Find the most frequent text in each row across the "_protein_region" columns
+        df_protein_region['protein_region'] = columns_protein_region.mode(axis=1)[0]  
+        
+        # Get 1 letter code of protein region and identity
+        df_structure['protein_region'] = df_protein_region['protein_region'].map(dict_protein_region_1code)
+        df_structure['identity'] = df_protein_region['identity']
+    
+    else:
+        df_structure['protein_region'] = 'No'
+        df_structure['identity'] = 'No'
+        
+        
+    #===== Generate residue codes =====
+    df_structure["code_complete"] = df_structure["name"] + "_" + df_structure["secondary_structure"] + "_" + df_structure['protein_region']
+    df_structure["code_name_secondary_structure"] = df_structure["name"] + "_" + df_structure["secondary_structure"]
+    
+    
+    #===== Compute distances =====
+    # Convert COM column string values as array values
+    df_structure["COM"] = df_structure["COM"].map(string_to_array)
+    df_structure["COM_sidechain"] = df_structure["COM_sidechain"].map(string_to_array)
+    df_structure["COM_backbone"] = df_structure["COM_backbone"].map(string_to_array)
+    
+    # Compute distances: lenght of the vector between the COM points
+    df_structure["distance_COM_backbone_COM_sidechain"] = df_structure.apply(
+        lambda row: Vector.from_points(row["COM_backbone"], row["COM_sidechain"]).norm() *10, #*10 to convert nm to angstrom,
+        axis=1
+    )
+
+    df_structure["distance_COM_COM_sidechain"] = df_structure.apply(
+            lambda row: Vector.from_points(row["COM"], row["COM_sidechain"]).norm() *10, #*10 to convert nm to angstrom,
+            axis=1
+        )
+
+    df_structure["distance_COM_COM_backbone"] = df_structure.apply(
+            lambda row: Vector.from_points(row["COM"], row["COM_backbone"]).norm() *10, #*10 to convert nm to angstrom,
+            axis=1
+        )
+    
+    
+    #===== Remove unwanted columns =====
+    columns_to_remove = ["COM",
+                         "COM_backbone",
+                         "COM_sidechain"
+                        ]
+
+    df_structure = df_structure.drop(columns_to_remove, axis=1)
+   
+    
+    #===== Return cleaned df =====
+    if pdb_name == None:
+        pdb_name = directory.split('/')[-1]
+    
+    if save == True:
+        path_clean_df = f'{directory}/{pdb_name}_clean_structure.csv'
+        df_structure.to_csv(path_clean_df, index=False)
+    
+    return df_structure
+    
+
+
+
+
+
+
+#=====================================================
 #===== Function to concatenate CSV files
-#====================================================
+#=====================================================
 def concatenate_csv(directory, file_name, final_file_name=None, logfile_name=None, use_tqdm=False):
     """
     DESCRIPTION
@@ -488,7 +612,7 @@ class plot():
             dpi    Dots per Inch. When save the graph.
                 Default value: 300 
         """
-        plot_minimization(*arg,**kwargs)
+        return plot_minimization(*arg,**kwargs)
 
 
 
@@ -504,7 +628,7 @@ class concatenate:
         """
         pass
     
-    #----- Concatenate CSV files over subdirectory ----- 
+    #===== Concatenate CSV files over subdirectory ===== 
     def csv_file(*arg):
         """
         DESCRIPTION
@@ -526,7 +650,8 @@ class concatenate:
         """
         concatenate_csv(*arg)
         
-    #----- Concatenate files with ASA information -----
+
+    #===== Concatenate files with ASA information =====
     def ASA(*arg, **kwargs):
         """
         Concatenate '*ASA_complex_receptor_ligand_and_interface.csv' files in all subdirectories in a directory.
@@ -536,7 +661,8 @@ class concatenate:
         """
         concatenate_csv(*arg, 'ASA_complex_receptor_ligand_and_interface.csv', 'final_ASA_complexes.csv', logfile_name='concatenate_ASA', **kwargs)
         
-    #----- Concatenate files with interaction_table information -----
+
+    #===== Concatenate files with interaction_table information =====
     def interaction_table(*arg, **kwargs):
         """
         Concatenate '*clean_interactions_table.csv' files in all subdirectories in a directory.
@@ -546,7 +672,8 @@ class concatenate:
         """
         concatenate_csv(*arg, 'clean_interactions_table.csv', 'final_interactions_table.csv', logfile_name='concatenate_interactions_table', **kwargs)
         
-    #----- Concatenate files with neighbor_residues information -----
+
+    #===== Concatenate files with neighbor_residues information =====
     def neighbor_residues(*arg, **kwargs):
         """
         Concatenate '*clean_neighbor_residues.csv' files in all subdirectories in a directory.
@@ -556,7 +683,8 @@ class concatenate:
         """
         concatenate_csv(*arg, 'clean_neighbor_residues.csv', 'final_neighbor_residues.csv', logfile_name='concatenate_neighbor_residues', **kwargs)
            
-    #----- Concatenate files with neighbor_pairs information -----
+
+    #===== Concatenate files with neighbor_pairs information =====
     def neighbor_pairs(*arg, **kwargs):
         """
         Concatenate '*clean_neighbor_pairs.csv' files in all subdirectories in a directory.
@@ -566,7 +694,8 @@ class concatenate:
         """
         concatenate_csv(*arg, 'clean_neighbor_pairs.csv', 'final_neighbor_pairs.csv', logfile_name='concatenate_neighbor_pairs', **kwargs)
         
-    #----- Concatenate files with structure information -----
+
+    #===== Concatenate files with structure information =====
     def structure(*arg, **kwargs):
         """
         Concatenate '*clean_structure.csv' files in all subdirectories in a directory.
@@ -575,6 +704,58 @@ class concatenate:
             directory    directory containing all subdirectory with CSV files.
         """
         concatenate_csv(*arg, 'clean_structure.csv', 'final_structure.csv', logfile_name='concatenate_', **kwargs)
+
+
+
+
+
+#=====================================================
+#===== Class to clean data
+#=====================================================
+class cleaning:
+    def __init__():
+        """
+        Functions used to clean data
+        """
+        pass
+    
+    def all(*arg):
+        """
+        Perform all cleaning procedure in a directory. Save everything as CSV and don't return dataframes.
+        """
+        clean_structure(*arg)
+
+    #===== Concatenate CSV files over subdirectory ===== 
+    def structure(*arg,**kwargs):
+        """
+        DESCRIPTION
+            Use CSV files: *residues_secondaryStructure_and_COMs.csv
+                        *residues_protein_region.csv    (if it don't exist, protein_region and identity will be replaced by 'No')
+            
+            Clean structure information and write a table containing:
+                chainID, index, name, secondary structure,
+                protein region (for complex), identity (for complex),
+                code complete, code simplified,
+                distances: COM_COMsidechain, COM_COMbackbone, COMsidechain_COMbackbone
+        
+        ARGUMENTS
+            directory     directory where CSV files are located
+            
+        OPTINAL ARGUMENTS
+            file_name_structure         Name of file containing secondary structure and COMs information.
+                                        Default value: 'residues_secondaryStructure_and_COMs'
+                                
+            file_name_protein_region    Name of file containing protein region and identity information.
+                                        Default value: 'residues_protein_region'
+                                        
+            pdb_name    structure name to use in the clened file: {pdb_name}_clean_structure.csv
+                        Default value: directory name
+                        
+            save        save cleaned file as CSV in the directory
+                        Default value: True
+        """
+        return clean_structure(*arg,**kwargs)
+
 
 
 

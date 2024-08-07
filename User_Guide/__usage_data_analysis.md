@@ -6,7 +6,7 @@ All commands come from `miclot.analysis`
 
 This module is composed of three main classes. Each has a specific use:
 
-- `clean_data` : to generate clean data
+- `cleaning` : to generate clean data
 - `concatenate` : to concatenate clean data as unique file
 - `plot` : for plotting graphs (plots, clustered heatmaps, graph, ...)
 - `remove` : to delete unwanted files in a directory
@@ -29,12 +29,12 @@ Concatenate CSV files into a single final file. A log file is always writen to
 
 | Property | Description | Return |
 | -------- | --- | --- |
-| .csv_file | Concatenate any CSV files. | final pandas dataframe |
-| .ASA      | Concatenate ASA related files. | final pandas dataframet |
-| .interaction_table | Concatenate ASA related files. | final pandas dataframe |
-| .neighbor_residues | Concatenate ASA related files. | final pandas dataframe |
-| .neighbor_pairs    | Concatenate ASA related files. | final pandas dataframe |
-| .structure         | Concatenate ASA related files. | final pandas dataframe |
+| .csv_file | Concatenate any CSV files.     | final pandas dataframe |
+| .ASA      | Concatenate ASA related files. | final pandas dataframe |
+| .interaction_table | Concatenate interaction table files.         | final pandas dataframe |
+| .neighbor_residues | Concatenate neighbor residues related files. | final pandas dataframe |
+| .neighbor_pairs    | Concatenate neighbor pairs related files.    | final pandas dataframe |
+| .structure         | Concatenate structure files.                 | final pandas dataframe |
 
 
 
@@ -73,7 +73,92 @@ The command return the concatenated final file.
 
 ### Description
 
-Simplify concatenation of ASA, file selected based on name containing *ASA_complex_receptor_ligand_and_interface*.
+Simplify concatenation of ASA information, file selected based on name containing *ASA_complex_receptor_ligand_and_interface.csv*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| use_tqdm  | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+## B.3. Concatenate interaction types tables
+
+**.interaction_table**(directory,* use_tqdm=False*)
+
+### Description
+
+Simplify concatenation of interaction tables, file selected based on name containing *clean_interactions_table.csv*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| use_tqdm  | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+## B.4. Concatenate interaction types tables
+
+**.neighbor_residues**(directory,* use_tqdm=False*)
+
+### Description
+
+Simplify concatenation of neighbor residue information, file selected based on name containing *clean_neighbor_residues.csv*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| use_tqdm  | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+
+## B.6. Concatenate interaction types tables
+
+**.neighbor_pairs**(directory,* use_tqdm=False*)
+
+### Description
+
+Simplify concatenation of neighbor pairs information, file selected based on name containing *clean_neighbor_pairs.csv*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| use_tqdm  | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+## B.7. Concatenate interaction types tables
+
+**.neighbor_pairs**(directory,* use_tqdm=False*)
+
+### Description
+
+Simplify concatenation of structure information, file selected based on name containing *clean_structure.csv*.
 
 ### Arguments
 
