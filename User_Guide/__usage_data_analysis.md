@@ -4,14 +4,117 @@
 
 All commands come from `miclot.analysis`
 
+This module is composed of three main classes. Each has a specific use:
 
-## 1. Correlate PDB with MDTraj topology
+- `clean_data` : to generate clean data
+- `concatenate` : to concatenate clean data as unique file
+- `plot` : for plotting graphs (plots, clustered heatmaps, graph, ...)
+- `remove` : to delete unwanted files in a directory
 
-**plot_minimization**(path, *pdb_name=None, fig_size=[15, 4], linewidth=2, save_graph=False, dpi=300*)
+Classes have their own properties to ensure diffrents functions.
+
+
+
+# B. Class `concatenate`
+
+## B.1. Overview
+
+**concatenate**.*property*
 
 ### Description
 
-Read the CSV file written durin the minimisation and plot:
+Concatenate CSV files into a single final file. A log file is always writen to 
+
+### Properties
+
+| Property | Description | Return |
+| -------- | --- | --- |
+| .csv_file | Concatenate any CSV files. | final pandas dataframe |
+| .ASA      | Concatenate ASA related files. | final pandas dataframet |
+| .interaction_table | Concatenate ASA related files. | final pandas dataframe |
+| .neighbor_residues | Concatenate ASA related files. | final pandas dataframe |
+| .neighbor_pairs    | Concatenate ASA related files. | final pandas dataframe |
+| .structure         | Concatenate ASA related files. | final pandas dataframe |
+
+
+
+
+## B.2. Concatenate any CSV files
+
+**.csv_file**(directory, file_name, *final_file_name=None, logfile_name=None, use_tqdm=False*)
+
+### Description
+
+Concatenate CSV files in all subdirectory, based on their file name or motif in their name, then write a final CSV file.
+The final file is automatically save as CSV in the directory.
+
+>[!IMPORTANT]
+> If you don't work on ASA file, avoid file name containing *ASA_complex_receptor_ligand_and_interface*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| file_name | string | file name, or motif in the name, of files to be concatenated. | mandatory |
+| final_file_name | string | directory containing all subdirectory where CSV file are located. | optinal |
+| logfile_name | string | name for the log file. It is automatically save in the directory. | optinal |
+| use_tqdm | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+## B.2. Concatenate files containing ASA information
+
+**.ASA**(directory,* use_tqdm=False*)
+
+### Description
+
+Simplify concatenation of ASA, file selected based on name containing *ASA_complex_receptor_ligand_and_interface*.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| use_tqdm  | boolean | use tqdm progress bar. <br/> Default: False | optinal |
+
+### Returns
+
+The command return the concatenated final file.
+
+
+
+
+
+# C. Class `plot`
+
+## C.1. Overview
+
+**plot**.*property*
+
+### Description
+
+Select a directory where to remove unwanted files.
+
+### Properties
+
+| Property | Description | Return |
+| -------- | --- | --- |
+| .minimization   | Plot minimization energies from a directory or a file. | graph in Matplotlib format |
+
+
+
+## C.2. Plot minimization energies
+
+**.minimization**(path, *name=None, fig_size=[15, 4], linewidth=2, save=False, dpi=300*)
+
+### Description
+
+Read the CSV file written during the minimisation and plot:
 
 - System energy
 - Harmonic restraints energy
@@ -22,9 +125,96 @@ Read the CSV file written durin the minimisation and plot:
 
 | Argument | Format | Description | Requirement |
 | -------- | --- | --- | --- |
-| pdb_file_path | string  | Path to the PDB file.  | mandatory |
-| write_outfile | boolean | If you want to write the output CSV files. | optional |
+| path     | string  | directory or file path | mandatory |
+| fig_size | list of float | Width, height in inches. <br/> Default: [15, 4] | optional |
+| linewidth | float  | Set the line width. <br/> Default: 2.5  | optional |
+| save     | boolean | Save the graph as PNG in the directory. <br/> Dafault: False | optional |
+| dpi      | float   | The resolution of the figure in dots-per-inch. <br/> Default: 300 | optional |
+| name     | string  | directory or file path | optional |
 
 ### Returns
 
 The command return the graph in Matplotlib format.
+
+
+
+
+
+
+
+# D. Class `remove`
+
+## D.1. Overview
+
+**remove**.*property*
+
+### Description
+
+Select a directory where to remove unwanted files.
+
+### Properties
+
+| Property | Description | Return |
+| -------- | --- | --- |
+| .plots   | Remove all generated plots. | list_removed, list_error |
+| .clean_data | Remove all generated cleaned data. | list_removed, list_error |
+| .file | Remove any file. | list_removed, list_error |
+
+
+
+## D.2. Remove all generated clean data
+
+**.clean_data**(directory)
+
+### Description
+
+Remove all generated cleaned data.
+
+It is based of the file format: 'csv' and file name containing 'clean'
+
+### Return
+
+- list_removed : list containing the path of all removed file
+- list_error : list containing the path of all files that could not be removed
+
+
+
+
+
+## D.3. Remove all generated clean data
+
+**.pickles**(directory)
+
+### Description
+
+Remove all backub file in compressed pickle format generated by [`interaction_table_whole_system`](__usage_identify_nonbonded_interactions.md#identify-all-interfactions-in-a-protein-or-a-complex)
+
+It is based of the file format: 'pkl.gz' and file name containing 'class'
+
+### Return
+
+- list_removed : list containing the path of all removed file
+- list_error : list containing the path of all files that could not be removed
+
+
+
+
+## D.4. Remove all generated plots
+
+**.files**(directory, name, file_format)
+
+### Description
+
+Remove any file(s) using the name (or a motif in name) and the file format.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | --- | --- | --- |
+| name | string  | file name, or motif in the file name | mandatory |
+| file_format | string  | file format, without the dot. <br/> Example: 'png'| mandatory |
+
+### Return
+
+- list_removed : list containing the path of all removed file
+- list_error : list containing the path of all files that could not be removed

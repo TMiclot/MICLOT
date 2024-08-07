@@ -2,7 +2,7 @@
 <img src="https://www.python.org/static/community_logos/python-powered-w.svg" alt="python_logo" width="80">
 
 
-MICLOT (**M**olecular **I**ntera**C**tion ana**L**ysis t**O**olki**T**) is collection of tools for the analysis of protein-protein interactions.
+MICLOT (**M**olecular **I**ntera**C**tion ana**L**ysis t**O**olki**T**) is collection of tools for the analysis of protein-protein interactions in PDB files as well as MD simulations.
 
 It was designed as a package, written in [Python](https://www.python.org/), to be used in your scripts. It goal is to provide a simple and flexible user experience with efficient tools. 
 MICLOT contains many tools.

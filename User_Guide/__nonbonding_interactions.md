@@ -150,26 +150,26 @@ $C^{sp3}$. is a carbon atom in a tetrahedral configuration; it is bonded to four
 | Amino acid    | $C^{sp3}$ atom names | Carbonyl oxygen |
 | ------------- | -------------------- | --------------- |
 | Backbone      | CA                   | O               |
-| ALA           | CB                   | O               |
-| ARG           | CB, CG, CD           | O               |
-| ASN           | CB                   | O, OD1          |
-| ASP           | CB                   | O, OD1          |
-| CYS           | CB                   | O               |
-| GLN           | CB, CG               | O, OE1          |
-| GLU           | CB, CG               | O, OE1          |
-| GLY           | *None*               | O               |
-| HIS           | CB                   | O               |
-| ILE           | CB, CG1, CG2, CD     | O               |
-| LEU           | CB, CG, CD1, CD2     | O               |
-| LYS           | CB, CG, CD, CE       | O               |
-| MET           | CB, CG, CE           | O               |
-| PHE           | CB                   | O               |
-| PRO           | CB, CG, CD           | O               |
-| SER           | CB                   | O               |
-| THR           | CB, CG2              | O               |
-| TRP           | CB                   | O               |
-| TYR           | CB                   | O               |
-| VAL           | CB, CG1, CG2         | O               |
+| ALA           | CB                   |                 |
+| ARG           | CB, CG, CD           |                 |
+| ASN           | CB                   | OD1             |
+| ASP           | CB                   | OD1             |
+| CYS           | CB                   |                 |
+| GLN           | CB, CG               | OE1             |
+| GLU           | CB, CG               | OE1             |
+| GLY           | *None*               |                 |
+| HIS           | CB                   |                 |
+| ILE           | CB, CG1, CG2, CD     |                 |
+| LEU           | CB, CG, CD1, CD2     |                 |
+| LYS           | CB, CG, CD, CE       |                 |
+| MET           | CB, CG, CE           |                 |
+| PHE           | CB                   |                 |
+| PRO           | CB, CG, CD           |                 |
+| SER           | CB                   |                 |
+| THR           | CB, CG2              |                 |
+| TRP           | CB                   |                 |
+| TYR           | CB                   |                 |
+| VAL           | CB, CG1, CG2         |                 |
 
 
 

@@ -9,6 +9,8 @@ We will use the structure [5azz](https://www.rcsb.org/structure/5azz) of the sel
 ## First step: load required modules
 
 ```python
+import sys
+
 # Define the path to of the package
 package_dir = '/path/to/MICLOT'
 

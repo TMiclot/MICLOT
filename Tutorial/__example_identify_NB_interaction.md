@@ -9,6 +9,8 @@ This tutorial give you working example on how to identify all non-bonded interac
 ## First step: load required modules
 
 ```python
+import sys
+
 # Define the path to of the package
 package_dir = '/path/to/MICLOT'
 

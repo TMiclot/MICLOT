@@ -57,6 +57,8 @@ On the main page, clik on the `<> Code` buttun, then on `Download ZIP`.
 ## 4. Using *MICLOT* in a Python script
 
 ```python
+import sys
+
 # Define the path to of the package
 package_dir = '/path/to/package/MICLOT/'
 
@@ -74,6 +76,8 @@ import miclot
 ### Example
 
 ```python
+import sys
+
 # Define the path to of the package
 package_dir = '/home/user/analysis/MICLOT/'
 

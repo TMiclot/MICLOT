@@ -5,6 +5,8 @@
 ## First step: load required modules
 
 ```python
+import sys
+
 # Define the path to of the package
 package_dir = '/path/to/MICLOT'
 
