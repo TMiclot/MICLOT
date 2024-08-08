@@ -25,7 +25,7 @@ import miclot.analysis as mca
 
 ### A.1. Clean structure information
 
-Use the file 
+Use the file containing structure and COMs information, and optionally the file containing protein region and identity information (only for complexes).
 
 **Code**
 
@@ -234,3 +234,24 @@ remove.files('/Data/1acb', name='hydrolase', file_format='pdb')
 **Result**
 
 Remove any pdb file containing 'hydrolase' in their name in the directory '/Data/1acb'.
+
+
+# E. Other
+
+**make_distance_map**(directory, *file_name_structure='residues_secondaryStructure_and_COMs', pdb_name=None, save=True*)
+
+    DESCRIPTION
+        Calculate all COMs distances and generate a CSV file with these values.
+
+    ARGUMENTS
+        directory     directory where CSV files are located
+        
+    OPTINAL ARGUMENTS
+        file_name_structure    Name of file containing secondary structure and COMs information.
+                               Default value: 'residues_secondaryStructure_and_COMs'
+                                    
+        pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                    Default value: directory name
+                    
+        save        save cleaned file as CSV in the directory
+                    Default value: True

@@ -86,13 +86,16 @@ def string_to_array(s):
 #=====================================================
 def find_neighbor_couples(list_neighbor, list_couple):
     """
-    return dataframe of neighbor couples bas on list of couple and list of neighbord.
-    couples are neighbor if one of their respective component are neighbors.
-    
     list_neighbor = ["0_5", "3_4", "10_3", "1_9"]
-    list_couple = ["0_1", "3_5", "10_12", "14_15"]
+    list_couple = ["0_1", "3_4", "10_12", "14_15", "3_5"]
 
-    df = find_neighbor_couples(list_neighbor, list_couple)
+    return dataframe like:
+       pair_index  neighbor_pairs_index
+    0  0_1         [3_5]
+    1  3_4         [10_12, 3_5]
+    2  10_12       [3_4, 3_5]
+    3  14_15       NaN
+    4  3_5         [0_1, 3_4, 10_12]
     """
     neighbor_map = {}
     
@@ -172,6 +175,108 @@ def rm(directory, name, file_format):
             list_error.append(file_path)
             continue
     return list_removed, list_error
+
+
+
+#=====================================================
+#===== Fuction to generate distance map using COMs
+#=====================================================
+def make_distance_map(directory, file_name_structure='residues_secondaryStructure_and_COMs', pdb_name=None, save=True):
+    """
+    DESCRIPTION
+        Calculate all COMs distances and generate a CSV file with these values.
+
+    ARGUMENTS
+        directory     directory where CSV files are located
+        
+    OPTINAL ARGUMENTS
+        file_name_structure    Name of file containing secondary structure and COMs information.
+                               Default value: 'residues_secondaryStructure_and_COMs'
+                                    
+        pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                    Default value: directory name
+                    
+        save        save cleaned file as CSV in the directory
+                    Default value: True
+    """
+    #===== Read structure file as dataframe =====
+    file_structure = glob.glob(os.path.join(directory, f'*{file_name_structure}*.csv'))[0]
+    df_structure = pd.read_csv(file_structure)
+    
+    
+    #===== Create a list to store the distance data ====
+    list_distance = []
+
+    
+    #===== Calculates COMs distances and append the list_distance =====
+    for (index_residue_1, com_residue_1, com_sidechain_1, com_backbone_1), (index_residue_2, com_residue_2, com_sidechain_2, com_backbone_2) in combinations(zip(df_structure['index'], df_structure['COM'], df_structure["COM_sidechain"], df_structure["COM_backbone"]), 2):
+        
+        #----- Convert COMS position from string to numpy array -----
+        com_residue_1   = string_to_array(com_residue_1)
+        com_residue_2   = string_to_array(com_residue_2)
+        com_sidechain_1 = string_to_array(com_sidechain_1)
+        com_sidechain_2 = string_to_array(com_sidechain_2)
+        com_backbone_1  = string_to_array(com_backbone_1)
+        com_backbone_2  = string_to_array(com_backbone_2)
+        
+        #----- Calulate distances: COM-COM, COMbackbone-COMbackbone, COMsidechain-COMsidechain -----
+        distance_com = Vector.from_points(com_residue_1, com_residue_2).norm() *10 #*10 to convert nm to angstrom
+        distance_com_backbone  = Vector.from_points(com_backbone_1, com_backbone_2).norm() *10 #*10 to convert nm to angstrom
+        distance_com_sidechain = Vector.from_points(com_sidechain_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
+        
+        #----- Calulate distances: COMbackbone-COMsidechain -----
+        distance_com_backbone_residue_1_sidechain_residue_2 = Vector.from_points(com_backbone_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
+        distance_com_backbone_residue_2_sidechain_residue_1 = Vector.from_points(com_backbone_2, com_sidechain_1).norm() *10 #*10 to convert nm to angstrom
+        
+        #----- Calulate distances: COM-COMbackbone, COM-COMsidechain -----
+        distance_com_residue_1_backbone_residue_2  = Vector.from_points(com_residue_1, com_backbone_2).norm()  *10 #*10 to convert nm to angstrom
+        distance_com_residue_1_sidechain_residue_2 = Vector.from_points(com_residue_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
+        distance_com_residue_2_backbone_residue_1  = Vector.from_points(com_residue_2, com_backbone_1).norm()  *10 #*10 to convert nm to angstrom
+        distance_com_residue_2_sidechain_residue_1 = Vector.from_points(com_residue_2, com_sidechain_1).norm() *10 #*10 to convert nm to angstrom
+        
+        #----- Append list of distance with new informations -----
+        list_distance.append({'residue_1_index': index_residue_1,
+                              'residue_2_index': index_residue_2,
+                              'distance_COM_1_COM_2': distance_com,
+                              'distance_COM_backbone_1_COM_backbone_2':   distance_com_backbone,
+                              'distance_COM_sidechain_1_COM_sidechain_2': distance_com_sidechain,
+                              'distance_COM_backbone_1_COM_scidechain_2': distance_com_backbone_residue_1_sidechain_residue_2,
+                              'distance_COM_backbone_2_COM_scidechain_1': distance_com_backbone_residue_2_sidechain_residue_1,
+                              'distance_COM_1_COM_backbone_2':   distance_com_residue_1_backbone_residue_2,
+                              'distance_COM_1_COM_scidechain_2': distance_com_residue_1_sidechain_residue_2,
+                              'distance_COM_2_COM_backbone_1':   distance_com_residue_2_backbone_residue_1,
+                              'distance_COM_2_COM_scidechain_1': distance_com_residue_2_sidechain_residue_1,
+                             })
+
+        
+    #===== Create a new DataFrame from the distance data =====
+    df_distances = pd.DataFrame(list_distance)
+
+    
+    #===== Create pair index code (ex: 5_16) =====
+    df_distances["pair_index"] = df_distances.apply(
+            lambda row: '_'.join(map(str, sorted([row['residue_1_index'].astype(int), row['residue_2_index'].astype(int)]))),
+            axis=1
+        )
+    
+    
+    #===== Check if residues are consecutive =====
+    # consecutive residue are: i, i+1
+    df_distances['consecutive'] = (abs(df_distances['residue_1_index'] - df_distances['residue_2_index']) == 1).astype(int)
+
+    
+    #===== save to CSV =====
+    if save == True:
+
+        if pdb_name == None:
+            pdb_name = directory.split('/')[-1]
+            
+        path_clean_distance_map = f'{directory}/{pdb_name}_distance_map.csv'
+        df_distances.to_csv(path_clean_distance_map, index=False)
+    
+    #===== return dataframe =====
+    return df_distances
+
 
 
 
@@ -279,14 +384,16 @@ def clean_structure(directory, file_name_structure='residues_secondaryStructure_
     df_structure = df_structure.drop(columns_to_remove, axis=1)
    
     
-    #===== Return cleaned df =====
-    if pdb_name == None:
-        pdb_name = directory.split('/')[-1]
-    
+    #===== Save as CSV =====
     if save == True:
+
+        if pdb_name == None:
+            pdb_name = directory.split('/')[-1]
+
         path_clean_df = f'{directory}/{pdb_name}_clean_structure.csv'
         df_structure.to_csv(path_clean_df, index=False)
     
+    #===== Return final dataframe =====
     return df_structure
     
 
