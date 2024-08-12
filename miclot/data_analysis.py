@@ -282,6 +282,166 @@ def make_distance_map(directory, file_name_structure='residues_secondaryStructur
 
 
 ###################################################### Cleaning & Concatenate
+#=====================================================
+#===== Function to generate neigbor residues
+#=====================================================
+def clean_neighbor_residues(directory, file_name_clean_structure='clean_structure', \
+                    file_name_distance_map='distance_map', neighbor_cutoff_distance=8, distance_columns=None, pdb_name=None, save=True):
+    """
+    DESCRIPITON
+        Use the distance map to identify neighbor residues based on their COMs distances.
+        
+    ARGUMENTS
+        directory     directory where CSV files are located
+        
+    OPTIONAL ARGUMENTS
+        file_name_structure    Name of file containing secondary structure and COMs information.
+                               Default value: 'residues_secondaryStructure_and_COMs'
+                               
+        neighbor_cutoff_distance    Cutoff distance used to identify neighbor residues.
+                                    If any value in the list of columns distance_columns' is below or equal
+                                    to this distance, the residues are neighbors.
+                                    Default value: 8 angstrom
+        
+        distance_columns    list of columns in which to search for the cutoff distances
+                            Default value: None (search in all distances columns)
+        
+        pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                    Default value: directory name
+                    
+        save        save cleaned file as CSV in the directory
+                    Default value: True 
+    """
+    #===== Get structure information =====
+    #----- Read CSV files as pandas dataframe -----
+    file_structure = glob.glob(os.path.join(directory, f'*{file_name_clean_structure}*.csv'))[0]
+    df_structure = pd.read_csv(file_structure)
+    
+    #----- Conversion dictionnaries -----
+    dict_residue_index2codeComplete   = df_structure.set_index('index')['code_complete'].to_dict()
+    dict_residue_index2codeSimplified = df_structure.set_index('index')['code_name_secondary_structure'].to_dict()
+    dict_residue_index2name           = df_structure.set_index('index')['name'].to_dict()
+    dict_residue_index2ss             = df_structure.set_index('index')['secondary_structure'].to_dict()
+    dict_residue_index2pr             = df_structure.set_index('index')['protein_region'].to_dict()
+    dict_residue_index2identity       = df_structure.set_index('index')['identity'].to_dict()
+
+    
+    #===== Read distance map file, or create it =====
+    try:
+        file_distance_map = glob.glob(os.path.join(directory, f'*{file_name_distance_map}*.csv'))[0]
+        df_distances = pd.read_csv(file_distance_map)
+    except:
+        df_distances = make_distance_map()
+
+    
+    #===== Create neighbor df based on the neighbor_cutoff_distance value =====
+    if distance_columns == None:
+        distance_columns = df_distances.filter(like='distance').columns # use all column containing 'distance' in their name
+
+    # select row containing <= neighbor_cutoff_distance in any of their 'distance_columns'
+    condition = df_distances[distance_columns].le(neighbor_cutoff_distance).any(axis=1) 
+
+    # Create the neighbor residue dataframe
+    df_neighbor_residues = df_distances[condition].copy()
+
+    
+    #===== Residues information: codes, names, etc =====
+    # Codes
+    df_neighbor_residues["residue_1_codeComplete"]   = df_neighbor_residues['residue_1_index'].map(dict_residue_index2codeComplete)
+    df_neighbor_residues["residue_2_codeComplete"]   = df_neighbor_residues['residue_2_index'].map(dict_residue_index2codeComplete)
+    df_neighbor_residues["residue_1_codeSimplified"] = df_neighbor_residues['residue_1_index'].map(dict_residue_index2codeSimplified)
+    df_neighbor_residues["residue_2_codeSimplified"] = df_neighbor_residues['residue_2_index'].map(dict_residue_index2codeSimplified)
+
+    # names
+    df_neighbor_residues["residue_1_name"] = df_neighbor_residues['residue_1_index'].map(dict_residue_index2name)
+    df_neighbor_residues["residue_2_name"] = df_neighbor_residues['residue_2_index'].map(dict_residue_index2name)
+
+    # secondary structures
+    df_neighbor_residues["residue_1_secondary_structure"] = df_neighbor_residues['residue_1_index'].map(dict_residue_index2ss)
+    df_neighbor_residues["residue_2_secondary_structure"] = df_neighbor_residues['residue_2_index'].map(dict_residue_index2ss)
+
+    # protein region
+    df_neighbor_residues["residue_1_protein_region"] = df_neighbor_residues['residue_1_index'].map(dict_residue_index2pr)
+    df_neighbor_residues["residue_2_protein_region"] = df_neighbor_residues['residue_2_index'].map(dict_residue_index2pr)
+
+    # residues identity (receptor/ligand)
+    df_neighbor_residues["residue_1_identity"] = df_neighbor_residues['residue_1_index'].map(dict_residue_index2identity)
+    df_neighbor_residues["residue_2_identity"] = df_neighbor_residues['residue_2_index'].map(dict_residue_index2identity)
+
+    
+    #===== Replace all np.NaN values by string 'NaN' =====
+    df_neighbor_residues = df_neighbor_residues.fillna("NaN")
+
+    
+    #===== Generate pair codes =====
+    # Create the "neighbor_code_full" column with sorted combined information
+    df_neighbor_residues["neighbor_code_full"] = df_neighbor_residues.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_codeComplete'], row['residue_2_codeComplete']]))),
+            axis=1
+        )
+
+    # Create the "neighbor_code_full" column with sorted combined information
+    df_neighbor_residues["neighbor_code_name_secondary_structure"] = df_neighbor_residues.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_codeSimplified'], row['residue_2_codeSimplified']]))),
+            axis=1
+        )
+
+    # Create code for NAME column with sorted combined information
+    df_neighbor_residues["neighbor_code_name"] = df_neighbor_residues.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_name'], row['residue_2_name']]))),
+            axis=1
+        )
+
+    # Create code for SS column with sorted combined information
+    df_neighbor_residues["neighbor_code_secondary_structure"] = df_neighbor_residues.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_secondary_structure'], row['residue_2_secondary_structure']]))),
+            axis=1
+        )
+
+    # Create code for PR column with sorted combined information
+    df_neighbor_residues["neighbor_code_protein_region"] = df_neighbor_residues.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_protein_region'], row['residue_2_protein_region']]))),
+            axis=1
+        )
+
+
+    #===== Create the identity of the pair =====
+    df_neighbor_residues["neighbor_identity"] = df_neighbor_residues.apply(
+            lambda row: '_'.join(map(str, sorted([row['residue_1_identity'], row['residue_2_identity']]))),
+            axis=1
+        )
+
+
+    #===== Remove unwanted columns =====
+    columns_to_remove = ["residue_1_index", "residue_2_index",
+             "residue_1_name", "residue_2_name",
+             "residue_1_codeComplete", "residue_2_codeComplete",
+             "residue_1_codeSimplified", "residue_2_codeSimplified",
+             "residue_1_secondary_structure", "residue_2_secondary_structure",
+             "residue_1_protein_region", "residue_2_protein_region",
+             "residue_1_identity", "residue_2_identity",
+            ]
+
+    df_neighbor_residues = df_neighbor_residues.drop(columns_to_remove, axis=1)
+    df_neighbor_residues.reset_index(inplace=True, drop=True)
+
+    
+    #===== save to CSV =====
+    if save == True:
+
+        if pdb_name == None:
+            pdb_name = directory.split('/')[-1]
+            
+        path_file = f'{directory}/{pdb_name}_clean_neighbor_residues.csv'
+        df_neighbor_residues.to_csv(path_file, index=False)
+
+    
+    #===== return dataframe =====
+    return df_neighbor_residues
+
+
+
+
 
 #=====================================================
 #===== Function to clean structure information
@@ -832,7 +992,7 @@ class cleaning:
         """
         clean_structure(*arg)
 
-    #===== Concatenate CSV files over subdirectory ===== 
+    #===== Clean structure info ===== 
     def structure(*arg,**kwargs):
         """
         DESCRIPTION
@@ -864,6 +1024,34 @@ class cleaning:
         return clean_structure(*arg,**kwargs)
 
 
+    #===== Generate clean neighbor residue using distance map ===== 
+    def neighbor_residues(*arg,**kwargs):
+        """
+        DESCRIPITON
+            Use the distance map to identify neighbor residues based on their COMs distances.
+            
+        ARGUMENTS
+            directory     directory where CSV files are located
+            
+        OPTINAL ARGUMENTS
+            file_name_structure    Name of file containing secondary structure and COMs information.
+                                Default value: 'residues_secondaryStructure_and_COMs'
+                                
+            neighbor_cutoff_distance    Cutoff distance used to identify neighbor residues.
+                                        If any value in the list of columns distance_columns' is beloe or equal
+                                        to this distance, the residues are neighbors.
+                                        Default value: 8 angstrom
+            
+            distance_columns    list of columns in which to search for the cutoff distances
+                                Default value: None (search in all distances columns)
+            
+            pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                        Default value: directory name
+                        
+            save        save cleaned file as CSV in the directory
+                        Default value: True 
+        """
+        return clean_neighbor_residues(*arg,**kwargs)
 
 
 #=====================================================

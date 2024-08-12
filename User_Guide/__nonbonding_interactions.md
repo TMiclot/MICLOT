@@ -8,11 +8,11 @@ This part explains all the geometric (distance, angle) and energetic (when avail
 >Remember that a pair of residues can establish diverse types of interactions, and that a single residue is capable of engaging in interactions with multiple others.
 
 
-## A. Interaction regions
+## A. Interaction area
 
-All amino acid can be devided into two region : backbone and side chain. It mean that any interaction can take place in this region, if the nature of the given interaction allows. As consequence it is possible to identify :
+All amino acid can be devided into two area : backbone and side chain. It mean that any interaction can take place in this area, if the nature of the given interaction allows. As consequence it is possible to identify :
 
-| Interaction region      | Description |
+| Interaction area      | Description |
 | ----------------------- | ----------- |
 | Backbone - Backbone     | Interaction take place between the backbones of the tow residues. |
 | Side chain - Side chain | Interaction take place between the side chains of the tow residues. |
