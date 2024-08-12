@@ -285,6 +285,216 @@ def make_distance_map(directory, file_name_structure='residues_secondaryStructur
 #=====================================================
 #===== Function to generate neigbor residues
 #=====================================================
+def clean_interactions_table(directory, file_name_clean_structure='clean_structure', file_name_interaction_table='interaction_table_whole_system', \
+                    file_name_distance_map='distance_map', pdb_name=None, save=True):
+    """
+    DESCRIPITON
+        Clean the interaction table and use the distance map to add residues pair COMs distances.
+        
+    ARGUMENTS
+        directory     directory where CSV files are located
+        
+    OPTIONAL ARGUMENTS
+        file_name_interaction_table    Name of file containing interaction types information.
+                                       Default value: 'interaction_table_whole_system'
+    
+        file_name_clean_structure    Name of file containing clean structure information.
+                                     Default value: 'clean_structure'
+        
+        file_name_distance_map    Name od the distance map as CSV file.
+                                  Default value: 'distance_map'
+        
+        distance_columns    list of columns in which to search for the cutoff distances
+                            Default value: None (search in all distances columns)
+        
+        pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                    Default value: directory name
+                    
+        save        save cleaned file as CSV in the directory
+                    Default value: True 
+    """
+    #===== Get structure information =====
+    # Read CSV files as pandas dataframe
+    file_structure = glob.glob(os.path.join(directory, f'*{file_name_clean_structure}*.csv'))[0]
+    df_structure = pd.read_csv(file_structure)
+    
+    # Conversion dictionnaries
+    dict_residue_index2codeComplete   = df_structure.set_index('index')['code_complete'].to_dict()
+    dict_residue_index2codeSimplified = df_structure.set_index('index')['code_name_secondary_structure'].to_dict()
+    dict_residue_index2ss             = df_structure.set_index('index')['secondary_structure'].to_dict()
+    dict_residue_index2pr             = df_structure.set_index('index')['protein_region'].to_dict()
+    dict_residue_index2identity       = df_structure.set_index('index')['identity'].to_dict()
+
+    
+    #===== Get COMs distance information =====
+    # Read distance map file, or create it
+    try:
+        file_distance_map = glob.glob(os.path.join(directory, f'*{file_name_distance_map}*.csv'))[0]
+        df_distances = pd.read_csv(file_distance_map)
+    except:
+        df_distances = make_distance_map() 
+        
+    # Dictionnary for COMs distances info
+    dict_residue_pairindex2COM       = df_distances.set_index('pair_index')['distance_COM_1_COM_2'].to_dict()
+    dict_residue_pairindex2COMbb     = df_distances.set_index('pair_index')['distance_COM_backbone_1_COM_backbone_2'].to_dict()
+    dict_residue_pairindex2COMsc     = df_distances.set_index('pair_index')['distance_COM_sidechain_1_COM_sidechain_2'].to_dict()
+    dict_residue_pairindex2COMbb1sc2 = df_distances.set_index('pair_index')['distance_COM_backbone_1_COM_scidechain_2'].to_dict()
+    dict_residue_pairindex2COMbb2sc1 = df_distances.set_index('pair_index')['distance_COM_backbone_2_COM_scidechain_1'].to_dict()
+    
+    #===== Get interactions table =====
+    # Read CSV files as pandas dataframe
+    file_interaction_table = glob.glob(os.path.join(directory, f'*{file_name_interaction_table}*.csv'))[0]
+    df_interaction_table = pd.read_csv(file_interaction_table)
+
+    #===== Remove unwanted rows =====
+    # Remove rows without interaction: "number_interactions" column contains zero 
+    df_interaction_table = df_interaction_table[df_interaction_table['number_interactions'] != 0]
+
+    # Remove if consecutive, else if their is not only vdw between them
+    #    Note: vdw are keep only if the pair is not consecutive (i, i+1) else if the consecutive pair perform other interaction type
+    mask = ~((df_interaction_table['consecutive_residues'] == 1) & (df_interaction_table['number_interactions'] == 1) & (df_interaction_table['van_der_waals_nb_contacts'] != 0))
+    df_interaction_table = df_interaction_table[mask] # Apply the mask to the DataFrame
+
+    
+    #===== Compute delta energies =====
+    df_interaction_table["D_energy_total"]   = abs(df_interaction_table["energy_total_amber"] - df_interaction_table["energy_total_charmm"])
+    df_interaction_table["D_energy_coulomb"] = abs(df_interaction_table["energy_coulomb_amber"] - df_interaction_table["energy_coulomb_charmm"])
+    df_interaction_table["D_energy_lj"]      = abs(df_interaction_table["energy_lj_amber"] - df_interaction_table["energy_lj_charmm"])
+    
+    
+    #===== Get residues SS and prot region =====
+    df_interaction_table["residue_1_secondary_structure"] = df_interaction_table['residue_1_index'].map(dict_residue_index2ss)
+    df_interaction_table["residue_2_secondary_structure"] = df_interaction_table['residue_2_index'].map(dict_residue_index2ss)
+    df_interaction_table["residue_1_protein_region"] = df_interaction_table['residue_1_index'].map(dict_residue_index2pr)
+    df_interaction_table["residue_2_protein_region"] = df_interaction_table['residue_2_index'].map(dict_residue_index2pr)
+
+    
+    #===== Set pair index =====
+    df_interaction_table["pair_index"] = df_interaction_table.apply(
+            lambda row: '_'.join(map(str, sorted([row['residue_1_index'], row['residue_2_index']]))),
+            axis=1
+        )
+
+    #===== Get residue code and identity =====
+    # Get residues code
+    df_interaction_table["residue_1_codeComplete"]   = df_interaction_table['residue_1_index'].map(dict_residue_index2codeComplete)
+    df_interaction_table["residue_2_codeComplete"]   = df_interaction_table['residue_2_index'].map(dict_residue_index2codeComplete)
+    df_interaction_table["residue_1_codeSimplified"] = df_interaction_table['residue_1_index'].map(dict_residue_index2codeSimplified)
+    df_interaction_table["residue_2_codeSimplified"] = df_interaction_table['residue_2_index'].map(dict_residue_index2codeSimplified)
+
+    # Get residues identity
+    df_interaction_table["residue_1_identity"] = df_interaction_table['residue_1_index'].map(dict_residue_index2identity)
+    df_interaction_table["residue_2_identity"] = df_interaction_table['residue_2_index'].map(dict_residue_index2identity)
+    
+    
+    #===== Set pair codes =====
+    #----- pair codes: name, SS, PR -----
+    # Create code for NAME column with sorted combined information
+    df_interaction_table["pair_code_name"] = df_interaction_table.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_name'], row['residue_2_name']]))),
+            axis=1
+        )
+    
+    # Create code for SS column with sorted combined information
+    df_interaction_table["pair_code_secondary_structure"] = df_interaction_table.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_secondary_structure'], row['residue_2_secondary_structure']]))),
+            axis=1
+        )
+    
+    # Create code for PR column with sorted combined information
+    df_interaction_table["pair_code_protein_region"] = df_interaction_table.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_protein_region'], row['residue_2_protein_region']]))),
+            axis=1
+        )
+
+    #===== Create pair codes =====
+    # Replace all np.NaN values by string 'NaN'
+    df_interaction_table = df_interaction_table.fillna("NaN")
+
+    # Create the "pair_code_full" column with sorted combined information
+    df_interaction_table["pair_code_full"] = df_interaction_table.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_codeComplete'], row['residue_2_codeComplete']]))),
+            axis=1
+        )
+
+    # Create the "pair_code_full" column with sorted combined information
+    df_interaction_table["pair_code_name_secondary_structure"] = df_interaction_table.apply(
+            lambda row: '-'.join(map(str, sorted([row['residue_1_codeSimplified'], row['residue_2_codeSimplified']]))),
+            axis=1
+        )
+
+    # Create the "pair_code" column with sorted combined information
+    df_interaction_table["pair_identity"] = df_interaction_table.apply(
+            lambda row: '_'.join(map(str, sorted([row['residue_1_identity'], row['residue_2_identity']]))),
+            axis=1
+        )
+    
+    #===== Get distances: COM-COM, COMbb-COMbb, COMsc-COMsc, COMbb1-COMsc2 & COMbb2-COMsc1 =====
+    df_interaction_table["distance_COM_1_COM_2"] = df_interaction_table['pair_index'].map(dict_residue_pairindex2COM)
+    df_interaction_table["distance_COM_backbone_1_COM_backbone_2"]   = df_interaction_table['pair_index'].map(dict_residue_pairindex2COMbb)
+    df_interaction_table["distance_COM_sidechain_1_COM_sidechain_2"] = df_interaction_table['pair_index'].map(dict_residue_pairindex2COMsc)
+    df_interaction_table["distance_COM_backbone_1_COM_scidechain_2"] = df_interaction_table['pair_index'].map(dict_residue_pairindex2COMbb1sc2)
+    df_interaction_table["distance_COM_backbone_2_COM_scidechain_1"] = df_interaction_table['pair_index'].map(dict_residue_pairindex2COMbb2sc1)
+
+    
+    #===== Remove unwanted columns =====
+    columns_to_remove = ["residue_1_index", "residue_2_index",
+             "residue_1_chain", "residue_2_chain",
+             "residue_1_resSeq", "residue_2_resSeq",
+             "residue_1_name", "residue_2_name",
+             "residue_1_codeComplete", "residue_2_codeComplete",
+             #"residue_1_codeSimplified", "residue_2_codeSimplified",
+             "residue_1_secondary_structure", "residue_2_secondary_structure",
+             "residue_1_protein_region", "residue_2_protein_region",
+             "residue_1_identity", "residue_2_identity",
+            ]
+    
+    df_interaction_table = df_interaction_table.drop(columns_to_remove, axis=1)
+    
+    #===== Remove unvanted values =====
+    # Replace any string containing 'NaN' with np.nan
+    df_interaction_table = df_interaction_table.replace(to_replace=r'.*NaN.*', value=np.nan, regex=True)
+    
+    # Replace 0 and 0.0 in specified columns with np.nan
+    list_columns = ['residue_1_C5Hbond', 'residue_2_C5Hbond', 'c_bond', 'amino_pi',
+        'arg_aromatic_parallel', 'arg_aromatic_perpendicular', 'arg_aromatic_intermediate ',
+        'arg_arg_parallel', 'arg_arg_perpendicular', 'arg_arg_intermediate',
+        'aromatic_aromatic_parallel', 'aromatic_aromatic_offset', 'aromatic_aromatic_coplanar',
+        'aromatic_aromatic_Yshaped', 'aromatic_aromatic_Tshaped', 'aromatic_aromatic_intermediate',
+        'cation_pi', 'cation_intermediate', 'cation_quadrupole', 'anion_pi', 'anion_intermediate',
+        'anion_quadrupole', 'charge_repulsion', 'charge_clash', 'hydrogen_bond',
+        'hydrophobic_interaction', 'hydrophobe_hydrophile_clash', 'hydrophobe_hydrophile_repulsion',
+        'n_pi_regular', 'n_pi_reciprocal', 'pi_hbond', 'salt_bridge', 'S_pi', 'S_intermediate',
+        'S_quadrupole', 'Se_pi', 'Se_intermediate', 'Se_quadrupole', 'sse_hbond', 'sse_chalcogen',
+        'van_der_waals_nb_contacts'
+        ]
+    
+    df_interaction_table[list_columns] = df_interaction_table[list_columns].replace(0, np.nan)
+    
+    # Replace all 0.5 value by 1 in salt bridge
+    df_interaction_table['salt_bridge'] = df_interaction_table['salt_bridge'].replace(0.5, 1)
+    
+    
+    #===== save to CSV =====
+    if save == True:
+    
+        if pdb_name == None:
+            pdb_name = directory.split('/')[-1]
+            
+        path_file = f'{directory}/{pdb_name}_clean_interactions_table.csv'
+        df_interaction_table.to_csv(path_file, index=False)
+    
+    
+    #===== return dataframe =====
+    return df_interaction_table
+    
+
+
+
+
+#=====================================================
+#===== Function to generate neigbor residues
+#=====================================================
 def clean_neighbor_residues(directory, file_name_clean_structure='clean_structure', \
                     file_name_distance_map='distance_map', neighbor_cutoff_distance=8, distance_columns=None, pdb_name=None, save=True):
     """
@@ -295,9 +505,12 @@ def clean_neighbor_residues(directory, file_name_clean_structure='clean_structur
         directory     directory where CSV files are located
         
     OPTIONAL ARGUMENTS
-        file_name_structure    Name of file containing secondary structure and COMs information.
-                               Default value: 'residues_secondaryStructure_and_COMs'
-                               
+        file_name_clean_structure    Name of CSV file of cleaned structure information.
+                                     Default value: 'clean_structure'
+
+        file_name_distance_map    Name od the distance map as CSV file.
+                                  Default value: 'distance_map'
+
         neighbor_cutoff_distance    Cutoff distance used to identify neighbor residues.
                                     If any value in the list of columns distance_columns' is below or equal
                                     to this distance, the residues are neighbors.
@@ -1033,12 +1246,15 @@ class cleaning:
         ARGUMENTS
             directory     directory where CSV files are located
             
-        OPTINAL ARGUMENTS
-            file_name_structure    Name of file containing secondary structure and COMs information.
-                                Default value: 'residues_secondaryStructure_and_COMs'
-                                
+        OPTIONAL ARGUMENTS
+            file_name_clean_structure   Name of CSV file of cleaned structure information.
+                                        Default value: 'clean_structure'
+
+            file_name_distance_map      Name of the distance map as CSV file.
+                                        Default value: 'distance_map'
+
             neighbor_cutoff_distance    Cutoff distance used to identify neighbor residues.
-                                        If any value in the list of columns distance_columns' is beloe or equal
+                                        If any value in the list of columns distance_columns' is below or equal
                                         to this distance, the residues are neighbors.
                                         Default value: 8 angstrom
             
@@ -1052,6 +1268,38 @@ class cleaning:
                         Default value: True 
         """
         return clean_neighbor_residues(*arg,**kwargs)
+
+
+    #===== Generate clean neighbor residue using distance map ===== 
+    def interactions_table(*arg,**kwargs):
+        """
+        DESCRIPITON
+            Clean the interaction table and use the distance map to add residues pair COMs distances.
+            
+        ARGUMENTS
+            directory     directory where CSV files are located
+            
+        OPTIONAL ARGUMENTS
+            file_name_interaction_table    Name of file containing interaction types information.
+                                          Default value: 'interaction_table_whole_system'
+        
+            file_name_clean_structure   Name of file containing clean structure information.
+                                        Default value: 'clean_structure'
+            
+            file_name_distance_map    Name od the distance map as CSV file.
+                                      Default value: 'distance_map'
+            
+            distance_columns    list of columns in which to search for the cutoff distances
+                                Default value: None (search in all distances columns)
+            
+            pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
+                        Default value: directory name
+                        
+            save        save cleaned file as CSV in the directory
+                        Default value: True
+        """
+        return clean_interactions_table(*arg,**kwargs)
+
 
 
 #=====================================================

@@ -28,8 +28,6 @@ import miclot.analysis as mca
 
 ### A.1. Clean structure information
 
-Use the file containing structure and COMs information, and optionally the file containing protein region and identity information (only for complexes).
-
 **Code**
 
 ```python
@@ -43,12 +41,23 @@ Return the dataframe and save it as CSV file.
 
 ### A.2. Clean neighbor residues
 
-Use the file containing structure and COMs information, and optionally the file containing protein region and identity information (only for complexes).
-
 **Code**
 
 ```python
 cleaning.neighbor_residues('/Data/1acb')
+```
+
+**Result**
+
+Return the dataframe and save it as CSV file.
+
+
+### A.3. Clean interactions table
+
+**Code**
+
+```python
+cleaning.interactions_table('/Data/1acb')
 ```
 
 **Result**
