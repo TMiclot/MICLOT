@@ -37,8 +37,6 @@ from miclot.interactions import *
 
 ## A. Identify all interfactions in a protein, or a complex
 
-### A.1. Analyse a system
-
 **Code**
 
 ```python
@@ -55,52 +53,6 @@ traj.remove_solvent(inplace=True)
 
 # analyse the whole system
 df_interaction, df_class = mci.interaction_table_whole_system(traj)
-```
-
-### A.2. Recover raw information
-
-To recover raw information of the analysis, you can:
-
-- Directly use the 'df_class', in the same script.
-- Read the *.pkl.gz* file as Pandas dataframe, at a later inspection.
-
-As you will see each cell of the dataframe contain the output as `<miclot.interactions>` object. This means that properties can be used as if they were the normal output of an analysis command, as you can see below:
-
-**Code**
-
-```python
-import miclot.interactions as mci
-import pandas as pd
-
-result = pd.read_pickle("class_table_whole_system.pkl.gz")
-
-# loop over all ceels in the "hydrophobic" command
-for i in result["hydrophobic"]:
-
-    # extract information using the poperties '.check_interaction' and '.get_distance' as usual.
-    try:
-        print(i.check_interaction)
-        print(i.get_distance)
-    except:
-        pass
-```
-
-**Result**
-
-```
-(False, False, None)
-(3.806639611721039, 6.108064998445996)
-(True, False, 'repulsion')
-(5.545051693916321, 8.142675867155958)
-(True, False, 'repulsion')
-(5.140817165374756, 8.291636803448867)
-(False, False, None)
-(5.635319352149963, 5.125583707709749)
-(True, False, 'repulsion')
-(7.829961180686951, 8.181915776194057)
-(True, False, 'repulsion')
-(9.408645629882812, 9.748772673630256)
-...
 ```
 
 
@@ -168,6 +120,41 @@ print(df_class)
                                        van_der_waals  
 0  <miclot.interactions.van_der_waals object at 0...  
 ```
+
+
+### B.2. Recover raw information
+
+To recover raw information of the analysis, you can:
+
+- Directly use the 'df_class', in the same script.
+- Read the *.pkl.gz* file as Pandas dataframe, at a later inspection.
+
+As you will see each cell of the dataframe contain the output as `<miclot.interactions>` object. This means that properties can be used as if they were the normal output of an analysis command, as you can see below:
+
+**Code**
+
+```python
+import miclot.interactions as mci
+import pandas as pd
+
+result = pd.read_pickle("class_table_whole_system.pkl.gz")
+
+result = pd.read_pickle("/Data/4pas/4pas_class_11_50.pkl.gz")
+
+i = result["hydrogen_bond"][0]
+
+print(i.check_interaction)
+print(i.get_distance)
+```
+
+**Result**
+
+```
+True
+[[2.8605997562408447, array([205, 206, 834])]]
+```
+
+
 
 
 

@@ -89,7 +89,7 @@ The command return the concatenated final file as pandas dataframe and wrote it 
 
 
 
-## A.4. Search for neighbor residues
+## A.4. Clean the interaction table
 
 **.interactions_table**(directory, *file_name_clean_structure='clean_structure', file_name_interaction_table='interaction_table_whole_system', file_name_distance_map='distance_map', pdb_name=None, save=True*)
 
@@ -102,7 +102,7 @@ Clean the interaction table and use the distance map to add residues pair COMs d
 | Argument | Format | Description | Requirement |
 | -------- | ------ | ----------- | ----------- |
 | directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
-| file_name_interaction_table | string | Name of file containing raw interaction types information. <br/> Default value: 'interaction_table_whole_system' | mandatory |
+| file_name_interaction_table | string | Name of file containing raw interaction types information. <br/> Default value: 'interaction_table_whole_system' | optional |
 | file_name_clean_structure | string | File name of CSV containing clean struture data. <br/> Default value: 'clean_structure' | optional |
 | file_name_distance_map | string | File name of CSV of the distance map. *This file is automaticaly generated if it don't exist.* <br/> Default value: 'distance_map' | optional |
 | pdb_name | string | structure name to use in the exported file. <br/> Default value: directory name | optional |
@@ -111,6 +111,31 @@ Clean the interaction table and use the distance map to add residues pair COMs d
 ### Returns
 
 The command return the concatenated final file as pandas dataframe and wrote it as CSV file.
+
+
+
+## A.5. Search for neighbor pairs
+
+**.clean_neighbor_pairs**(directory, *file_name_clean_interactions_table='clean_interactions_table', file_name_neighbor_residues='clean_neighbor_residues', pdb_name=None, save=True*)
+
+### Description
+
+Identify neighbor pairs using the neighbor residue and interactions table.
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | ------ | ----------- | ----------- |
+| directory | string | directory containing all subdirectory where CSV files are located. | mandatory |
+| file_name_clean_interactions_table | string | Name of file containing raw interaction types information. <br/> Default value: 'clean_interactions_table' | optional |
+| file_name_neighbor_residues | string | File name of CSV containing clean struture data. <br/> Default value: 'clean_neighbor_residues' | optional |
+| pdb_name | string | structure name to use in the exported file. <br/> Default value: directory name | optional |
+| save | boolean | save or not the final CSV file. <br/> Default value: True| optional 
+
+### Returns
+
+The command return the concatenated final file as pandas dataframe and wrote it as CSV file.
+
 
 
 
