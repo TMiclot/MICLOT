@@ -122,7 +122,7 @@ If a cleaned structure file is provided, the class can return 'code_complete' an
 | Argument | Format | Description | Requirement |
 | -------- | ------ | ----------- | ----------- |
 | result   | <miclot.interactions> | interaction type class object | mandatory |
-| directory | string | directory containing all subdirectory where CSV files are located. | optional |
+| directory | string | directory containing all subdirectory where CSV files are located. <br/> Default value: current directory | optional |
 | file_name_structure | string | File name of CSV containing clean struture data. <br/> Default value: 'clean_structure' | optional |
 
 ### Properties
