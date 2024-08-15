@@ -100,6 +100,48 @@ The command return:
 
 
 
+## Identify interaction area of an interaction
+
+**locate**(result, *directory='.', file_name_structure=None*)
+
+### Description
+
+Take an interaction type class object and locate the interaction area where the interaction take place:             backbone-backbone (BB-BB), backbone-sidechain (name-BB), sidechain-sidechain (name1-name2).
+
+If a cleaned structure file is provided, the class can return 'code_complete' and 'code_name_secondary_structure' for backbone and side chaine.
+
+>[!IMPORTANT]
+> It is based on atom indices and don't check if the interaction exist or not. That is why it always return result.Remember that location/area (sidechain or bakbone) of atoms is independant on the interaction existance.
+
+>[!WARNING]
+> Error like: `AttributeError: 'NoneType' object has no attribute 'get_atoms'` can append when the interaction type i.e. don't exist or not correctly set.
+
+
+### Arguments
+
+| Argument | Format | Description | Requirement |
+| -------- | ------ | ----------- | ----------- |
+| result   | <miclot.interactions> | interaction type class object | mandatory |
+| directory | string | directory containing all subdirectory where CSV files are located. | optional |
+| file_name_structure | string | File name of CSV containing clean struture data. <br/> Default value: 'clean_structure' | optional |
+
+### Properties
+
+| Property | Description | Return |
+| -------- | --- | --- |
+| .get_interaction_type | Return the interaction type: class name of `result`. | string |
+| .get_atoms | Return list of atoms index involved in the interaction. | List of integer | MDTraj indices |
+| .get_area  | Return area list corresponding to atoms item in '.get_atoms' list. | list |
+| .get_code  | When a structure information file is set. Return interaction code name, code name secondary structure (= code simple), code complete corresponding to atoms item in '.get_atoms' list. | 3 lists |
+| .get_table_interaction | Return the count for interaction type areas. <br/> 'pair_index' is set as index of the table to easly merge with other interaction type row (or table). | pandas dataframe |
+| .get_table_code_name | Return the count of code_name pair for interaction type. <br/> 'code_name' is set as index of the table to easly merge with other interaction type row (or table). | pandas dataframe |
+| .get_table_code_simple | Return the count of code_name_secondary_structure pair for interaction type. <br/> 'code_name_secondary_structure' is set as index of the table to easly merge with other interaction type row (or table). | pandas dataframe |
+| .get_table_code_complete | Return the count of code_complete pair for interaction type. <br/> 'code_complete' is set as index of the table to easly merge with other interaction type row (or table). | pandas dataframe |
+
+
+
+
+
 ## 1. C-bond
 
 **C_bond**(trajectory, res_index_A, res_index_B, *frame=0, MAX_distance=3.6, MIN_distance=2.5, \
@@ -132,10 +174,11 @@ Identify if their is C-bond interaction between C(sp3) with O.
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit or not between the two amino acids. | Boolean (True / False) |  |
+| .get_atoms         | Return a list of atoms index involved in C-bond. | List of set: <br/> [{indices},{indices},...] <br/> indices are integer. |  |
 | .get_distance      | Return a list of distance of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[distance],[indices]],...] < br/> distance and indices are float. | Å |
 | .get_angle         | Return a list of angles of the C-bond, it also return the corresponding C-bond atom indices. <br/> $\theta 1$ angle: C...O=C <br/> $\theta 2$ angle: Z-C...O | float | degree |
 | .get_energy        | Return a list of energy of the C-bond, it also return the corresponding C-bond atom indices. | List of list: <br/> [[[energy],[indices]],...] < br/> energy are float and indices are integer. | kJ/mol |
-| .get_atoms         | Return a list of atoms index involved in C-bond. | List of set: <br/> [{indices},{indices},...] <br/> indices are integer. |  |
+
 
 
 
@@ -164,6 +207,7 @@ Identify if their is a C5 H-bond interaction exist between the O and the H (or N
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. | Boolean (True / False) |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distance between atoms O and H in the backbone of the residue. | float | Å |
 | .get_angle         | Values of Phi and Psi angle of the residue. | angle_phi, angle_psi | float |
 
@@ -203,6 +247,7 @@ Identify interaction between tow hydrophobic residue or clash between hydrophili
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the interaction exist or not, the second identify *hydrophobic interaction* or *clash*. Output: <br/> True,True,"hydrophobic" <br/> True,False,"clash" <br/> False,False,None | Boolean (True / False / None) , String|  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distances between CA-CA atoms and side chaine COM-COM of the two residues. | distance_CA (float), distance_COM (float) | Å |
 
 
@@ -244,7 +289,8 @@ Check if their is a clash or a repulsion interaction between the two residues.
 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
-| .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the interaction exist or not, the second identify *repulsion* or *clash*. Output: <br/> True,True,"clash" <br/> True,False,"repulsion" <br/> False,False,None | Boolean (True / False / None) , String|  |
+| .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the interaction exist or not, the second identify *repulsion* or *clash*. Output: <br/> True,True,"clash" <br/> True,False,"repulsion" <br/> False,False,None | Boolean (True / False / None) , String |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (float), distance_charge (,float) | Å |
 
 
@@ -290,6 +336,7 @@ Check if their is a strong electrostatic interaction involving an H-bond and an 
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit. It return two boolean: the first determine if the ionic bond exist or not, the second identify hydrogen bond. Output: <br/> True,True: Interaction exist. <br/> True,False: Only ionic bond. <br/> False,True: Only H-bond. <br/> False,False: Interaction don't exist. | Boolean (True / False / None) & String|  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distances between CA-CA and charge-charge atoms of the two residues. | distance_CA (float), distance_charge (float) | Å |
 | .get_hbond         | Return the atom indices forming H-bond in the pair. For each method, the output is converted to an np.array. | np.array |  |
 
@@ -361,6 +408,7 @@ Identify van der Waals interaction between two residues.
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction   | Check if the given interaction type exisit.  | Boolean (True / False ) & string() |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance        | Return the list distances between atoms pairs making vdW interaction and the list of their index. | list_distance (list), list_contacts (list) | Å |
 | .get_number_contacts | Return the number of atom-atom vdW contact between the two residues. | integer |  |
 | .get_interface       | Return the interface contact between the two residues. *None* is return when the vdw interaction don't exist. The value is given by the equation: <br/> $SASA_{residu \space A} + SASA_{residu \space B} - SASA_{pair \space AB}$ | float or boolean | $Å^2$ |
@@ -393,6 +441,7 @@ Identify the interaction between the amino group of Asn or Gln and the $\pi$ rin
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distances between the COM of the ring and the N atom. | float | Å |
 | .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ N. | float | degree |
 
@@ -435,6 +484,7 @@ It identify 3 subtypes, where *charge* is cation or anion:
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Distances between the COM of the ring and the charged atom. | float | Å |
 | .get_angle         | Angle between vector normal of the aromatic ring plan and the vector COM $\rightarrow$ charge. | float | degree |
 
@@ -472,6 +522,7 @@ Please note that protonated histidine (HIP or HSP) are not taken in acount are n
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ), string (subtype) |  |
+| .get_atoms         | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_angle         | Angle between the two plane, angle beteewn the vector COM $\rightarrow$ COM and plane A then with plane B. Finally it return the hsaped position angle.| float | degree |
 | .get_distance      | Return the distances between COM-COM and distance between the COM and the projected COM on a plane. | float | Å |
 
@@ -503,6 +554,7 @@ A specific class to precise the ARG-Aromatic and ARG-ARG interaction. It is poss
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) |  |
+| .get_atoms      | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_angle         | Angle between the 2 Arg plane or the angle between the Arg plane and the aromatic plane. | float | degree |
 | .get_distance      | Distance between the CZ of each Arg, of distance between the CZ of Arg and the COM of the aromatic plane. | float | Å |
 
@@ -581,6 +633,7 @@ Identify $n \rightarrow \pi^*$ between caronyl group (C=O) of two residues.
 | Property | Description | Return | Unit |
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ), string (regular / reciprocal) |  |
+| .get_atoms      | Return list of atoms index involved in the interaction. | List | MDTraj indices |
 | .get_distance      | Return the two O...C distances. | floats: distance_O_res_A_C_res_B, distance_O_res_B_C_res_A | Å |
 | .get_angle         | Return the two O...C=O angles.  | floats: angle_O_res_A_CO_res_B, angle_O_res_B_CO_res_A | degree |
 
@@ -623,8 +676,8 @@ Identify chalcogen bond or S/Se mediated H-bond. The analysis don't take in acco
 | -------- | --- | --- | --- |
 | .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) , string |  |
 | .get_atoms      | Return list of atoms index involved in chalogen bond and another list of atoms index involved in H-bond. | List, List <br/> Format: [[index_S/Se,index_N/O],...] , [[index_S/Se,index_N/O],...] | MDTraj indices |
-| .get_angle      | Return a list of angles for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...], [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...] | Å |
-| .get_distance   | Return a list of distance  for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [distance,...] , [distance,...] | degree |
+| .get_angle      | Return a list of angles for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...], [[angle_theta, angle_phi, angle_CSX, angle_dihedral],...] | degree |
+| .get_distance   | Return a list of distance  for chalcogen bonds and another for H-bonds. | List, List <br/> Format: [distance,...] , [distance,...] | Å |
 
 
 
@@ -650,3 +703,11 @@ Identify the interaction between an sulfur or selenium atomand an aromatic resiu
 | MIN_pi_angle | integer | Minimum angle defining the Pi area (the maximum is 90˚). <br/> Default value: 60.0˚ | optional |
 | MAX_quadrupole_angle | integer | Maximum angle defining the quadrupole area (the maximum is 0˚). <br/> Default value: 35.0˚ | optional |
 
+### Properties
+
+| Property | Description | Return | Unit |
+| -------- | --- | --- | --- |
+| .check_interaction | Check if the given interaction type exisit.  | Boolean (True / False ) , string |  |
+| .get_atoms      | Return list of atoms index involved in the interaction. | List | MDTraj indices |
+| .get_angle      | Angle between the S/Se-COM and the normal of the amino plane | float | degree |
+| .get_distance   | Distance between COM of aromatic ring and S/Se of the amino group | float | Å |

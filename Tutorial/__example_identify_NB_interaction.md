@@ -157,6 +157,103 @@ True
 
 
 
+## C. Locate interaction area
+
+### C.1. Normal usage
+
+**Code**
+
+```python
+pdb_file = '4pas.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 52,53) # identify vdw interaction
+location = locate(interaction)           # locate are for all vdw contact
+
+l = mci.locate(class_itype)
+print(l.get_interaction_type)
+print('='*50)
+print(l.get_atoms)
+print('='*50)
+print(l.get_area)
+```
+
+**Result**
+
+```
+van_der_waals
+[[856, 873], [856, 879], [857, 873], [857, 874], [857, 879], [858, 874], [858, 875], [858, 877], [858, 879], [858, 880], [859, 873], [859, 874], [859, 875], [859, 876], [859, 880], [860, 873], [860, 879], [865, 873], [865, 879]]
+['backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-sidechain', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-sidechain', 'sidechain-sidechain', 'backbone-sidechain', 'sidechain-sidechain']
+```
+
+
+### C.2. Usage with a cleaned structure information file
+
+To get the cleaned structure information file, see [Clean structure information](../User_Guide/__usage_data_analysis.md#a2-clean-structure-information)
+
+**Code**
+
+```python
+pdb_file = '4pas.pdb'
+traj = md.load(pdb_file, top=pdb_file)
+interaction = van_der_waals(traj, 52,53) # identify vdw interaction
+location = locate(interaction)           # locate are for all vdw contact
+
+l = mci.locate(class_itype, directory="/home/miclot/Documents/1-analyse_ppi/5-clean_data/4pas")
+print(l.get_interaction_type)
+print('='*50)
+print(l.get_atoms)
+print('='*50)
+print(l.get_area)
+print('='*50)
+print(l.get_code)
+print('='*50)
+print(l.get_table_interaction)
+print('='*50)
+print(l.get_table_code_name)
+print('='*50)
+print(l.get_table_code_simple)
+print('='*50)
+print(l.get_table_code_complete)
+```
+
+**Result**
+
+```
+van_der_waals
+==================================================
+[[856, 873], [856, 879], [857, 873], [857, 874], [857, 879], [858, 874], [858, 875], [858, 877], [858, 879], [858, 880], [859, 873], [859, 874], [859, 875], [859, 876], [859, 880], [860, 873], [860, 879], [865, 873], [865, 879]]
+==================================================
+['backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-sidechain', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-backbone', 'backbone-sidechain', 'sidechain-sidechain', 'backbone-sidechain', 'sidechain-sidechain']
+==================================================
+(['BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'HIS-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'BB-BB', 'HIS-BB', 'HIS-HIS', 'HIS-BB', 'HIS-HIS'], ['BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'HIS_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'BB_H-BB_H', 'HIS_H-BB_H', 'HIS_H-HIS_H', 'HIS_H-BB_H', 'HIS_H-HIS_H'], ['BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'HIS_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'BB_H_H-BB_H_H', 'HIS_H_H-BB_H_H', 'HIS_H_H-HIS_H_H', 'HIS_H_H-BB_H_H', 'HIS_H_H-HIS_H_H'])
+==================================================
+pair_index  van_der_waals_backbone-backbone  van_der_waals_backbone-sidechain  \
+52_53                                    14                                 3   
+
+pair_index  van_der_waals_sidechain-sidechain  
+52_53                                       2  
+==================================================
+                van_der_waals
+pair_code_name               
+BB-BB                      14
+HIS-BB                      3
+HIS-HIS                     2
+==================================================
+                                    van_der_waals
+pair_code_name_secondary_structure               
+BB_H-BB_H                                      14
+HIS_H-BB_H                                      3
+HIS_H-HIS_H                                     2
+==================================================
+                    van_der_waals
+pair_code_complete               
+BB_H_H-BB_H_H                  14
+HIS_H_H-BB_H_H                  3
+HIS_H_H-HIS_H_H                 2
+```
+
+
+
 
 ## 0. C5 hydrogen bond
 

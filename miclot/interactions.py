@@ -22,9 +22,8 @@ __all__ = ['C5_hydrogen_bond', 'C_bond', 'hydrophobic', 'charge_clash_repulsion'
 #=====================================================
 
 import os
-import shutil
-import time
 import glob
+from collections import Counter
 
 import numpy as np
 from skspatial.objects import Plane, Vector, Points
@@ -128,7 +127,16 @@ class C5_hydrogen_bond:
             return True
         else:
             return False
-        
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [[atom_O_res, atom_H_res]]
+        """
+        return [[self.atom_O_res, self.atom_H_res]]
+
+
     @property
     def get_angle(self):
         """
@@ -524,7 +532,19 @@ class hydrophobic:
         else:
             return False, False, None
     
-    
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = []
+        atoms_interaction.extend(list(self.top.select(f"resid {self.res_A} and sidechain")))
+        atoms_interaction.extend(list(self.top.select(f"resid {self.res_B} and sidechain")))
+        return [atoms_interaction]
+
+
     @property
     def get_distance(self):
         """
@@ -631,7 +651,19 @@ class charge_clash_repulsion:
             else:
                 return False, False, None
     
-    
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = []
+        atoms_interaction.extend([self.charged_atoms_res_A])
+        atoms_interaction.extend([self.charged_atoms_res_B])
+        return [atoms_interaction]
+
+
     @property
     def get_distance(self):
         """
@@ -800,7 +832,19 @@ class salt_bridge:
             # other case
             else:
                 return False, False    
-    
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = []
+        atoms_interaction.extend([self.charged_atoms_res_A])
+        atoms_interaction.extend([self.charged_atoms_res_B])
+        atoms_interaction.extend(list(self.residue_pair)) # part of residue pair containing only atom performing Hbond in salt bridge
+        return [atoms_interaction]
+        
     @property
     def get_distance(self):
         """
@@ -1287,7 +1331,15 @@ class van_der_waals:
         RETURN         list_distance, list_contacts
         UNIT           Angstrom
         """
-        return self.list_distance, self.list_contacts
+        return self.list_distance
+    
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return the list of atom pairs performing vdw contact
+        RETURN         list of atom pair list as [[indices], [indices], ...]
+        """
+        return [[y.index for y in x] for x in self.list_contacts]
     
         
     @property
@@ -1462,7 +1514,17 @@ class amino_pi:
             return True
         else:
             return False
-        
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = list(self.top.select(f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}"))
+        atoms_interaction.append(self.atom_N_index)
+        return [atoms_interaction]
+
     @property
     def get_angle(self):
         """
@@ -1525,6 +1587,8 @@ class charge_aromatic:
         self.MAX_distance = MAX_distance
         self.MIN_pi_angle = MIN_pi_angle
         self.MAX_quadrupole_angle = MAX_quadrupole_angle
+        self.res_index_A = res_index_A
+        self.res_index_B = res_index_B
 
         
         #===== Create dictionaries of aromatic ring and corresponding plans =====
@@ -1663,7 +1727,19 @@ class charge_aromatic:
             return True, f"{charge_type}-quadrupole"
         else:
             return False, False
-        
+    
+    
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = list(self.top.select(f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}"))
+        atoms_interaction.append(self.atom_charge_index)
+        return [atoms_interaction]
+
+
     @property
     def get_angle(self):
         """
@@ -1672,6 +1748,7 @@ class charge_aromatic:
         UNIT           degree
         """
         return abs(self.angle)
+
 
     @property
     def get_distance(self):
@@ -1975,7 +2052,27 @@ class aromatic_aromatic:
             else:
                 return True, 'intermediate'
         
-        
+
+
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction]
+        """
+        atoms_interaction = []
+
+        aromatic_ring_A = list(self.top.select(f"resid {self.res_index_A} and name {' '.join(self.aromatic_A_atoms_list)}"))
+        aromatic_ring_B = list(self.top.select(f"resid {self.res_index_B} and name {' '.join(self.aromatic_B_atoms_list)}"))
+
+        atoms_interaction.extend(aromatic_ring_A)
+        atoms_interaction.extend(aromatic_ring_B)
+
+        return [atoms_interaction]
+
+
+
     @property
     def get_angle(self):
         """
@@ -2036,6 +2133,8 @@ class arg_involved:
         self.MAX_distance = MAX_distance
         self.MIN_perpendicular_angle = MIN_perpendicular_angle
         self.MAX_parallel_angle = MAX_parallel_angle
+        self.res_index_A = res_index_A
+        self.res_index_B = res_index_B
 
         
         #===== Create dictionaries of aromatic ring and corresponding plans =====
@@ -2090,7 +2189,7 @@ class arg_involved:
             
             #----- Get angle between ARG plane and aromatic plane -----
             # get atoms in the aromatic ring
-            self.aromatic_atoms_list = self.dict_aromatic_ring[self.res_aromatic_name]
+            #self.aromatic_atoms_list = self.dict_aromatic_ring[self.res_aromatic_name]
             
             # Get position of atom making the aromatic plane
             self.list_aromatic_atom_position = []
@@ -2214,7 +2313,23 @@ class arg_involved:
                 return True, self.type, "intermediate"
 
         
-        
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [atoms_interaction] or [[CZ_A_index, CZ_B_index]]
+        """
+        if self.type == "Arg-Aromatic":
+            atoms_interaction = list(self.top.select(f"resid {self.res_aromatic_index} and name {self.dict_aromatic_ring[self.res_aromatic_name]}"))
+            atoms_interaction.append(self.CZ_atom_arg_index)
+            return [atoms_interaction]
+
+        elif self.type == "Arg-Arg":
+            return [[self.CZ_A_index, self.CZ_B_index]]
+
+
+
+
     @property
     def get_angle(self):
         """
@@ -2566,6 +2681,16 @@ class n_pi:
         # The interaction don't exist.
         else:
             return False, False
+        
+
+
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         [[atom_O_res_A,atom_C_res_B],[atom_O_res_B,atom_C_res_A]]
+        """
+        return [[self.atom_O_res_A,self.atom_C_res_B],[self.atom_O_res_B,self.atom_C_res_A]]
     
     
     
@@ -3015,6 +3140,16 @@ class sse_aromatic:
         """
         return self.distance
 
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         
+        """
+        
+        atoms_aromatic = list(self.top.select(f"resid {self.res_aromatic} and name {self.dict_aromatic_ring[self.res_aromatic_name]}"))
+        atoms_aromatic.append(self.index_atom_SSE)
+        return [atoms_aromatic]
 
 
 
@@ -3792,6 +3927,348 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
     return df
     
 
+
+
+
+#=====================================================
+#===== Function to identify interaction area
+#=====================================================
+class locate:
+    def __init__ (self, result, directory='.', file_name_structure=None):
+        """
+        DESCRIPTION
+            Take an interaction type class object and locate the interaction area where the interaction take place:
+            backbone-backbone (BB-BB), backbone-sidechain (name-BB), sidechain-sidechain (name1-name2).
+
+            If a cleaned structure file is provided, the class can return 'code_complete'
+            and 'code_name_secondary_structure' for backbone and side chaine.
+
+            Warning: It always return result, also if the interaction is "False", because atom's
+                     location/area (sidechain or bakbone) is independant on the interaction existance.
+            Warning: Error "AttributeError: 'NoneType' object has no attribute 'get_atoms'" append whent the interaction type
+                     class is None, i.e. don't exist.
+
+            
+        ARGUMENTS
+            result    interaction type class object  
+            
+        OPTIONAL ARGUMENTS
+            directory   Directry whre the CSV file of cleaned structure information is located.
+                        Default vale: '.'
+                        
+            file_name_structure    Full name of motif in the name of the cleaned structure file.
+                                   Default vale: None            
+        """
+        self.result = result
+        self.directory = directory
+        self.file_name_structure = file_name_structure
+
+        
+        #===== Try to find secondary structure and protein region information to make dictionnaries =====
+        try:
+            # Set file name
+            if self.file_name_structure == None:
+                self.file_name_structure = 'clean_structure'
+            
+            # Read as dataframe
+            self.file_structure = glob.glob(os.path.join(self.directory, f'*{self.file_name_structure}*.csv'))[0]
+            self.df_structure   = pd.read_csv(self.file_structure)
+            
+            # Create dictionnaries
+            self.dict_residue_index2codeComplete = self.df_structure.set_index('index')['code_complete'].to_dict()
+            self.dict_residue_index2codeSimple   = self.df_structure.set_index('index')['code_name_secondary_structure'].to_dict()
+            self.dict_residue_index2ss           = self.df_structure.set_index('index')['secondary_structure'].to_dict()
+            self.dict_residue_index2pr           = self.df_structure.set_index('index')['protein_region'].to_dict()
+                
+        except:
+            self.dict_residue_index2codeComplete = None
+            self.dict_residue_index2codeSimple   = None
+            self.dict_residue_index2ss           = None
+            self.dict_residue_index2pr           = None
+        
+        
+        #===== Get indices of residues =====
+        # depending on the class the residue indices definid in the self can be self.res_A/B or self.res_index_A/B
+        try:
+            self.residue_index_A = self.result.res_A
+            self.residue_index_B = self.result.res_B
+        except:
+            self.residue_index_A = self.result.res_index_A
+            self.residue_index_B = self.result.res_index_B
+
+        self.pair_index = '_'.join(map(str, list(sorted([self.residue_index_A, self.residue_index_B]))))
+    
+        
+        #===== Get residues information =====
+        # residue names
+        self.residue_name_A = self.result.top.residue(self.residue_index_A).name
+        self.residue_name_B = self.result.top.residue(self.residue_index_B).name
+    
+        # code complete
+        if self.dict_residue_index2codeComplete != None:
+            self.residue_codeComplete_A = self.dict_residue_index2codeComplete[self.residue_index_A]
+            self.residue_codeComplete_B = self.dict_residue_index2codeComplete[self.residue_index_B]
+        else:
+            self.residue_codeComplete_A = None
+            self.residue_codeComplete_B = None
+    
+        # code simple
+        if self.dict_residue_index2codeSimple != None:
+            self.residue_codeSimple_A = self.dict_residue_index2codeSimple[self.residue_index_A]
+            self.residue_codeSimple_B = self.dict_residue_index2codeSimple[self.residue_index_B]
+        else:
+            self.residue_codeSimple_A = None
+            self.residue_codeSimple_B = None
+    
+        # code backbone
+        if self.dict_residue_index2ss != None:
+            self.backbone_codeSimple_A   = f"BB_{self.dict_residue_index2ss[self.residue_index_A]}"
+            self.backbone_codeSimple_B   = f"BB_{self.dict_residue_index2ss[self.residue_index_B]}"
+    
+            if self.dict_residue_index2pr != None:
+                self.backbone_codeComplete_A = f"BB_{self.dict_residue_index2ss[self.residue_index_A]}_{self.dict_residue_index2pr[self.residue_index_A]}"
+                self.backbone_codeComplete_B = f"BB_{self.dict_residue_index2ss[self.residue_index_B]}_{self.dict_residue_index2pr[self.residue_index_B]}"
+            else:
+                self.backbone_codeComplete_A = None
+                self.backbone_codeComplete_B = None
+        
+        else:
+            self.backbone_codeSimple_A   = None
+            self.backbone_codeSimple_B   = None
+            self.backbone_codeComplete_A = None
+            self.backbone_codeComplete_B = None
+        
+        
+        #===== Get set of atoms in the sidechain and backbone of residues =====
+        # for residue A
+        self.set_sidechain_residue_A = set(self.result.top.select(f"sidechain and resid {self.residue_index_A}"))
+        self.set_backone_residue_A   = set(self.result.top.select(f"backbone and resid {self.residue_index_A}"))
+        
+        # for residue B
+        self.set_sidechain_residue_B = set(self.result.top.select(f"sidechain and resid {self.residue_index_B}"))
+        self.set_backone_residue_B   = set(self.result.top.select(f"backbone and resid {self.residue_index_B}"))
+        
+        # Define set for all sidechains and backbones 
+        self.set_atoms_sidechain = self.set_sidechain_residue_A.union(self.set_sidechain_residue_B) 
+        self.set_atoms_backbone  = self.set_backone_residue_A.union(self.set_backone_residue_B)
+        
+        
+        #===== Get list of atoms performing the interaction =====
+        #----- set list to store results -----
+        self.list_interaction_area          = []
+        self.list_interaction_code_name     = []
+        self.list_interaction_code_complete = []
+        self.list_interaction_code_simple   = []
+        
+        #----- Read the .get_atoms output -----
+        # if the output is a tupple of list (occure when: return list1, list2) merge the lists
+        if isinstance(self.result.get_atoms, tuple):
+            self.atoms_list = []
+            for x in self.result.get_atoms:
+                self.atoms_list.extend(x)
+
+        # if the output is a list only take it as atom list
+        else:
+            self.atoms_list = self.result.get_atoms
+
+
+
+        for self.atom_indices in self.atoms_list:
+            self.set_atom_interaction = set(self.atom_indices)
+            
+            #----- Search for protein area -----
+            #..... check for sidechain-sidechain .....
+            if any(self.set_atom_interaction & self.set_atoms_sidechain) and not any(self.set_atom_interaction & self.set_atoms_backbone):
+                # Add area
+                self.list_interaction_area.append("sidechain-sidechain")
+    
+                # Add code name
+                self.code_name = '-'.join(sorted([self.residue_name_A, self.residue_name_B]))
+                self.list_interaction_code_name.append(self.code_name)
+    
+                # Add code complete
+                if self.residue_codeComplete_A and self.residue_codeComplete_B:
+                    self.code_complete = '-'.join(sorted([self.residue_codeComplete_A, self.residue_codeComplete_B]))
+                    self.list_interaction_code_complete.append(self.code_complete)
+                else:
+                    self.list_interaction_code_complete.append("NaN-NaN")
+                
+                # Add code simple
+                if self.residue_codeSimple_A and self.residue_codeSimple_B:    
+                    self.code_simple = '-'.join(sorted([self.residue_codeSimple_A, self.residue_codeSimple_B]))
+                    self.list_interaction_code_simple.append(self.code_simple)
+                else:
+                    self.list_interaction_code_simple.append("NaN-NaN")
+    
+            
+            #..... check for backbone-backbone .....
+            elif not any(self.set_atom_interaction & self.set_atoms_sidechain) and any(self.set_atom_interaction & self.set_atoms_backbone):
+                # Add area
+                self.list_interaction_area.append("backbone-backbone")
+    
+                # Add code name
+                self.list_interaction_code_name.append("BB-BB")
+    
+                # Add code complete
+                if self.backbone_codeComplete_A and self.backbone_codeComplete_B:
+                    self.code_complete = '-'.join(sorted([self.backbone_codeComplete_A, self.backbone_codeComplete_B]))
+                    self.list_interaction_code_complete.append(self.code_complete)
+                else:
+                    self.list_interaction_code_complete.append("NaN-NaN")
+                
+                # Add code simple
+                if self.backbone_codeSimple_A and self.backbone_codeSimple_B:    
+                    self.code_simple = '-'.join(sorted([self.backbone_codeSimple_A, self.backbone_codeSimple_B]))
+                    self.list_interaction_code_simple.append(self.code_simple)
+                else:
+                    self.list_interaction_code_simple.append("NaN-NaN")
+    
+            
+            #..... backbone-sidechain .....
+            elif any(self.set_atom_interaction & self.set_atoms_sidechain) and any(self.set_atom_interaction & self.set_atoms_backbone):
+    
+                # Idendify which sidechain interaction with backbone
+                if any(self.set_atom_interaction & self.set_sidechain_residue_A) and any(self.set_atom_interaction & self.set_backone_residue_B):
+                    # residue A is side chain and ressidue B is backbone
+                    self.sidechain_name         = self.residue_name_A
+                    self.sidechain_codeComplete = self.residue_codeComplete_A
+                    self.sidechain_codeSimple   = self.residue_codeSimple_A
+                    self.backbone_codeSimple    = self.backbone_codeSimple_B
+                    self.backbone_codeComplete  = self.backbone_codeComplete_B
+    
+                elif any(self.set_atom_interaction & self.set_sidechain_residue_B) and any(self.set_atom_interaction & self.set_backone_residue_A):
+                    # residue B is side chain and ressidue A is backbone
+                    self.sidechain_name         = self.residue_name_B
+                    self.sidechain_codeComplete = self.residue_codeComplete_B
+                    self.sidechain_codeSimple   = self.residue_codeSimple_B
+                    self.backbone_codeSimple    = self.backbone_codeSimple_A
+                    self.backbone_codeComplete  = self.backbone_codeComplete_A
+                
+                # Add area
+                self.list_interaction_area.append("backbone-sidechain")
+    
+                # Add code name
+                self.list_interaction_code_name.append(f"{self.sidechain_name}-BB")
+    
+                # Add code complete
+                if self.sidechain_codeComplete and self.backbone_codeComplete:
+                    self.list_interaction_code_complete.append(f"{self.sidechain_codeComplete}-{self.backbone_codeComplete}")
+                else:
+                    self.list_interaction_code_complete.append("NaN-NaN")
+                
+                # Add code simple
+                if self.sidechain_codeSimple and self.backbone_codeSimple:
+                    self.list_interaction_code_simple.append(f"{self.sidechain_codeSimple}-{self.backbone_codeSimple}")
+                else:
+                    self.list_interaction_code_simple.append("NaN-NaN")
+    
+    
+    #===== Return informations =====
+    @property
+    def get_interaction_type(self):
+        """
+        DESCRIPTION    Return interaction type name. (It's the class name)
+        RETURN         result.__class__.__name__.lower()
+        """
+        return self.result.__class__.__name__.lower()
+        
+    @property
+    def get_atoms(self):
+        """
+        DESCRIPTION    Return atoms invoved in the interaction.
+        RETURN         result.atoms_list
+        """
+        return self.atoms_list
+        
+    @property
+    def get_area(self):
+        """
+        DESCRIPTION    Return area list corresponding to atoms item in '.get_atoms' list.
+        RETURN         list_interaction_area
+        """
+        return self.list_interaction_area
+    
+    @property
+    def get_code(self):
+        """
+        DESCRIPTION    Return interaction code name, code name secondary structure (= code simple), and
+                       code complete corresponding to atoms item in '.get_atoms' list.
+        RETURN         list_interaction_code_name, list_interaction_code_simple, list_interaction_code_complete
+        """
+        return self.list_interaction_code_name, self.list_interaction_code_simple, self.list_interaction_code_complete
+
+
+    @property
+    def get_table_interaction(self):
+        """
+        DESCRIPTION    Return the count for interaction type areas.
+                       'pair_index' is set as index of the table to easly merge with other interaction type row (or table).
+        RETURN         pandas dataframe
+        """
+        # Sample list of elements
+        elements = [self.result.__class__.__name__.lower() + "_" + x for x in self.list_interaction_area]
+        
+        # Count the occurrences of each element
+        element_counts = Counter(elements)
+        
+        # Convert the Counter object to a Pandas DataFrame
+        df = pd.DataFrame(list(element_counts.items()), columns=['pair_index', self.pair_index])
+        df.set_index('pair_index', inplace=True)
+        
+        return df.T
+
+
+    @property
+    def get_table_code_name(self):
+        """
+        DESCRIPTION    Return the count of code_name pair for interaction type.
+                       'code_name' is set as index of the table to easly merge with other interaction type row (or table).
+        RETURN         pandas dataframe
+        """        
+        # Count the occurrences of each element
+        element_counts = Counter(self.list_interaction_code_name)
+        
+        # Convert the Counter object to a Pandas DataFrame
+        df = pd.DataFrame(list(element_counts.items()), columns=['pair_code_name', self.result.__class__.__name__.lower()])
+        df.set_index('pair_code_name', inplace=True)
+        
+        return df
+
+    
+    
+    @property
+    def get_table_code_simple(self):
+        """
+        DESCRIPTION    Return the count of code_name_secondary_structure pair for interaction type.
+                       'code_name_secondary_structure' is set as index of the table to easly merge with other interaction type row (or table).
+        RETURN         pandas dataframe
+        """        
+        # Count the occurrences of each element
+        element_counts = Counter(self.list_interaction_code_simple)
+        
+        # Convert the Counter object to a Pandas DataFrame
+        df = pd.DataFrame(list(element_counts.items()), columns=['pair_code_name_secondary_structure', self.result.__class__.__name__.lower()])
+        df.set_index('pair_code_name_secondary_structure', inplace=True)
+        
+        return df
+
+    
+    
+    @property
+    def get_table_code_complete(self):
+        """
+        DESCRIPTION    Return the count of code_complete pair for interaction type.
+                       'code_complete' is set as index of the table to easly merge with other interaction type row (or table).
+        RETURN         pandas dataframe
+        """        
+        # Count the occurrences of each element
+        element_counts = Counter(self.list_interaction_code_complete)
+        
+        # Convert the Counter object to a Pandas DataFrame
+        df = pd.DataFrame(list(element_counts.items()), columns=['pair_code_complete', self.result.__class__.__name__.lower()])
+        df.set_index('pair_code_complete', inplace=True)
+        
+        return df
 
 
 
