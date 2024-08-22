@@ -96,13 +96,14 @@ $$
 - Bond lengths in crystalline organic compounds. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–1 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Mantina, M., Valero, R., Cramer, C. J. & Truhlar, D. G. Atomic radii of the elements. in *CRC Handbook of chemistry and physics* (eds. Haynes, W. M., Lide, D. R. & Bruno, T. J.) 9–57 (CRC Press, 2016). [https://doi.org/10.1201/9781315380476](https://doi.org/10.1201/9781315380476)
 - Gao, X., Dong, X., Li, X., Liu, Z. & Liu, H. Prediction of disulfide bond engineering sites using a machine learning method. *Sci Rep* 10, 10330 (2020). [https://doi.org/10.1038/s41598-020-67230-z](https://doi.org/10.1038/s41598-020-67230-z)
-- Deplazes, E., Chin, Y. K. ‐Y., King, G. F. & Mancera, R. L. The unusual conformation of cross‐strand disulfide bonds is critical to the stability of β‐hairpin peptides. Proteins 88, 485–502 (2020). [https://doi.org/10.1002/prot.25828](https://doi.org/10.1002/prot.25828)
-- Dombkowski, A. A., Sultana, K. Z. & Craig, D. B. Protein disulfide engineering. FEBS Letters 588, 206–212 (2014). [https://doi.org/10.1016/j.febslet.2013.11.024](https://doi.org/10.1016/j.febslet.2013.11.024)
+- Deplazes, E., Chin, Y. K. ‐Y., King, G. F. & Mancera, R. L. The unusual conformation of cross‐strand disulfide bonds is critical to the stability of β‐hairpin peptides. *Proteins* 88, 485–502 (2020). [https://doi.org/10.1002/prot.25828](https://doi.org/10.1002/prot.25828)
+- Dombkowski, A. A., Sultana, K. Z. & Craig, D. B. Protein disulfide engineering. *FEBS Letters* 588, 206–212 (2014). [https://doi.org/10.1016/j.febslet.2013.11.024](https://doi.org/10.1016/j.febslet.2013.11.024)
 - Craig, D. B. & Dombkowski, A. A. Disulfide by Design 2.0: a web-based tool for disulfide engineering in proteins. *BMC Bioinformatics* 14, 346 (2013). [https://doi.org/10.1186/1471-2105-14-346](https://doi.org/10.1186/1471-2105-14-346])
 - Dombkowski, A. A. Disulfide by Design™: a computational method for the rational design of disulfide bonds in proteins. *Bioinformatics* 19, 1852–1853 (2003). [https://doi.org/10.1093/bioinformatics/btg231](https://doi.org/10.1093/bioinformatics/btg231)
 - Schmidt, B., Ho, L. & Hogg, P. J. Allosteric Disulfide Bonds. *Biochemistry* 45, 7429–7433 (2006). [https://doi.org/10.1021/bi0603064](https://doi.org/10.1021/bi0603064)
 - Weiner, S. J. et al. A new force field for molecular mechanical simulation of nucleic acids and proteins. *J. Am. Chem. Soc.* 106, 765–784 (1984). [https://doi.org/10.1021/ja00315a051](https://doi.org/10.1021/ja00315a051)
 - Katz, B. A. & Kossiakoff, A. The crystallographically determined structures of atypical strained disulfides engineered into subtilisin. *Journal of Biological Chemistry* 261, 15480–15485 (1986). [https://doi.org/10.1016/S0021-9258(18)66737-7](https://doi.org/10.1016/S0021-9258(18)66737-7)
+- Pellequer, J. & Chen, S. W. Multi‐template approach to modeling engineered disulfide bonds. *Proteins* 65, 192–202 (2006). [https://doi.org/10.1002/prot.21059](https://doi.org/10.1002/prot.21059)
 
 
 
