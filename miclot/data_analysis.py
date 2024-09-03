@@ -423,7 +423,7 @@ def clean_interactions_table(directory, file_name_clean_structure='clean_structu
         file_distance_map = glob.glob(os.path.join(directory, f'*{file_name_distance_map}*.csv'))[0]
         df_distances = pd.read_csv(file_distance_map)
     except:
-        df_distances = make_distance_map() 
+        df_distances = make_distance_map(directory) 
         
     # Dictionnary for COMs distances info
     dict_residue_pairindex2COM       = df_distances.set_index('pair_index')['distance_COM_1_COM_2'].to_dict()
@@ -479,6 +479,9 @@ def clean_interactions_table(directory, file_name_clean_structure='clean_structu
     
     
     #===== Set pair codes =====
+    # Replace all np.NaN values by string 'NaN'
+    df_interaction_table = df_interaction_table.fillna("NaN")
+
     #----- pair codes: name, SS, PR -----
     # Create code for NAME column with sorted combined information
     df_interaction_table["pair_code_name"] = df_interaction_table.apply(
@@ -635,7 +638,7 @@ def clean_neighbor_residues(directory, file_name_clean_structure='clean_structur
         file_distance_map = glob.glob(os.path.join(directory, f'*{file_name_distance_map}*.csv'))[0]
         df_distances = pd.read_csv(file_distance_map)
     except:
-        df_distances = make_distance_map()
+        df_distances = make_distance_map(directory)
 
     
     #===== Create neighbor df based on the neighbor_cutoff_distance value =====

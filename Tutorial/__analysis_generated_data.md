@@ -18,7 +18,7 @@ if package_dir not in sys.path:
 Now you can import the packages:
 
 ```python
-import miclot.analysis as mca
+import miclot.data_analysis as mca
 ```
 
 
