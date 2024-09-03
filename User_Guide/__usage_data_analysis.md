@@ -148,7 +148,12 @@ The command return the concatenated final file as pandas dataframe and wrote it 
 
 ### Description
 
-Concatenate CSV files into a single final file. A log file is always writen to 
+Concatenate CSV files into a single final file. A log file is always writen to the directory.
+
+>[!IMPORTANT]
+> The concatenate process use a cycle of overwrite file. This means that tracking the size or number of lines is not a linear increase, because it takes time for the file to (re)write itself, especially if there's a lot of data.
+>
+>For example: the first writing cycle the file size will vary between 0 and 1500 bytes, then the second cycle its size will vary between 0 and 250000, etc.
 
 ### Properties
 

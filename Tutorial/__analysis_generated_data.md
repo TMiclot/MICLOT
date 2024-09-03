@@ -65,6 +65,21 @@ cleaning.interactions_table('/Data/1acb')
 Return the dataframe and save it as CSV file.
 
 
+### A.4. Clean neighbor pairs
+
+**Code**
+
+```python
+cleaning.neighbor_pairs('/Data/1acb')
+```
+
+**Result**
+
+Return the dataframe and save it as CSV file.
+
+
+
+
 
 
 

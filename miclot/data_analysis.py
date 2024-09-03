@@ -1277,7 +1277,7 @@ class concatenate:
         ARGUMENT
             directory    directory containing all subdirectory with CSV files.
         """
-        concatenate_csv(*arg, 'clean_structure.csv', 'final_structure.csv', logfile_name='concatenate_', **kwargs)
+        concatenate_csv(*arg, 'clean_structure.csv', 'final_structure.csv', logfile_name='concatenate_structure', **kwargs)
 
 
 
