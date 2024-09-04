@@ -198,7 +198,7 @@ traj = md.load(pdb_file, top=pdb_file)
 interaction = van_der_waals(traj, 52,53) # identify vdw interaction
 location = locate(interaction)           # locate are for all vdw contact
 
-l = mci.locate(class_itype, directory="/home/miclot/Documents/1-analyse_ppi/5-clean_data/4pas")
+l = mci.locate(class_itype, directory="/Data/4pas/")
 print(l.get_interaction_type)
 print('='*50)
 print(l.get_atoms)
