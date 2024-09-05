@@ -3993,8 +3993,12 @@ class locate:
             self.residue_index_A = self.result.res_A
             self.residue_index_B = self.result.res_B
         except:
-            self.residue_index_A = self.result.res_index_A
-            self.residue_index_B = self.result.res_index_B
+            try:
+                self.residue_index_A = self.result.res_index_A
+                self.residue_index_B = self.result.res_index_B
+            except:
+                self.residue_index_A = self.result.res_R_index
+                self.residue_index_B = self.result.res_aromatic_index
 
         self.pair_index = '_'.join(map(str, list(sorted([self.residue_index_A, self.residue_index_B]))))
     
@@ -4043,10 +4047,12 @@ class locate:
         # for residue A
         self.set_sidechain_residue_A = set(self.result.top.select(f"sidechain and resid {self.residue_index_A}"))
         self.set_backone_residue_A   = set(self.result.top.select(f"backbone and resid {self.residue_index_A}"))
+        self.set_atoms_residue_A     = set(self.result.top.select(f"resid {self.residue_index_A}"))
         
         # for residue B
         self.set_sidechain_residue_B = set(self.result.top.select(f"sidechain and resid {self.residue_index_B}"))
         self.set_backone_residue_B   = set(self.result.top.select(f"backbone and resid {self.residue_index_B}"))
+        self.set_atoms_residue_B     = set(self.result.top.select(f"resid {self.residue_index_B}"))
         
         # Define set for all sidechains and backbones 
         self.set_atoms_sidechain = self.set_sidechain_residue_A.union(self.set_sidechain_residue_B) 
@@ -4073,11 +4079,25 @@ class locate:
 
 
 
+        # correction for pi_hbond interaction
+        if self.result.__class__.__name__.lower() == 'pi_hbond':
+            newlist = []
+            
+            for H, X in self.atoms_list:
+                if H in self.set_atoms_residue_A:
+                    newlist.append(self.set_sidechain_residue_B.union([H]))
+                
+                elif H in self.set_atoms_residue_B:
+                    newlist.append(self.set_sidechain_residue_A.union([H]))
+            
+            self.atoms_list = newlist
+
+
+
         for self.atom_indices in self.atoms_list:
             self.set_atom_interaction = set(self.atom_indices)
             
             #----- Search for protein area -----
-            #..... check for sidechain-sidechain .....
             if any(self.set_atom_interaction & self.set_atoms_sidechain) and not any(self.set_atom_interaction & self.set_atoms_backbone):
                 # Add area
                 self.list_interaction_area.append("sidechain-sidechain")

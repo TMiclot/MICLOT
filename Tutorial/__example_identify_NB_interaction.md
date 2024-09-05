@@ -137,8 +137,6 @@ As you will see each cell of the dataframe contain the output as `<miclot.intera
 import miclot.interactions as mci
 import pandas as pd
 
-result = pd.read_pickle("class_table_whole_system.pkl.gz")
-
 result = pd.read_pickle("/Data/4pas/4pas_class_11_50.pkl.gz")
 
 i = result["hydrogen_bond"][0]
