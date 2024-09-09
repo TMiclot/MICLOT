@@ -3938,7 +3938,8 @@ class locate:
         """
         DESCRIPTION
             Take an interaction type class object and locate the interaction area where the interaction take place:
-            backbone-backbone (BB-BB), backbone-sidechain (name-BB), sidechain-sidechain (name1-name2).
+            backbone-backbone (BB-BB), backbone-sidechain (name-BB), sidechain-sidechain (name1-name2)
+            or intraresidue (name_INTRA).
 
             If a cleaned structure file is provided, the class can return 'code_complete'
             and 'code_name_secondary_structure' for backbone and side chaine.
@@ -3985,7 +3986,7 @@ class locate:
             self.dict_residue_index2codeSimple   = None
             self.dict_residue_index2ss           = None
             self.dict_residue_index2pr           = None
-        
+
         
         #===== Get indices of residues =====
         # depending on the class the residue indices definid in the self can be self.res_A/B or self.res_index_A/B
@@ -4000,7 +4001,7 @@ class locate:
                 self.residue_index_A = self.result.res_R_index
                 self.residue_index_B = self.result.res_aromatic_index
 
-        self.pair_index = '_'.join(map(str, list(sorted([self.residue_index_A, self.residue_index_B]))))
+        self.pair_index = '_'.join(map(str, list(sorted([int(self.residue_index_A) , int(self.residue_index_B)]))))
     
         
         #===== Get residues information =====
@@ -4023,7 +4024,8 @@ class locate:
         else:
             self.residue_codeSimple_A = None
             self.residue_codeSimple_B = None
-    
+
+        
         # code backbone
         if self.dict_residue_index2ss != None:
             self.backbone_codeSimple_A   = f"BB_{self.dict_residue_index2ss[self.residue_index_A]}"
@@ -4078,44 +4080,106 @@ class locate:
             self.atoms_list = self.result.get_atoms
 
 
+        
 
-        # correction for pi_hbond interaction
+        # correction for H bonds interaction
         if self.result.__class__.__name__.lower() == 'pi_hbond':
             newlist = []
             
-            for H, X in self.atoms_list:
-                if H in self.set_atoms_residue_A:
-                    newlist.append(self.set_sidechain_residue_B.union([H]))
+            for H, X in self.atoms_list: # use the X atom donnor insteed of the H. Because sometime H is not correctly identified as bb or sidechain
+                if X in self.set_atoms_residue_A:
+                    newlist.append(self.set_sidechain_residue_B.union([X]))
                 
-                elif H in self.set_atoms_residue_B:
-                    newlist.append(self.set_sidechain_residue_A.union([H]))
+                elif X in self.set_atoms_residue_B:
+                    newlist.append(self.set_sidechain_residue_A.union([X]))
             
+            self.atoms_list = newlist
+
+        elif self.result.__class__.__name__.lower() == 'hydrogen_bond': # remove H and keep donnor and acceptor atoms
+            newlist = []
+            H_index_to_remove = set(self.result.top.select(f"protein and element H"))
+
+            newlist = [[item for item in sublist if item not in H_index_to_remove] for sublist in self.atoms_list]
             self.atoms_list = newlist
 
 
 
+            
+
         for self.atom_indices in self.atoms_list:
             self.set_atom_interaction = set(self.atom_indices)
-            
+
             #----- Search for protein area -----
-            if any(self.set_atom_interaction & self.set_atoms_sidechain) and not any(self.set_atom_interaction & self.set_atoms_backbone):
+            #..... check for intraresidue ....
+            # residue A intra
+            if all(self.set_atom_interaction & self.set_atoms_residue_A) and not any(self.set_atom_interaction & self.set_atoms_residue_B):
+                # Add area
+                self.list_interaction_area.append("intraresidue")
+    
+                # Add code name
+                self.code_name = f'{self.residue_name_A}_INTRA'
+                self.list_interaction_code_name.append(self.code_name)
+    
+                # Add code complete
+                if self.residue_codeComplete_A:
+                    self.code_complete = f'{self.residue_codeComplete_A}_INTRA'
+                    self.list_interaction_code_complete.append(self.code_complete)
+                else:
+                    self.list_interaction_code_complete.append("NaN_INTRA")
+                
+                # Add code simple
+                if self.residue_codeSimple_A:    
+                    self.code_simple = f'{self.residue_codeSimple_A}_INTRA'
+                    self.list_interaction_code_simple.append(self.code_simple)
+                else:
+                    self.list_interaction_code_simple.append("NaN_INTRA")
+
+            # residue B intra
+            elif all(self.set_atom_interaction & self.set_atoms_residue_B) and not any(self.set_atom_interaction & self.set_atoms_residue_A):
+                # Add area
+                self.list_interaction_area.append("intraresidue")
+    
+                # Add code name
+                self.code_name = f'{self.residue_name_B}_INTRA'
+                self.list_interaction_code_name.append(self.code_name)
+    
+                # Add code complete
+                if self.residue_codeComplete_B:
+                    self.code_complete = f'{self.residue_codeComplete_B}_INTRA'
+                    self.list_interaction_code_complete.append(self.code_complete)
+                else:
+                    self.list_interaction_code_complete.append("NaN_INTRA")
+                
+                # Add code simple
+                if self.residue_codeSimple_B:    
+                    self.code_simple = f'{self.residue_codeSimple_B}_INTRA'
+                    self.list_interaction_code_simple.append(self.code_simple)
+                else:
+                    self.list_interaction_code_simple.append("NaN_INTRA")                
+
+
+
+
+                
+            #..... check for sidechain-sidechain ....
+            elif any(self.set_atom_interaction & self.set_atoms_sidechain) and not any(self.set_atom_interaction & self.set_atoms_backbone):
                 # Add area
                 self.list_interaction_area.append("sidechain-sidechain")
     
                 # Add code name
-                self.code_name = '-'.join(sorted([self.residue_name_A, self.residue_name_B]))
+                self.code_name = '-'.join(sorted([str(self.residue_name_A), str(self.residue_name_B)]))
                 self.list_interaction_code_name.append(self.code_name)
     
                 # Add code complete
                 if self.residue_codeComplete_A and self.residue_codeComplete_B:
-                    self.code_complete = '-'.join(sorted([self.residue_codeComplete_A, self.residue_codeComplete_B]))
+                    self.code_complete = '-'.join(sorted([str(self.residue_codeComplete_A), str(self.residue_codeComplete_B)]))
                     self.list_interaction_code_complete.append(self.code_complete)
                 else:
                     self.list_interaction_code_complete.append("NaN-NaN")
                 
                 # Add code simple
                 if self.residue_codeSimple_A and self.residue_codeSimple_B:    
-                    self.code_simple = '-'.join(sorted([self.residue_codeSimple_A, self.residue_codeSimple_B]))
+                    self.code_simple = '-'.join(sorted([str(self.residue_codeSimple_A), str(self.residue_codeSimple_B)]))
                     self.list_interaction_code_simple.append(self.code_simple)
                 else:
                     self.list_interaction_code_simple.append("NaN-NaN")
@@ -4131,14 +4195,14 @@ class locate:
     
                 # Add code complete
                 if self.backbone_codeComplete_A and self.backbone_codeComplete_B:
-                    self.code_complete = '-'.join(sorted([self.backbone_codeComplete_A, self.backbone_codeComplete_B]))
+                    self.code_complete = '-'.join(sorted([str(self.backbone_codeComplete_A), str(self.backbone_codeComplete_B)]))
                     self.list_interaction_code_complete.append(self.code_complete)
                 else:
                     self.list_interaction_code_complete.append("NaN-NaN")
                 
                 # Add code simple
                 if self.backbone_codeSimple_A and self.backbone_codeSimple_B:    
-                    self.code_simple = '-'.join(sorted([self.backbone_codeSimple_A, self.backbone_codeSimple_B]))
+                    self.code_simple = '-'.join(sorted([str(self.backbone_codeSimple_A), str(self.backbone_codeSimple_B)]))
                     self.list_interaction_code_simple.append(self.code_simple)
                 else:
                     self.list_interaction_code_simple.append("NaN-NaN")
@@ -4163,6 +4227,7 @@ class locate:
                     self.sidechain_codeSimple   = self.residue_codeSimple_B
                     self.backbone_codeSimple    = self.backbone_codeSimple_A
                     self.backbone_codeComplete  = self.backbone_codeComplete_A
+
                 
                 # Add area
                 self.list_interaction_area.append("backbone-sidechain")
@@ -4181,7 +4246,8 @@ class locate:
                     self.list_interaction_code_simple.append(f"{self.sidechain_codeSimple}-{self.backbone_codeSimple}")
                 else:
                     self.list_interaction_code_simple.append("NaN-NaN")
-    
+
+
     
     #===== Return informations =====
     @property
