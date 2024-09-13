@@ -1042,7 +1042,7 @@ def get_protein_region(pdb_file_path, chainID_receptor, chainID_ligand, write_ou
     ASA_total_ligand = dataframe[dataframe['identity'] == 'ligand']['SASA_free'].sum()
 
     # calculate the interface
-    interface = (ASA_total_receptor + ASA_total_ligand) - ASA_total_complex
+    interface = ((ASA_total_receptor + ASA_total_ligand) - ASA_total_complex) /2
 
     # create a dataframe with the results
     df_ASA_total_interface = pd.DataFrame({'identity':["complex", "receptor", "ligand", "interface"],
