@@ -58,7 +58,7 @@ List of all repulsion/clash types:
 
 
 
-## Residues pairs types
+## Residues association types
 
 No [interaction network](#interaction-network) is unchangeable, since variations are visible in the dynamics of any system. This is why we classified the residue pairs into five categories based on their presence in the initial and modified networks.
 
