@@ -17,6 +17,8 @@ All commands come from `miclot.interactions`
 > <br/> It is mandatory if your file contain not [Standard code](__amino_acids_properties.md#2-the-3-letter-codes-of-standard-residues-in-pdb) residue names. For example, bonds of seleno-methionine (MSE) are not recognized if the file don't containt the information about connectivity between atoms.
 >
 > 2. It is also necessary to have hydrogens atoms to identify hydrogen bonds, else for the S/Se mediated H-bond.
+>
+> 3. Be sure to clean the PDB. For example, the presence of ANISOU (or other) can create an additional “virtual” residue that is detected; however, as it is not referenced in the sequence, it is not possible to assign its secondary structure or protein region to it.
 
 
 
