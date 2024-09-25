@@ -78,7 +78,7 @@ It also write 3 output files in CSV format:
 The interface is calculated as follow:
 
 $$
-I = ( {SASA}_{receptor} + {SASA}_{ligand} ) - {SASA}_{complex}
+I = \frac {( {SASA}_{receptor} + {SASA}_{ligand} ) - {SASA}_{complex} }{2}
 $$
 
 ### Arguments
