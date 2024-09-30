@@ -94,3 +94,6 @@ PDB_file 	                          3bzd.pdb
 chains_receptor 	                  A
 chains_ligand 	                      B
 ```
+
+> [!IMPORTANT]
+> Jupyter Notebook may not display `dissociation_constant_(M)_at_25(C)` properly, so if you read a value of 0.0, please take look at the output `*_report_interaction.csv` file.

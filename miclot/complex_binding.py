@@ -17,11 +17,14 @@ __all__ = ['identify_contacts','identify_NIS_residues_SASA','compute_binding_ene
 #=====================================================
 #===== Import modules
 #====================================================
+import os
 import mdtraj as md
 import numpy as np
 import pandas as pd
 pd.options.mode.copy_on_write = True
 import freesasa
+from Bio.PDB import PDBParser, PDBIO, Select
+from Bio.PDB.Polypeptide import is_aa
 
 # Import module from MICLOT
 from miclot.utilities import pdb2pandas, mdtraj_chainID_2_chainName
@@ -190,6 +193,56 @@ def identify_contacts(pdb_file_path, chainName_receptor, chainName_ligand, write
 
 
 #=====================================================
+#===== Function to prepare structure for freesasa
+#=====================================================
+class StructureFilter(Select):
+    def __init__(self, allowed_chains):
+        super().__init__()
+        self.allowed_chains = allowed_chains
+
+    def accept_chain(self, chain):
+        # Keep only chains "C" and "G"
+        return chain.get_id() in self.allowed_chains
+
+    def accept_residue(self, residue):
+        # Exclude heteroatoms (e.g., water) and keep only standard amino acids or nucleotides
+        return not residue.id[0].startswith("W") and not residue.id[0].startswith("H")
+
+    def accept_atom(self, atom):
+        # Exclude hydrogens
+        return atom.element != "H" and not atom.is_disordered()
+
+
+#---------------------------------------------------------------------------
+def filter_structure(input_pdb_file, allowed_chains=["A"], model_id=0):
+    """
+    Is not defined to be use directly by the user.
+    Use the class StructureFilter to clean a PDB file and output the result as Biopython structure format.
+
+    ARGUMENTS
+    allowed_chains   Chain name to keep. Default is A.
+    model_id         Model ID to keep. Default is 0
+    """
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure('filtered_structure', input_pdb_file)
+
+    # Select only the specified model
+    model = structure[model_id]
+
+    # Define output using PDBIO
+    io = PDBIO()
+    io.set_structure(model)  # Set the specific model
+
+    # Use the custom StructureFilter to apply the filter
+    filtered_structure = StructureFilter(allowed_chains)
+    
+    return io, filtered_structure  # Return IO object and filter for further use or saving
+
+
+
+
+
+#=====================================================
 #===== Function to identify NIS(interface) residues based on their SASA
 #====================================================
 def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_ligand, write_outfile=True):
@@ -262,9 +315,18 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 
 
     #===== Use biopython to prepare strcture for freeSASA =====
-    structure_complex   = freesasa_structure_preparation(pdb_file_path, chainName_complex)
-    structure_receptor  = freesasa_structure_preparation(pdb_file_path, chainName_receptor)
-    structure_ligand    = freesasa_structure_preparation(pdb_file_path, chainName_ligand)
+    #----- Clean structures -----
+    io_complex, structure_complex   = filter_structure(pdb_file_path, chainName_complex)
+    io_receptor, structure_receptor = filter_structure(pdb_file_path, chainName_receptor)
+    io_ligand, structure_ligand     = filter_structure(pdb_file_path, chainName_ligand)
+
+    #----- Save cleaned structures as PDB -----
+    # Get the output path with the original PDB name
+    file_path = pdb_file_path.replace('.pdb', '') # Replace '.pdb' with an empty string
+    # Save PDB
+    io_complex.save(f"{file_path}_selected_complex.pdb", select=structure_complex)
+    io_receptor.save(f"{file_path}_selected_receptor.pdb", select=structure_receptor)
+    io_ligand.save(f"{file_path}_selected_ligand.pdb", select=structure_ligand)
 
 
 
@@ -277,7 +339,13 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
     #  'n-slices': 20,
     #  'n-threads': 1}
     
-    
+    # Read cleaned PDB
+    parser = PDBParser(QUIET=True)
+    structure_complex  = parser.get_structure('structure_complex', f"{file_path}_selected_complex.pdb")
+    structure_receptor = parser.get_structure('structure_receptor', f"{file_path}_selected_receptor.pdb")
+    structure_ligand   = parser.get_structure('structure_ligand', f"{file_path}_selected_ligand.pdb")
+
+
     # Compute freesasa
     result_complex,  sasa_classes_complex  = freesasa.calcBioPDB(structure_complex, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
     result_receptor, sasa_classes_receptor = freesasa.calcBioPDB(structure_receptor, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
@@ -353,6 +421,10 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
 
         # save the concatenate dataframe to a file
         df_SASA_result_filtered.to_csv(f'{file_path}_residue_NIS_types.csv', index=False)
+    else:
+        os.remove(f"{file_path}_selected_complex.pdb")
+        os.remove(f"{file_path}_selected_receptor.pdb")
+        os.remove(f"{file_path}_selected_ligand.pdb")
     
 
     #===== Return the final dataframe =====
