@@ -72,27 +72,27 @@ compute_binding_energy('3bzd.pdb', ['A'], ['B'])
 **Result**
 
 ```
-contacts_apolar-polar 	              15.0
-contacts_apolar-apolar 	              12.0
-contacts_charged-polar 	              7.0
-contacts_polar-polar 	              7.0
+contacts_apolar-polar                 15.0
+contacts_apolar-apolar                12.0
+contacts_charged-polar                7.0
+contacts_polar-polar                  7.0
 contacts_apolar-charged               6.0
 contacts_charged-charged              4.0
-TOTAL_contacts 	                      51.0
-NIS_polar 	                          103.0
-NIS_apolar 	                          74.0
-NIS_charged 	                      74.0
-TOTAL_NIS_types 	                  251.0
-NIS_polar(%) 	                      41.035857
-NIS_apolar(%) 	                      29.482072
-NIS_charged(%) 	                      29.482072
-temperature(C) 	                      25.0
-temperature(K) 	                      298.15
-DeltaG(kcal/mol) 	                  -9.37332
+TOTAL_contacts                        51.0
+NIS_polar                             103.0
+NIS_apolar                            74.0
+NIS_charged                           74.0
+TOTAL_NIS_types                       251.0
+NIS_polar(%)                          41.035857
+NIS_apolar(%)                         29.482072
+NIS_charged(%)                        29.482072
+temperature(C)                        25.0
+temperature(K)                        298.15
+DeltaG(kcal/mol)                      -9.37332
 dissociation_constant_(M)_at_25(C)    1.33265e-07
-PDB_file 	                          3bzd.pdb
-chains_receptor 	                  A
-chains_ligand 	                      B
+PDB_file                              3bzd.pdb
+chains_receptor                       A
+chains_ligand                         B
 ```
 
 > [!IMPORTANT]
