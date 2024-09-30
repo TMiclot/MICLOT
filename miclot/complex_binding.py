@@ -477,10 +477,18 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
                 'apolar-charged':'contacts_apolar-charged',
                 'charged-charged':'contacts_charged-charged',
                 }
+
+    # Check if the index exists
+    for index_to_check in new_indices:
+        if index_to_check not in series_counts_types.index:
+            series_counts_types[index_to_check] = 0  # Create the index with a value of '0'
+
+    # change indices
     series_counts_types = series_counts_types.rename(index=new_indices)
 
     # Get the sum of all contact
     series_counts_types['TOTAL_contacts'] = series_counts_types.sum()
+
 
 
     #----- Create serie for SASA (interface-NIS) -----
@@ -491,6 +499,13 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
     new_indices = {'polar': 'NIS_polar',
                    'apolar': 'NIS_apolar',
                    'charged': 'NIS_charged'}
+
+    # Check if the index exists
+    for index_to_check in new_indices:
+        if index_to_check not in series_SASA_types.index:
+            series_SASA_types[index_to_check] = 0  # Create the index with a value of '0'
+
+    # change indices
     series_SASA_types = series_SASA_types.rename(index=new_indices)
 
     # Get the sum of all residue types
