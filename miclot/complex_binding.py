@@ -341,15 +341,15 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
     
     # Read cleaned PDB
     parser = PDBParser(QUIET=True)
-    structure_complex  = parser.get_structure('structure_complex', f"{file_path}_selected_complex.pdb")
-    structure_receptor = parser.get_structure('structure_receptor', f"{file_path}_selected_receptor.pdb")
-    structure_ligand   = parser.get_structure('structure_ligand', f"{file_path}_selected_ligand.pdb")
+    pdb_complex  = parser.get_structure('structure_complex', f"{file_path}_selected_complex.pdb")
+    pdb_receptor = parser.get_structure('structure_receptor', f"{file_path}_selected_receptor.pdb")
+    pdb_ligand   = parser.get_structure('structure_ligand', f"{file_path}_selected_ligand.pdb")
 
 
     # Compute freesasa
-    result_complex,  sasa_classes_complex  = freesasa.calcBioPDB(structure_complex, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
-    result_receptor, sasa_classes_receptor = freesasa.calcBioPDB(structure_receptor, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
-    result_ligand,   sasa_classes_ligand   = freesasa.calcBioPDB(structure_ligand, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
+    result_complex,  sasa_classes_complex  = freesasa.calcBioPDB(pdb_complex, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
+    result_receptor, sasa_classes_receptor = freesasa.calcBioPDB(pdb_receptor, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
+    result_ligand,   sasa_classes_ligand   = freesasa.calcBioPDB(pdb_ligand, classifier=freesasa.Classifier.getStandardClassifier('naccess'))
 
     # create s list to store all results from freesasa
     list_result_freesasa = [result_complex, result_receptor, result_ligand]
@@ -359,9 +359,14 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
     #===== Generate a pandas dataframe from the PDB file and contaiing chainName, resName and resSeq =====
     # Get the PDB as Pandas dataframe
     df_pdb = pdb2pandas(pdb_file_path)
+    # sometyme pandas perform strange convertion of resSeq number, this commands ensure it to the a string of int number: ex: '10'
+    df_pdb['resSeq'] = df_pdb['resSeq'].astype(float)
+    df_pdb['resSeq'] = df_pdb['resSeq'].astype(int)
+    df_pdb['resSeq'] = df_pdb['resSeq'].astype(str)
 
     # Get only raw with CA atom and residue in the dict_amino_acid_properties_interface
     df_pdb_filtered = df_pdb[(df_pdb['name'].isin(['CA'])) & (df_pdb['resName'].isin(dict_amino_acid_properties_interface))]
+
 
     # Select only column with resName, resSeq, and chainName
     df_SASA_result = df_pdb_filtered[['chainName', 'resSeq', 'resName']]
@@ -395,8 +400,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
                 residue_asa_total = residue_asa.total
 
                 # Modify SASA_x column with the ASA value for the correspondind residue
-                df_SASA_result.loc[(df_SASA_result[f'chainName'] == chain) & (df_SASA_result[f'resSeq'] == resSeq), f'{column_name}'] = residue_asa_total
-
+                df_SASA_result.loc[(df_SASA_result[f'chainName'] == str(chain)) & (df_SASA_result[f'resSeq'] == str(resSeq)), f'{column_name}'] = residue_asa_total
 
 
     #===== Calculate rASA and drASA =====
@@ -412,7 +416,7 @@ def identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_liga
     # Based on the code of 'analyse_nis' in https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/predict_IC.py filter is done on 'rASA_complex' (and not 'drASA')
     # and take value equal or greater than 5% (named NIS but corresponding to the interface)
     df_SASA_result_filtered = df_SASA_result[(5/100.0 <= df_SASA_result['rASA_complex'])]
-   
+ 
    
     #===== Save output files =====
     if write_outfile == True:
@@ -457,12 +461,13 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     #===== Identify NIS/interface residues =====
     df_SASA = identify_NIS_residues_SASA(pdb_file_path, chainName_receptor, chainName_ligand, write_outfile=write_outfile)
-
+    
 
     #===== Make final series report =====
     #----- Create a serie for contact types -----
     # Count all 'contact_type'in the dataframe
     series_counts_types = df_contact['contact_type'].value_counts(normalize=False)
+
 
     # Renames indeces
     new_indices = {'apolar-polar':'contacts_apolar-polar',
@@ -491,10 +496,11 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
     # Get the sum of all residue types
     series_SASA_types['TOTAL_NIS_types'] = series_SASA_types.sum()
 
+
     # Get proportion of residue types (polar, apolr, charged) & convert it to %
     series_SASA_types_percentages = df_SASA['resType'].value_counts(normalize=True) *100
 
-    # Renames indeces
+    # Renames indices
     new_indices = {'polar': 'NIS_polar(%)',
                    'apolar': 'NIS_apolar(%)',
                    'charged': 'NIS_charged(%)'}
@@ -503,7 +509,6 @@ def compute_binding_energy(pdb_file_path, chainName_receptor, chainName_ligand, 
 
     #----- Create the final Series for report by concatenate all the previous -----
     report = pd.concat([series_counts_types, series_SASA_types, series_SASA_types_percentages])
-
 
 
     #===== compute DeltaG and kd =====
