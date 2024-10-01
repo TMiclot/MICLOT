@@ -3917,8 +3917,11 @@ def interaction_table_whole_system(trajectory, list_pairs="all", frame=0, MAX_CA
     # Initialize final tables
     df = pd.DataFrame() # table containing the analysis result summary
     
-    # Append the final tables with the row 
-    df = pd.concat([i[0] for i in results if isinstance(i[0], pd.DataFrame)], ignore_index=True)
+    # Append the final tables with the row
+    try:
+        df = pd.concat([i[0] for i in results if isinstance(i[0], pd.DataFrame)], ignore_index=True)
+    except:
+        df = pd.concat([i for i in results if isinstance(i, pd.DataFrame)], ignore_index=True)
     
     if write_outfile == True:
         df.to_csv(path_table_outfile, index=False)
