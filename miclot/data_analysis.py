@@ -72,10 +72,24 @@ def string_to_array(s):
     Convert string like '[0.23 456.5 98.0]' to numpy array.
     """
     # Remove square brackets and split the string
+    s = str(s)
     s = s.strip('[]')
     # Convert to numpy array
     array = np.array(s.split(), dtype=float)
     return array
+
+
+
+#=====================================================
+#===== Function to get distance between two points
+#=====================================================
+def compute_distance(value1,value2):
+    try:
+        distance = Vector.from_points(row["COM_backbone"], row["COM_sidechain"]).norm() *10, #*10 to convert nm to angstrom,
+    except:
+        distance = np.nan
+    
+    return distance
 
 
 
@@ -220,19 +234,19 @@ def make_distance_map(directory, file_name_structure='residues_secondaryStructur
         com_backbone_2  = string_to_array(com_backbone_2)
         
         #----- Calulate distances: COM-COM, COMbackbone-COMbackbone, COMsidechain-COMsidechain -----
-        distance_com = Vector.from_points(com_residue_1, com_residue_2).norm() *10 #*10 to convert nm to angstrom
-        distance_com_backbone  = Vector.from_points(com_backbone_1, com_backbone_2).norm() *10 #*10 to convert nm to angstrom
-        distance_com_sidechain = Vector.from_points(com_sidechain_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
+        distance_com = compute_distance(com_residue_1, com_residue_2)
+        distance_com_backbone  = compute_distance(com_backbone_1, com_backbone_2)
+        distance_com_sidechain = compute_distance(com_sidechain_1, com_sidechain_2)
         
         #----- Calulate distances: COMbackbone-COMsidechain -----
-        distance_com_backbone_residue_1_sidechain_residue_2 = Vector.from_points(com_backbone_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
-        distance_com_backbone_residue_2_sidechain_residue_1 = Vector.from_points(com_backbone_2, com_sidechain_1).norm() *10 #*10 to convert nm to angstrom
+        distance_com_backbone_residue_1_sidechain_residue_2 = compute_distance(com_backbone_1, com_sidechain_2)
+        distance_com_backbone_residue_2_sidechain_residue_1 = compute_distance(com_backbone_2, com_sidechain_1)
         
         #----- Calulate distances: COM-COMbackbone, COM-COMsidechain -----
-        distance_com_residue_1_backbone_residue_2  = Vector.from_points(com_residue_1, com_backbone_2).norm()  *10 #*10 to convert nm to angstrom
-        distance_com_residue_1_sidechain_residue_2 = Vector.from_points(com_residue_1, com_sidechain_2).norm() *10 #*10 to convert nm to angstrom
-        distance_com_residue_2_backbone_residue_1  = Vector.from_points(com_residue_2, com_backbone_1).norm()  *10 #*10 to convert nm to angstrom
-        distance_com_residue_2_sidechain_residue_1 = Vector.from_points(com_residue_2, com_sidechain_1).norm() *10 #*10 to convert nm to angstrom
+        distance_com_residue_1_backbone_residue_2  = compute_distance(com_residue_1, com_backbone_2)
+        distance_com_residue_1_sidechain_residue_2 = compute_distance(com_residue_1, com_sidechain_2)
+        distance_com_residue_2_backbone_residue_1  = compute_distance(com_residue_2, com_backbone_1)
+        distance_com_residue_2_sidechain_residue_1 = compute_distance(com_residue_2, com_sidechain_1)
         
         #----- Append list of distance with new informations -----
         list_distance.append({'residue_1_index': index_residue_1,
@@ -785,9 +799,17 @@ def clean_structure(directory, file_name_structure='residues_secondaryStructure_
     
     #===== Read structure file as dataframe =====
     file_structure = glob.glob(os.path.join(directory, f'*{file_name_structure}*.csv'))[0]
-    df_structure = pd.read_csv(file_structure) # will be use as final dataframe
+    df_structure = pd.read_csv(file_structure,
+                               dtype={'COM': str,
+                                      'COM_sidechain': str,
+                                      'COM_backbone': str,
+                                      }) # will be use as final dataframe
     
-    
+    df_structure['COM'] = df_structure['COM'].astype(str)
+    df_structure['COM_sidechain'] = df_structure['COM_sidechain'].astype(str)
+    df_structure['COM_backbone'] = df_structure['COM_backbone'].astype(str)
+
+
     #===== Read protein region file as dataframe, if any =====
     try:
         file_protein_region = glob.glob(os.path.join(directory, f'*{file_name_protein_region}*.csv'))[0]
@@ -827,17 +849,17 @@ def clean_structure(directory, file_name_structure='residues_secondaryStructure_
     
     # Compute distances: lenght of the vector between the COM points
     df_structure["distance_COM_backbone_COM_sidechain"] = df_structure.apply(
-        lambda row: Vector.from_points(row["COM_backbone"], row["COM_sidechain"]).norm() *10, #*10 to convert nm to angstrom,
+        lambda row: compute_distance(row["COM_backbone"], row["COM_sidechain"]),
         axis=1
     )
 
     df_structure["distance_COM_COM_sidechain"] = df_structure.apply(
-            lambda row: Vector.from_points(row["COM"], row["COM_sidechain"]).norm() *10, #*10 to convert nm to angstrom,
+            lambda row: compute_distance(row["COM"], row["COM_sidechain"]),
             axis=1
         )
 
     df_structure["distance_COM_COM_backbone"] = df_structure.apply(
-            lambda row: Vector.from_points(row["COM"], row["COM_backbone"]).norm() *10, #*10 to convert nm to angstrom,
+            lambda row: compute_distance(row["COM"], row["COM_backbone"]),
             axis=1
         )
     
