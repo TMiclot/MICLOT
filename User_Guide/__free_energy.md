@@ -245,7 +245,7 @@ This two diffrences lead to minor changes in the ASA of the residues. But this c
 
 ### 3.4. Amino acid properties use to identify contact type and NIS-interface properties
 
-Amino acid properties are use to identify contact type and NIS-interface properties. Please note that their is diffrences for: Cys, His, Trp and Tyr.
+Amino acid properties are use to identify contact type and NIS-interface properties. Please note that their is diffrences for: Cys, His, Trp and Tyr, see dictionnaries `aa_character_ic` and `aa_character_protorp` in [aa_properties.py](https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/modules/aa_properties.py)
 
 | Amino acid | Contact | Interface-NIS | Difference |
 | ---------- | ------- | ------------- | --------- |
