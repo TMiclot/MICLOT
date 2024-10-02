@@ -371,7 +371,7 @@ def perform_locate(dict_tolocate, directory, name):
 
                 interaction = df_pickle[interactionType][0]
                 
-                locate = mci.locate(interaction)
+                locate = mci.locate(interaction, directory=directory)
                 
                 df = locate.get_table_interaction
 
