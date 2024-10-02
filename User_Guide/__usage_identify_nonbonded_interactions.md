@@ -360,6 +360,7 @@ Based on distances, this class can also discriminate regular, low-barrier, and s
 > [!IMPORTANT]
 > - The structure, or a trajectory must contain hydrogens.
 > - To avoid redundancy with the class [salt_bridge](#5-salt-bridge), this command exclude H-bond involved in a salt bridge only.
+> - This methods can identify H-bond oppering sindide a residue (intra-residue). Depanding on the case, it can be important to perform a [locate](#identify-interaction-area-of-an-interaction) to avoid false positive result.
 
 ### Arguments
 

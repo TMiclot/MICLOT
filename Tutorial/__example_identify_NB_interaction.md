@@ -250,10 +250,149 @@ HIS_H_H-BB_H_H                  3
 HIS_H_H-HIS_H_H                 2
 ```
 
+### C.3. Run `locate` automatically
+
+This part assume that analysis using `mci.interaction_table_whole_system` was already done.
+
+**Step 1: create a function to clean raw interaction table**
+
+```python
+def read_clean_csv(csv):
+    """
+    This function:
+    1. deletes all pairs for which no interaction is found
+    2. replace all 0.5 value found in salt bridge interaction by 1
+    3. create a column with a sorted pair index: residue1index_residue2index
+    """
+    df = pd.read_csv(csv)
+    
+    filtered_df = df[(df['number_interactions'] > 0) & (df['residue_1_chain'] != df['residue_2_chain'])]
+    filtered_df['salt_bridge'] = filtered_df['salt_bridge'].replace(0.5, 1)
+    filtered_df['pair_index'] = filtered_df.apply(lambda row: '_'.join(map(str, [sorted(row['residue_1_index'], row['residue_2_index'])])),
+                                                 axis=1)
+    filtered_df.drop(columns=col_toremove, inplace=True)
+    return filtered_df
+```
+
+**Step 2: read and clean interaction table and create a list of interaction type we want to locate**
+
+Generaly it is: c_bond, sse_hbond ,sse_chalcogen ,pi_hbond ,hydrogen_bond, van_der_waals_nb_contacts.
+For in formation, remember that n-Pi interaction (n_pi_regular and n_pi_reciprocal) is backbone-backbone. So it's not necessary to locate it.
+
+
+```python
+# read and clean interaction taqble
+df_filtered_interaction_table = read_clean_csv("MyDirectory/MYSTSEM_interaction_table_whole_system.csv")
+
+# set interaction type to list
+type_to_locate = ["c_bond",
+                  "sse_hbond",
+                  "sse_chalcogen",
+                  "pi_hbond",
+                  "hydrogen_bond",
+                  "van_der_waals_nb_contacts"
+                 ]
+```
+
+**Step 3: Create a function to identify the number of pairs perfoming defined interaction type**
+
+```python
+def check_tolocate(df, type_to_locate):
+    """
+    This function return a dictionnary with the interaction type name
+    and the corresponding number of residue pairs found to perform this interaction types.
+    """
+    dict_interaction_files = {}
+    
+    for interaction in type_to_locate:
+        # select row only if thei is interaction
+        filtered_df = df[1 <= df[interaction]]
+    
+        dict_interaction_files[interaction] = filtered_df["pair_index"].to_list()
+
+    return dict_interaction_files
+```
+
+**Step 3.1: Manually visualise the number of result (optional)**
+
+```python
+# create the dictionnary
+dict_tolocate = check_tolocate(df_filtered_interaction_table, type_to_locate=type_to_locate)
+
+# display the 
+for i in dict_tolocate:
+    print(i, len(dict_tolocate[i]))
+```
+
+For example a possible output can be:
+
+```
+c_bond 1
+sse_hbond 0
+sse_chalcogen 0
+pi_hbond 0
+hydrogen_bond 18
+van_der_waals_nb_contacts 16
+```
+
+**Step 4: Create a function to locate selected interaction types over all identified pairs**
+
+```python
+def perform_locate(dict_tolocate, directory, name):
+    """
+    dict_tolocate    is the dictionnary create with the command: check_tolocate
+    directory        directory where *.pkl.gz files are stored
+    name             name at he begining od pickle file, for example. NAME_class_1_2.pkl.gz
+    """
+    df_final = pd.DataFrame()
+    
+    for interactionType in dict_interaction:
+        list_pair = dict_interaction[interactionType]
+        
+        if len(list_pair) > 0:
+
+            # get correct interaction because their is a diffrence between column name
+            #     in the *_interaction_table_whole_system.csv* and the table storing the raw informations.
+            if interactionType == "sse_hbond":
+                interactionType = 'sse_hydrogen_chalcogen_bond'
+            elif interactionType == "sse_chalcogen":
+                interactionType = 'sse_hydrogen_chalcogen_bond'
+            elif interactionType == "pi_hbond":
+                interactionType ='pi_hydrogen_bond'
+            elif interactionType == "van_der_waals_nb_contacts":
+                interactionType = 'van_der_waals'
+
+            print(interactionType) # inform user on the current valid state
+            
+            for pair in list_pair:
+                file = f"{directory}/{name}_class_{pair}.pkl.gz"
+                
+                df_pickle = pd.read_pickle(file)
+
+                interaction = df_pickle[interactionType][0]
+                
+                locate = mci.locate(interaction)
+                
+                df = locate.get_table_interaction
+
+                df_final = pd.concat([df_final, df], ignore_index=False)
+                
+    return df_final
+```
+
+**Step 5: Get results from `locate` and save them as table**
+
+```python
+df_locate = perform_locate(dict_tolocate, "MyDirectory", "MySystemName")
+df_locate.reset_index(inplace=True)
+df_locate.rename(columns={'index':'pair_index'}, inplace=True)
+df_locate.to_csv("MyDirectory/MYSTSEM_locate_interaction_types.csv", index=False)
+```
 
 
 
-## 0. C5 hydrogen bond
+
+## 0. C5-hydrogen bond
 
 **Code**
 
