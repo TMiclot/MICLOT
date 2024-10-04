@@ -222,7 +222,7 @@ And the terms of the equations are defined as:
 
 ### 3.2. Compute contacts
 
-The contacts are computed using the [mdtraj.compute_contacts](https://mdtraj.org/1.9.4/api/generated/mdtraj.compute_contacts.html) command. It return the closest distance between any two heavy atoms in the residues pair.
+The contacts are computed using the [mdtraj.compute_contacts](https://mdtraj.org/1.9.4/api/generated/mdtraj.compute_contacts.html) command, with a cutoff of 5.5 Å. It return the closest distance between any two heavy atoms in the residues pair.
 
 
 ### 3.3. NIS-Interface identification

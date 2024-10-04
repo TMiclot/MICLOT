@@ -1277,7 +1277,7 @@ class van_der_waals:
         # Compute interface
             # np.sum(self.SASA_pair) sum the SASA of the tow residue when forming pair
             # *100 to convert nm^2 to angstrom^2
-        interface = ( SASA_res_A[0] + SASA_res_B[0] - np.sum(SASA_pair) ) *100        
+        interface = ( ( SASA_res_A[0] + SASA_res_B[0] ) - np.sum(SASA_pair) ) *100        
         
         # return result
         return interface
