@@ -103,7 +103,7 @@ Because the method has been calibrated for use on fixed structures, but no menti
 
 > [!IMPORTANT]
 > It's important that the atom names match those of FreeSASA.
-> If you analyse a structure extracted from a MD simulation, the atom names may not be well recognized.
+> If you analyse a structure extracted from a MD simulation, the atom names may not be well recognized. [PDBFixer](https://github.com/openmm/pdbfixer) is a good tool for this task.
 
 
 ### Arguments

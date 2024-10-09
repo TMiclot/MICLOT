@@ -1,7 +1,7 @@
 [User Guide home](Manual.md)
 # Installation guide
 
-This script is written in [Python](https://www.python.org/), with the **version 3.10.13** packaged by conda-forge.
+This script is written in [Python](https://www.python.org/), with the **version 3.10.12** packaged by conda-forge.
 
 ## 1. Install Python
 
@@ -17,6 +17,7 @@ We recommend using a Python environment with [Conda](https://docs.conda.io/proje
 | scikit-spatial |||||
 | OpenMM |||||
 | PDB2PQR |||||
+| ProPKa |||||
 | pdbfixer |||||
 | biopython |||||
 | freesasa |||||
