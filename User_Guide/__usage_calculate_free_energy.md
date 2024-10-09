@@ -101,6 +101,11 @@ All commands come from `miclot.complex_binding`
 Calculate the binding energy of a protein-protein complex using the [contact-based method](__free_energy.md#2-protein-binding-contacts-based-method). Currently the implementation allow user to work only with PDB ().
 Because the method has been calibrated for use on fixed structures, but no mention has been made of molecular dynamics trajectories. So it was decided to restrict use to fixed structures: PDb, mmCIF, and all MDTraj readable files.
 
+> [!IMPORTANT]
+> It's important that the atom names match those of FreeSASA.
+> If you analyse a structure extracted from a MD simulation, the atom names may not be well recognized.
+
+
 ### Arguments
 
 | Argument | Description | Format | Requirement |
