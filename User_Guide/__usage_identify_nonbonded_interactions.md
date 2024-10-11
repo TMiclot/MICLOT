@@ -92,6 +92,16 @@ The command return:
 > Exception for **salt bridges**: it return 1 if both H-bond and short distance between charges are identified, or return 0.5 if only one of them is identified.
 
 
+>[!TIP]
+> ARG-ARG stacking are also referenced as charge clash, or as charge repulsion (happend mainly when they are not in perpendicular conformation). So if you want to remove ARG-ARG stacking, you can simply run the code below to replace 1 by 0 in carge clash or repulsion column:
+> ```python
+> # search lines containing 1 in any of ARG-ARG interaction columns
+> condition = (df[['arg_arg_parallel', 'arg_arg_perpendicular', 'arg_arg_intermediate']] == 1).any(axis=1)
+> # for selected lines set 0 value to charge clash/repulsion columns
+> df.loc[condition, ['charge_repulsion', 'charge_clash']] = 0
+> ```
+
+
 ### Arguments
 
 | Argument | Format | Description | Requirement |
