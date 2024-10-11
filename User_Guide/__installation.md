@@ -9,32 +9,24 @@ We recommend using a Python environment with [Conda](https://docs.conda.io/proje
 
 ## 2. Install dependencies
 
-| Name   | Version | Usage | Description | Link |
-| ------ | ------- | ----- | ----------- | ---- |
-| Numpy  |||||
-| MDTraj |||||
-| Pandas |||||
-| scikit-spatial |||||
-| OpenMM |||||
-| PDB2PQR |||||
-| ProPKa |||||
-| pdbfixer |||||
-| biopython |||||
-| freesasa |||||
+| Name           | Version |
+| -------------- | ------- |
+| numpy          | 1.24.3  |
+| mdtraj         | 1.9.9   |
+| pandas         | 1.5.3   |
+| scikit-spatial | 7.2.0   |
+| openmm         | 8.1.1   |
+| pdb2pqr        | 3.6.1   |
+| propka         | 3.5.1   |
+| biopython      | 1.83    |
+| freesasa       | 2.2.1   |
 
-### 2.1 Simple way: use the *miclot.yml* file
-
-It use an environment *.yml* file to install all the dependencies.
-More technical informations concerning this file type in Conda is available [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file).
+It can be done simply using this command:
 
 ```bash
-conda env create -f miclot.yml
+conda create -n miclot -c conda-forge python=3.10.13 freesasa=2.2.1 biopython=1.83 propka=3.5.1 pdb2pqr=3.6.1 openmm=8.1.1 scikit-spatial=7.2.0 pandas=1.5.3 mdtraj=1.9.9 numpy=1.24.3
 ```
 
-### 2.2 Complex way
-
-You can do it manually, but be sure to use the same version of each dependancy and python.
-For Conda, you can find information on how to install a specific version of a package on [Anaconda website](https://anaconda.org/).
 
 
 ## 3. Download from GitHub
@@ -111,3 +103,22 @@ interaction = mci.aromatic_aromatic(trajectory, 0, 3)
 print(interaction.check_interaction)
 ```
 
+## 5. Setup MICLOT as environment for jupyter notebook
+
+0. Create an environment only for JupyterLab (if not already created).
+
+```bash
+conda install -c conda-forge jupyterlab
+```
+
+1. Install `nb_conda_kernels` in your jupyter environment.
+
+```bash
+conda install -n jupyterlab -c conda-forge nb_conda_kernels
+```
+
+2. Install `ipykernel` in your miclot environment.
+
+```bash
+conda install -n miclot -c conda-forge ipykernel
+```
