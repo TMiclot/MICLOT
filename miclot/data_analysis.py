@@ -146,7 +146,7 @@ def find_neighbor_couples(list_neighbor, list_couple):
 
 
 #=====================================================
-#===== Function to replace np.NaN by 'No' in a list (for pair neighbor)
+#===== Function to replace np.NaN by 'No' in a list (for pair neighbor)  ** TO REMOVE
 #=====================================================
 def map_list(lst, mapping_dict):
     """
@@ -296,97 +296,6 @@ def make_distance_map(directory, file_name_structure='residues_secondaryStructur
 
 
 ###################################################### Cleaning & Concatenate
-#=====================================================
-#===== Function to generate neigbor pairs
-#=====================================================
-def clean_neighbor_pairs(directory, file_name_clean_interactions_table='clean_interactions_table', \
-                         file_name_neighbor_residues='clean_neighbor_residues', pdb_name=None, save=True):
-    """
-    DESCRIPITON
-        Identify neighbor pairs using the neighbor residue and interactions table.
-        
-    ARGUMENTS
-        directory     directory where CSV files are located
-        
-    OPTIONAL ARGUMENTS
-        file_name_clean_interactions_table    Name of CSV file of cleaned interaction table.
-                                              Default value: 'clean_interactions_table'
-
-        file_name_neighbor_residues    Name of clean neighbor residues CSV file.
-                                       Default value: 'clean_neighbor_residues'
-        
-        pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
-                    Default value: directory name
-                    
-        save        save cleaned file as CSV in the directory
-                    Default value: True 
-    """
-    #===== i =====
-    file_interaction_table = glob.glob(os.path.join(directory, f'*{file_name_clean_interactions_table}*.csv'))[0]
-    df_interaction_table   = pd.read_csv(file_interaction_table)
-
-    file_neighbor_residues = glob.glob(os.path.join(directory, f'*{file_name_neighbor_residues}*.csv'))[0]
-    df_neighbor_residues   = pd.read_csv(file_neighbor_residues)
-
-    
-    #===== Create necessary dictionnaries =====
-    # pair codes
-    dict_residue_pairindex2codeComplete   = df_interaction_table.set_index('pair_index')['pair_code_complete'].to_dict()
-    dict_residue_pairindex2codename       = df_interaction_table.set_index('pair_index')['pair_code_name'].to_dict()
-    dict_residue_pairindex2codeSimplified = df_interaction_table.set_index('pair_index')['pair_code_name_secondary_structure'].to_dict()
-    dict_residue_pairindex2codess         = df_interaction_table.set_index('pair_index')['pair_code_secondary_structure'].to_dict()
-    dict_residue_pairindex2codepr         = df_interaction_table.set_index('pair_index')['pair_code_protein_region'].to_dict()
-    
-    # pair identity
-    dict_residue_pairindex2identity = df_interaction_table.set_index('pair_index')['pair_identity'].to_dict()
-    
-    
-    #===== Create table of neighboring pairs =====
-    # Get list of all neighbors residues
-    list_neighbor = df_neighbor_residues["pair_index"].to_list()
-
-    # Get list of all interacting pair
-    list_pair = df_interaction_table["pair_index"].to_list()
-
-    # Make the neighbor pairs table
-    df_neighbor_pairs = find_neighbor_couples(list_neighbor, list_pair)
-
-    
-    #===== Get codes =====
-    # interacting pairs
-    df_neighbor_pairs["pair_code_complete"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2codeComplete)
-    df_neighbor_pairs["pair_code_name"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2codename)
-    df_neighbor_pairs["pair_code_name_secondary_structure"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2codeSimplified)
-    df_neighbor_pairs["pair_code_secondary_structure"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2codess)
-    df_neighbor_pairs["pair_code_protein_region"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2codepr)
-    df_neighbor_pairs["pair_identity"] = df_neighbor_pairs['pair_index'].map(dict_residue_pairindex2identity)
-
-    # get create neighbor pair code of the interactiong pair
-    df_neighbor_pairs['neighbor_pairs_code_complete'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2codeComplete,))
-    df_neighbor_pairs['neighbor_pairs_code_name'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2codename,))
-    df_neighbor_pairs['neighbor_pairs_code_name_secondary_structure'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2codeSimplified,))
-    df_neighbor_pairs['neighbor_pairs_code_secondary_structure'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2codess,))
-    df_neighbor_pairs['neighbor_pairs_code_protein_region'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2codepr,))
-    df_neighbor_pairs['neighbor_pairs_identity'] = df_neighbor_pairs['neighbor_pairs_index'].apply(map_list, args=(dict_residue_pairindex2identity,))
-    
-    
-    #===== save to CSV =====
-    if save == True:
-    
-        if pdb_name == None:
-            pdb_name = directory.split('/')[-1]
-            
-        path_file = f'{directory}/{pdb_name}_clean_neighbor_pairs.csv'
-        df_neighbor_pairs.to_csv(path_file, index=False)
-    
-    
-    #===== return dataframe =====
-    return df_neighbor_pairs
-    
-
-
-
-
 #=====================================================
 #===== Function to clean interactions table
 #=====================================================
@@ -863,15 +772,7 @@ def clean_structure(directory, file_name_structure='residues_secondaryStructure_
             axis=1
         )
     
-    
-    #===== Remove unwanted columns =====
-    columns_to_remove = ["COM",
-                         "COM_backbone",
-                         "COM_sidechain"
-                        ]
-
-    df_structure = df_structure.drop(columns_to_remove, axis=1)
-   
+ 
     
     #===== Save as CSV =====
     if save == True:
@@ -1416,30 +1317,6 @@ class cleaning:
         """
         return clean_interactions_table(*arg,**kwargs)
     
-
-    #===== Identify neighbor residues =====
-    def neighbor_pairs(*arg,**kwargs):
-        """
-        DESCRIPITON
-            Identify neighbor pairs using the neighbor residue and interactions table.
-            
-        ARGUMENTS
-            directory     Directory where CSV files are located
-            
-        OPTIONAL ARGUMENTS
-            file_name_clean_interactions_table    Name of CSV file of cleaned interaction table.
-                                                  Default value: 'clean_interactions_table'
-
-            file_name_neighbor_residues    Name of clean neighbor residues CSV file.
-                                           Default value: 'clean_neighbor_residues'
-            
-            pdb_name    structure name to use in the clened file: {pdb_name}_distance_map.csv
-                        Default value: directory name
-                        
-            save        save cleaned file as CSV in the directory
-                        Default value: True 
-        """
-        clean_neighbor_pairs(*arg,**kwargs)
 
 
 

@@ -247,28 +247,29 @@ This two diffrences lead to minor changes in the ASA of the residues. But this c
 
 Amino acid properties are use to identify contact type and NIS-interface properties. Please note that their is diffrences for: Cys, His, Trp and Tyr, see dictionnaries `aa_character_ic` and `aa_character_protorp` in [aa_properties.py](https://github.com/haddocking/prodigy/blob/main/src/prodigy_prot/modules/aa_properties.py)
 
-| Amino acid | Contact | Interface-NIS | Difference |
-| ---------- | ------- | ------------- | --------- |
-| ALA        | apolar  | apolar        |   |
-| CYS        | apolar  | polar         | x |
-| GLU        | charged | charged       |   |
-| ASP        | charged | charged       |   |
-| GLY        | apolar  | apolar        |   |
-| PHE        | apolar  | apolar        |   |
-| ILE        | apolar  | apolar        |   |
-| HIS        | charged | polar         | x |
-| LYS        | charged | charged       |   |
-| MET        | apolar  | apolar        |   |
-| LEU        | apolar  | apolar        |   |
-| ASN        | polar   | polar         |   |
-| GLN        | polar   | polar         |   |
-| PRO        | apolar  | apolar        |   |
-| SER        | polar   | polar         |   |
-| ARG        | charged | charged       |   |
-| THR        | polar   | polar         |   |
-| TRP        | apolar  | polar         | x |
-| VAL        | apolar  | apolar        |   |
-| TYR        | apolar  | polar         | x |
+
+| Amino acid|Contact|Interface-NIS|Difference|
+| ----------|-------|-------------|---------|
+| ALA | apolar  | apolar  |   |
+| ARG | charged | charged |   |
+| ASN | polar   | polar   |   |
+| ASP | charged | charged |   |
+| CYS | apolar  | polar   | x |
+| GLN | polar   | polar   |   |
+| GLU | charged | charged |   |
+| GLY | apolar  | apolar  |   |
+| HIS | charged | polar   | x |
+| ILE | apolar  | apolar  |   |
+| LEU | apolar  | apolar  |   |
+| LYS | charged | charged |   |
+| MET | apolar  | apolar  |   |
+| PHE | apolar  | apolar  |   |
+| PRO | apolar  | apolar  |   |
+| SER | polar   | polar   |   |
+| THR | polar   | polar   |   |
+| TRP | apolar  | polar   | x |
+| TYR | apolar  | polar   | x |
+| VAL | apolar  | apolar  |   |
 
 
 ### 3.5. References
