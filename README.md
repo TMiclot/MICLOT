@@ -21,27 +21,21 @@ MICLOT contains many tools.
 ```mermaid
 mindmap
     root)**MICLOT**(
-        id{{**Protein region**}}
+        id{{**Structural information**}}
+            Protein region
+            Secondary structure
         id{{**Energy calculation**}}
             Contacts-based method
-            Coulomb & Lennard-Jones
+            Coulomb and Lennard-Jones
         id{{**Cys-Cys bridge**}}
             Disulfide
             Diselenium
             Selenosulfide
         id{{**Interaction network**}}
             Non-bonded interaction types
-            Residues & Pairs neighborhood
         id{{**Database**}}
             Amino acids
             Atoms
-        id{{**Data analysis**}}
-            Plot
-            Clustered heatmap
-            Graph
-        id{{**Scoring**}}
-            Interacting pairs
-            Interface
 ```
 
 
