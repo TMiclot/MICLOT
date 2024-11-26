@@ -2,6 +2,9 @@
 
 # Data analysis
 
+> [!WARNING]  
+> Is part is a work in progress: it's not stable and things can change!
+
 All commands come from `miclot.analysis`
 
 This module is composed of three main classes. Each has a specific use:

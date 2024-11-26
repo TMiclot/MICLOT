@@ -1,6 +1,9 @@
 [User Guide home](Manual.md)
 # Installation guide
 
+> [!NOTE]  
+> The software has been written and tested on Linux (Ubuntu 22.04.4 LTS), it should be compatible with other OS but this has not been tested.
+
 This script is written in [Python](https://www.python.org/), with the **version 3.10.12** packaged by conda-forge.
 
 ## 1. Install Python
