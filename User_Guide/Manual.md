@@ -10,7 +10,7 @@ Please follow [installation instructions](__installation.md).
 
 ## Theory behind MICLOT
 
-This part explain all the theory behind the development of the script. It it a key for a better understanding of how to use it.
+This section provides an in-depth explanation of the theoretical underpinnings behind the development of MICLOT. Understanding these concepts is essential to understanding how to use the software effectively.
 
 - [Element properties](__element_properties.md)
 - [Amino acids properties](__amino_acids_properties.md)
@@ -23,9 +23,9 @@ This part explain all the theory behind the development of the script. It it a k
 
 ## Usage
 
-This part provide information about the classes and methods available in MICLOT and how to use them.
+This section provides detailed information about the classes and methods available in MICLOT, along with guidance on how to utilize them effectively.
 
-To start exploring the software, you can take also look at the [tutorials](../Tutorial/Tutorials.md).
+For a practical introduction to the software, you can also refer to the [tutorials](../Tutorial/Tutorials.md), which offer a hands-on exploration of MICLOT's capabilities.
 
 - [Installation guide](__installation.md)
 - [Prepare a structure](__usage_prepare_structure.md)
@@ -36,6 +36,12 @@ To start exploring the software, you can take also look at the [tutorials](../Tu
 - [Data analysis](__usage_data_analysis.md) :warning: :construction:
 - [Atoms & Amino acids Database](__usage_database.md)
 - [Other tools](__usage_other_tools.md)
+
+
+
+## Tips
+
+### Reduce CPU usage
 
 >[!TIP]
 > For some cases you may want to limit the CPU usage, 2 ways are possible.
@@ -53,6 +59,8 @@ To start exploring the software, you can take also look at the [tutorials](../Tu
 > max_cpu = os.cpu_count() -2 #Get total number of CPU -2 to avoid crash
 > os.sched_setaffinity(pid, range(max_cpu)) 
 > ```
+
+### Kill all Python processes
 
 >[!TIP]
 > I case you over use your computer ressources, or want to kill the process, you can use this command:
