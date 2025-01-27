@@ -4,10 +4,10 @@
 ## 1. Standard atom names use in PDB and Force field
 
 > [!NOTE] 
-> For reasons of space, the numbers in the names are written in subscript. Backbone atome are alway replased by: *backbone*, else for GLY and PRO they are given in grey italics.
+> For reasons of space, numerical values in names are denoted using subscript notation. Additionally, backbone atoms are consistently represented by the term backbone, except in the cases of GLY and PRO, where they are displayed in grey italics.
 
 > [!WARNING]
-> If you use molecular dynamic software, hydrogen names can change depending of the force field you use (Amber, CHARMM, ...).
+> If you use molecular dynamic software, the naming conventions for hydrogen atoms may vary depending on the force field employed (e.g., Amber, CHARMM, etc.).
 
 ### 1.1. Backbone
 
@@ -26,7 +26,7 @@
 
 ## 2. The 3 letter codes of standard residues in PDB
 
-The table below refers to the standard items found in the PDB files. It use standard atom and residue nomenclature as described in the [monomer section](https://files.wwpdb.org/pub/pdb/data/monomers) of the Chemical Component Dictionary. Some code name may change or not be recognize, depending on the force field. For more information see [Standard residues in MDAnalysis selections](https://userguide.mdanalysis.org/stable/standard_selections.html) to find out which types of residue are recognized and selectable by MDAnalysis.
+The table below outlines the standard residues typically found in PDB files, utilizing the standard atom and residue nomenclature as described in the [monomer section](https://files.wwpdb.org/pub/pdb/data/monomers) of the Chemical Component Dictionary. Note that some code names may be modified or not recognized, depending on the force field employed. For further information, please refer to Standard residues in MDAnalysis selections to determine which types of residues are recognized and selectable by MDAnalysis.
 
 | Amino acid    | Standard code | Reduced | Oxydized | Neutral     | Deprotonated (Negative charge) | Protonated (Positive charge) | Selenium containing |
 | ------------- | ------------- | ------- | -------- | ---------- | ------------ | ---------- | ------------------- |
@@ -74,10 +74,10 @@ The table below refers to the standard items found in the PDB files. It use stan
 
 ## 3. Maximum ASA in proteins
 
-The table below give the maximum possible solvent accessible surface area (ASA), in $Å^2$, for the residue, according to various sources.
+The table below provides the maximum solvent accessible surface area (ASA) values, expressed in $Å^2$, for each residue, as reported by various sources.
 
 > [!NOTE]
-> ASA is also named solvent accessible surface area (SASA).
+> ASA is also named *solvent accessible surface area* (SASA).
 
 | Residue | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Theoretical | [Tien *et al.* (2013)](https://doi.org/10.1371/journal.pone.0080635) Empirical | [Miller *et al.* (1987)](https://doi.org/10.1016/0022-2836%2887%2990038-6 "https://doi.org/10.1016/0022-2836(87)90038-6") | [Rose *et al.* (1985)](https://doi.org/10.1126/science.4023714) | [Lins *et al.* (2003)](https://doi.org/10.1110/ps.0304803) | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Gly-x-Gly | [Samanta *et al.* (2002)](https://doi.org/10.1093/protein/15.8.659) Ala-X-Ala | [NACCESS software](http://www.bioinf.manchester.ac.uk/naccess/) |
 | --- | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -218,10 +218,13 @@ Table adapted from [Chou and Fasman, 1974](https://doi.org/10.1021/bi00699a002)
 
 ### 5.2. Secondary structure assignment methods
 
-Secondary structure of each residue is assigned using the DSSP 2.2.0 written by Maarten L. Hekkelman and implemented in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This implementation eliminates the need for the user to install, or compile, third-party software. This increases the module's ease of installation and portability between OS. It also avoids the need to read/write numerous output files.
+Secondary structure of each residue is assigned using the implementation of in DSSP 2.2.0 in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This implementation eliminates the need for the user to install, or compile, third-party software. This increases the software's ease of installation and portability between OS. It also avoids the need to read/write numerous output files.
+
+The secondary structure of each residue is assigned utilizing the DSSP 2.2.0 algorithm implemented in [MDTraj](https://www.mdtraj.org/1.9.8.dev0/api/generated/mdtraj.compute_dssp.html). This integrated implementation eliminates the need for users to install or compile additional third-party software. Furthermore, it avoids the requirement for reading and writing numerous output files, streamlining the overall process.
+
 
 > [!IMPORTANT] 
-> As mentioned above, you don't need to have the executable files. The current version does NOT include the following type of regulation:
+> As mentioned above, you don't need to have the executable files. The current version does NOT include the following type of wraper:
 > - DSSP [version 4 and latter](https://github.com/PDB-REDO/dssp), or the [version 2.0](https://github.com/MDAnalysis/dssp), with the wraper [PDB.DSSP](https://biopython.org/docs/1.75/api/Bio.PDB.DSSP.html) implemented in [Biopython](https://biopython.org).
 > - STRIDE, source aviable [here](https://github.com/MDAnalysis/stride),  with the wraper [pySTRIDE](https://github.com/MDAnalysis/pystride) created by [MDAnalysis](https://docs.mdanalysis.org/stable/index.html) team.
 
@@ -259,11 +262,14 @@ Secondary structure of each residue is assigned using the DSSP 2.2.0 written by 
 
 ## 6. Location in diffrent regions in protein & Role in interaction
 
-Within a protein complex, amino acids can be located in different regions. It is possible to determine in which region an amino acid is located, by measuring its accessible surface. There are 5 regions: surface, interior, core, support and rim (Figure 1).
+Within a protein complex, amino acids can be located in distinct regions, which can be identified by measuring their ASA. There are five primary regions: surface, interior, core, support, and rim (Figure 1).
 
-Residues located on the surface do not participate in the interaction and form part of the Non-interactin surface (NIS), see Figure 2. Two types of residue can be distinguished. On the one hand, there are those that are only slightly exposed to solvent, and secondly, those that are highly exposed to seolvent and are said to be hydrated. In this case, their relative ASA in complex is > 40%.
+Amino acids located on the surface do not participate in interactions and form part of the Non-Interacting Surface (NIS), as illustrated in Figure 2. Two types of surface residues can be distinguished: those that are slightly exposed to solvent and those that are highly exposed to solvent, referred to as hydrated residues, which have a relative Accessible Surface Area (ASA) in the complex greater than 40%.
 
-There's a subtlety to the residues in the rim. Since this is the interface boundary, the residues are somewhat exposed to the solvent. So we need to distinguish between those that are in the NIS and those that play a role in the interaction. Residues involved in the complex interface have a difference of more than 5% between their relative ASA in monomer and complex.
+A notable consideration applies to residues in the rim region, as it represents the interface boundary. Since these residues are partially exposed to solvent, it is essential to differentiate between those that are part of the NIS and those that play a role in the interaction. Residues involved in the complex interface can be identified by a difference of more than 5% between their relative ASA in the monomer and in the complex.
+
+
+
 
 | Figure 1 - Regions in protein | Figure 2 - Non-interacting surface and Interacting surface |
 | --- | --- |
