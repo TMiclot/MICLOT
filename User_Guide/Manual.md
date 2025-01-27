@@ -10,7 +10,7 @@ Please follow [installation instructions](__installation.md).
 
 ## Theory behind MICLOT
 
-This section provides an in-depth explanation of the theoretical underpinnings behind the development of MICLOT. Understanding these concepts is essential to understanding how to use the software effectively.
+This section provides an in-depth explanation of the theoretical underpinnings behind the development of MICLOT. Understanding these concepts is essential for a comprehensive grasp of how to use the software.
 
 - [Element properties](__element_properties.md)
 - [Amino acids properties](__amino_acids_properties.md)
