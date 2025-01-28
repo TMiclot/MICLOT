@@ -55,6 +55,6 @@ Currently, we do not have a formal protocol in place for bug report. So please s
 
 # Citing us
 
-The article is in preparation, please wait to quote our software.
+The article is in preparation, please wait to cite our software.
 
 Made with :heart: by Tom Miclot
