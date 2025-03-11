@@ -743,7 +743,7 @@ For more information concerning charges (*X* atoms), please see [11. Salt bridge
 
 #### 12.4.1. Description
 
-Arginine can stack with another arginine. Technically this corresponds to a charge collision, but this specific case is stable and can favor the protein-protein interaction.
+Arginine can stack with another arginine. Technically this corresponds to a charge clash, but this specific case is stable and can favor the protein-protein interaction.
 
 <img src="pictures/ARG-ARG_stacking_subtypes.png" width="400"> 
 
