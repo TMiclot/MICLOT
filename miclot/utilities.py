@@ -505,7 +505,7 @@ def minimize_pdb(pdb_file_path, force_field='amber', max_iterations=100, restrai
                                 initial position. It's possible to change the constant force value with the
                                 argument 'constant'.
                                 Default value: True
-        constant                Constant force value (in kJ/nm) for the force used to restrain heavy atoms
+        constant                Constant force value (in kJ/(mol nm^2) ) for the force used to restrain heavy atoms
                                 Default value: 1.0e+5
     """
     #----- Clear existing output file and minimized pdb -----
