@@ -108,7 +108,7 @@ For more details, the options: `nonbondedMethod=NoCutoff, constraints=HBonds` ar
 | force_field | string | Force field to use. Values are 'amber' or 'charmm'. <br/> Default value: 'amber' | optional |
 | max_iterations | integer | Maximum number of iterations. To minimize the structure until the results converge regardless the number of iterations step, you must set the value at 0. <br/> Default value: 100 | optional |
 | restrain_heavy_atoms | Apply restain force to heavy atom to avoid them moving too far from their initial position. It's possible to change the constant force value with the argument 'constant'. <br/> Default value: True | optional |
-| constant | Constant force value (in kJ/nm) for the force used to restrain heavy atoms. <br/> Default value: 1.0e+5 | optional |
+| constant | Constant force value (in kJ/(mol nm^2) ) for the force used to restrain heavy atoms. <br/> Default value: 1.0e+5 | optional |
 
 
 ### Returns
