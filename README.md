@@ -49,7 +49,7 @@ mindmap
 
 # Bug report
 
-Currently, we do not have a formal protocol in place for bug report. So please simply send an email to [tom.miclot@jh-inst.cas.cz](tom.miclot@jh-inst.cas.cz)
+Currently, we do not have a formal protocol in place for bug report. So please simply send an email to [tom.miclot@u-paris.fr](tom.miclot@u-paris.fr)
 
 
 
