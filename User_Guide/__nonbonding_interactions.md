@@ -906,3 +906,8 @@ Legend:
 - Chand, A., Sahoo, D. K., Rana, A., Jena, S. & Biswal, H. S. The Prodigious Hydrogen Bonds with Sulfur and Selenium in Molecular Assemblies, Structural Biology, and Functional Materials. *Acc. Chem. Res.* 53, 1580–1592 (2020). [https://doi.org/10.1021/acs.accounts.0c00289](https://doi.org/10.1021/acs.accounts.0c00289)
 - Mishra, K. K. et al. Water-Mediated Selenium Hydrogen-Bonding in Proteins: PDB Analysis and Gas-Phase Spectroscopy of Model Complexes. *J. Phys. Chem. A* 123, 5995–6002 (2019). [https://doi.org/10.1021/acs.jpca.9b04159](https://doi.org/10.1021/acs.jpca.9b04159)
 - Wilds, C. J., Pattanayek, R., Pan, C., Wawrzak, Z. & Egli, M. Selenium-Assisted Nucleic Acid Crystallography: Use of Phosphoroselenoates for MAD Phasing of a DNA Structure. *J. Am. Chem. Soc.* 124, 14910–14916 (2002). [https://doi.org/10.1021/ja021058b](https://doi.org/10.1021/ja021058b)
+
+
+## R.9. Non-bonding involving Metals
+
+- Jena, S. et al. Noncovalent interactions in proteins and nucleic acids: beyond hydrogen bonding and π-stacking. Chem. Soc. Rev. 51, 4261–4286 (2022). [https://doi.org/10.1039/D2CS00133K](https://doi.org/10.1039/D2CS00133K)
