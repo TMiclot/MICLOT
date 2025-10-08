@@ -59,10 +59,10 @@ The command return:
 > import itertools
 >
 > # Create a range from 30 to 40
-> chain_A_res = list(range(30, 40))
+> chain_A_res = range(30, 40)
 >
 > # Create a range from 100 to 120
-> chain_B_res = list(range(100,120))
+> chain_B_res = range(100,120)
 >
 > # Create all possible pairs: (30,100), (30,101), ... (40,120)
 > list_pairs = list(itertools.product(chain_A_res, chain_B_res)) 
