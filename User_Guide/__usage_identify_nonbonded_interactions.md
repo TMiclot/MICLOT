@@ -51,6 +51,22 @@ The command return:
 > # (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)
 > list_pairs = list(itertools.combinations(list_residues, 2))
 > ```
+>
+> Another case, you have two chain and for each you know their range of resides involving into the assembly.
+> For example: chain A interact with residues from residue 30 to 40, and chain B with residue from 100 to 120. Below a correspong code:
+>
+>```python
+> import itertools
+>
+> # Create a range from 30 to 40
+> chain_A_res = list(range(30, 40))
+>
+> # Create a range from 100 to 120
+> chain_B_res = list(range(100,120))
+>
+> # Create all possible pairs: (30,100), (30,101), ... (40,120)
+> list_pairs = list(itertools.product(chain_A_res, chain_B_res)) 
+>```
 
 > [!CAUTION]
 > 1. This command use all CPUs seen by Python, so it can use all CPUs of your computer. To ensure avoid any crash, be sure to limit the number of CPUs used by: Jupyter, or your script. To do this, you can take look at this [Tip](Manual.md#usage)
