@@ -37,7 +37,7 @@ conda create -n miclot -c conda-forge python=3.10.13 freesasa=2.2.1 biopython=1.
 ### 3.1. Clone the repository
 
 ```bash
-git clone https://github.com/miclot/miclot.git
+git clone https://github.com/TMiclot/MICLOT.git
 ```
 
 or with the GitHub CLI
@@ -124,4 +124,5 @@ conda install -n jupyterlab -c conda-forge nb_conda_kernels
 
 ```bash
 conda install -n miclot -c conda-forge ipykernel
+
 ```
