@@ -23,11 +23,13 @@ We recommend using a Python environment with [Conda](https://docs.conda.io/proje
 | propka         | 3.5.1   |
 | biopython      | 1.83    |
 | freesasa       | 2.2.1   |
+| seaborn        |         |
+| tqdm           |         |
 
 It can be done simply using this command:
 
 ```bash
-conda create -n miclot -c conda-forge python=3.10.13 freesasa=2.2.1 biopython=1.83 propka=3.5.1 pdb2pqr=3.6.1 openmm=8.1.1 scikit-spatial=7.2.0 pandas=1.5.3 mdtraj=1.9.9 numpy=1.24.3
+conda create -n miclot -c conda-forge python=3.10.13 freesasa=2.2.1 biopython=1.83 propka=3.5.1 pdb2pqr=3.6.1 openmm=8.1.1 scikit-spatial=7.2.0 pandas=1.5.3 mdtraj=1.9.9 numpy=1.24.3 seaborn tqdm
 ```
 
 
@@ -126,3 +128,4 @@ conda install -n jupyterlab -c conda-forge nb_conda_kernels
 conda install -n miclot -c conda-forge ipykernel
 
 ```
+
