@@ -59,6 +59,9 @@ def pdb2pandas(pdb_file_path):
     # PDB column delimitation 
     # Columns: 12(11), 21(20), 28-30(27-29), 67-72(66-71) are empty in PDB format
     # SegmentID 73-75(72, 75) is not taked in account
+    # For more information, visit:
+    #     https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/tutorials/pdbintro.html
+    #     https://www.wwpdb.org/documentation/file-formats-and-the-pdb
     PDB_format_columns = [(0, 6), (6, 11), (12, 16), (16, 17), (17, 20), (21, 22), (22, 26),
                          (26, 27), (30, 38), (38, 46), (46, 54), (54, 60), (60, 66), (72, 76),
                          (76, 78), (78, 80)]
