@@ -69,6 +69,12 @@ For a practical introduction to the software, you can also refer to the [tutoria
 > pkill -9 python
 > ```
 
+### Residues IDs and Visualisation software
+
+> [!WARNING]
+> Please note that the residue IDs returned by the software are those provided by MDTraj. These IDs may differ from those used by other software, particularly visualization software.
+
+
 
 
 * * *
