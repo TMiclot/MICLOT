@@ -9,7 +9,9 @@ All commands come from `miclot.interactions`
 > For each classe it is possible to get somes properties and, for simplicity, keywords used are excalcy the same.
 
 > [!IMPORTANT]
-> Keep in mind that protonation state name is not always used in a structure file. Depending on the context, it may be useful to use PDB2PQR to get this information.
+> 1. Keep in mind that protonation state name is not always used in a structure file. Depending on the context, it may be useful to use PDB2PQR to get this information.
+> 
+> 2. The analysis takes periodic boundary conditions (PBCs) into account, meaning that residues that are far apart may be considered to interact if their images within the PBC are close together.
 
 > [!WARNING]
 > 1. If you analyse PDB structure file, be sure to have the [CONNECT](https://www.wwpdb.org/documentation/file-format-content/format33/sect10.html) section in the file, or the [struct_conn](https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Categories/struct_conn.html) category for PDBx/mmCIF files. 
@@ -18,7 +20,7 @@ All commands come from `miclot.interactions`
 >
 > 2. It is also necessary to have hydrogens atoms to identify hydrogen bonds, else for the S/Se mediated H-bond.
 >
-> 3. Be sure to clean the PDB. For example, the presence of ANISOU (or other) can create an additional “virtual” residue that is detected; however, as it is not referenced in the sequence, it is not possible to assign its secondary structure or protein region to it.
+> 3. Be sure to clean the PDB. For example, the presence of ANISOU (or other) can create an additional "virtual" residue that is detected; however, as it is not referenced in the sequence, it is not possible to assign its secondary structure or protein region to it.
 
 
 
