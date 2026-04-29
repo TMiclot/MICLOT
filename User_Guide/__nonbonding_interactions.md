@@ -852,6 +852,8 @@ Legend:
 
 - Lee, D., Lee, J. & Seok, C. What stabilizes close arginine pairing in proteins? *Phys. Chem. Chem. Phys.* 15, 5844 (2013). [https://doi.org/10.1039/C3CP00160A](https://doi.org/10.1039/C3CP00160A)
 - Magalhaes, A., Maigret, B., Hoflack, J., Gomes, J. N. F. & Scheraga, H. A. Contribution of unusual Arginine-Arginine short-range interactions to stabilization and recognition in proteins. *J Protein Chem* 13, 195–215 (1994). [https://doi.org/10.1007/BF01891978](https://doi.org/10.1007/BF01891978)
+- Neves, M. A. C., Yeager, M., & Abagyan, R. (2012). Unusual arginine formations in protein function and assembly : Rings, strings, and stacks. *The Journal of Physical Chemistry B*, 116(23), 7006‑7013. [https://doi.org/10.1021/jp3009699](https://doi.org/10.1021/jp3009699)
+- Vondrášek, J., Mason, P. E., Heyda, J., Collins, K. D., & Jungwirth, P. (2009). The molecular origin of like-charge arginine−arginine pairing in water. *The Journal of Physical Chemistry B*, 113(27), 9041‑9045. [https://doi.org/10.1021/jp902377q](https://doi.org/10.1021/jp902377q)
 
 ### R.4.3. Charge-Charge repulsion
 
