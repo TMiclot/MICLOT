@@ -113,7 +113,7 @@ print(interaction.check_interaction)
 0. Create an environment only for JupyterLab (if not already created).
 
 ```bash
-conda install -c conda-forge jupyterlab
+conda create -c conda-forge -n jupyterlab jupyterlab
 ```
 
 1. Install `nb_conda_kernels` in your jupyter environment.
