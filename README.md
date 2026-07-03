@@ -55,6 +55,6 @@ Currently, we do not have a formal protocol in place for bug report. So please s
 
 # Citing us
 
-The article is in preparation, please wait to cite our software.
+Miclot, T., & Timr, S. (2026). Beyond contacts : The important role of the support region in protein complex assembly. *Protein Science*, 35(2), e70470. [https://doi.org/10.1002/pro.70470](https://doi.org/10.1002/pro.70470)
 
 Made with :heart: by Tom Miclot
