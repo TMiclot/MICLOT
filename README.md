@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> Be happy! :smiley: A new release with major updates is scheduled for late 2027.
+
 <img src="__banner.png" alt="banner" class="center">
 <img src="https://www.python.org/static/community_logos/python-powered-w.svg" alt="python_logo" width="80">
 
