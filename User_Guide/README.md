@@ -1,30 +1,10 @@
-# MDQ: Molecular Dynamics Trajectory Analysis
+# MDQ: Molecular Dynamics DockQ
 
 A Python toolkit for analysing protein--protein or protein--chain
 interfaces across molecular dynamics (MD) trajectories. The package
 calculates contact conservation, interface RMSD (iRMSD), ligand RMSD
 (lRMSD), an MDQ similarity score, and clustering/visualisation of
 trajectory frames.
-
-> **Important --- check the source file before running:** the uploaded
-> `mdq.py` currently contains two function definitions with invalid
-> Python parameter ordering:
->
-> ``` python
-> def run_dbscan_analysis(self, eps_dict, min_samples_pct=0.05,
->                         min_pct_dyn=0.05, total_frames_dyn):
-> ```
->
-> ``` python
-> def run_hierarchical_analysis(self, method="average", threshold=0.3,
->                               min_pct=0.05, total_frames):
-> ```
->
-> Python does not allow a required argument after arguments with default
-> values. Move `total_frames_dyn` / `total_frames` before the
-> default-valued parameters, or give them defaults, before importing the
-> module. This guide documents the current API and behaviour; it does
-> not silently modify the implementation.
 
 ------------------------------------------------------------------------
 
