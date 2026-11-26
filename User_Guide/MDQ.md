@@ -73,8 +73,6 @@ Then place `mdq.py` in your project folder and import the classes:
 from mdq import TrajectoryAnalyzer, TrajectoryClusterVisualizer
 ```
 
-> `scikit-learn-extra` may need extra build tools on some systems. If the installation fails, check the documentation of that package.
-
 ---
 
 ## Methodology
@@ -219,7 +217,7 @@ chains = {
 }
 ```
 
-These are **not** PDB residue numbers (`resSeq`). MDTraj residue indices start at 0. Always check that they match the loaded topology. Use `list(range(a, b))` to create the lists.
+These are **not** PDB residue numbers (`resSeq`). MDTraj residue indices start at 0. Always check that they match the loaded topology. Use `range(a, b)` to create the lists.
 
 ### Stride
 
@@ -473,7 +471,7 @@ from mdq import TrajectoryAnalyzer, TrajectoryClusterVisualizer
 
 traj_file = "production.xtc"
 top_file = "topology.pdb"
-chains = {"A": list(range(0, 314)), "B": list(range(314, 634))}
+chains = {"A": range(0, 314), "B": range(314, 634)}
 
 # 1. Metrics
 analyzer = TrajectoryAnalyzer(traj_file, top_file, chains, stride=1)
@@ -517,9 +515,9 @@ visualizer.save_cluster_stats_csv(output_prefix="cluster_stats")
 
 ```python
 chains = {
-    "A": list(range(0, 200)),
-    "B": list(range(200, 400)),
-    "C": list(range(400, 600))
+    "A": range(0, 200),
+    "B": range(200, 400),
+    "C": range(400, 600)
 }
 analyzer = TrajectoryAnalyzer("traj.xtc", "top.pdb", chains)
 analyzer.compute_shared_fraction()
@@ -546,7 +544,7 @@ visualizer.run_hierarchical_analysis(
 | File | Created by | Description |
 |------|-----------|-------------|
 | `shared_fraction.csv` | `compute_shared_fraction()` | Pairwise FSR values |
-| `mdq.csv` | You (`analyzer.df_score.to_csv(...)`) | Pairwise metrics and MDQ scores. Needed by the default visualiser |
+| `mdq.csv` | `analyzer.df_score.to_csv(...)` | Pairwise metrics and MDQ scores. Needed by the default visualiser |
 | `distance.csv` | `create_distance_from_mdq()` | Pairwise distance (`1 - mdq_weighted`) |
 | `representative_structures/` | `export_representative_frames_pdb()` | Representative PDB files |
 | `cluster_representatives.csv` | `export_cluster_representatives_csv()` | Cluster members and representative frames |
@@ -596,14 +594,12 @@ The DataFrames `df_shared`, `df_irmsd`, `df_lrmsd` and `df_score` are also avail
 These points describe the current `mdq.py`. Check them before a production analysis.
 
 1. **Method signatures.** In `run_dbscan_analysis()` and `run_hierarchical_analysis()`, required arguments must come before arguments with default values. Otherwise Python raises a `SyntaxError` when importing the file.
-2. **Duplicate heatmap method.** `plot_distance_heatmap()` is defined twice. The second definition replaces the first, so `start_frame` and `end_frame` are not available.
-3. **No automatic `mdq.csv`.** `compute_mdq()` only fills `self.df_score`. Save the file yourself.
-4. **Distance column check.** `create_distance_from_mdq()` checks for `mdq_weighted` twice. There is no fallback for another MDQ column.
-5. **Frame sampling.** Frame indices refer to the loaded (strided) trajectory. Keep the same order when you export structures.
-6. **Cluster-size filter.** The minimum cluster size is calculated with the `total_frames` value you give. Use a value that matches your definition of the minimum fraction.
-7. **Scaling.** The number of pair calculations grows like N², where N is the number of frames. Large trajectories produce large tables and long run times.
-8. **Backbone definition.** Only atoms named `N`, `CA`, `C` and `O` are used.
-9. **Receptor and ligand.** The longer chain is the receptor and the shorter is the ligand. For equal lengths, the alphabetical order decides. This is a convention of the code, not a biological annotation.
+2. **No automatic `mdq.csv`.** `compute_mdq()` only fills `self.df_score`. Save the file yourself.
+3. **Frame sampling.** Frame indices refer to the loaded (strided) trajectory. Keep the same order when you export structures.
+4. **Cluster-size filter.** The minimum cluster size is calculated with the `total_frames` value you give. Use a value that matches your definition of the minimum fraction.
+5. **Scaling.** The number of pair calculations grows like N², where N is the number of frames. Large trajectories produce large tables and long run times.
+6. **Backbone definition.** Only atoms named `N`, `CA`, `C` and `O` are used.
+7. **Receptor and ligand.** The longer chain is the receptor and the shorter is the ligand. For equal lengths, the alphabetical order decides. This is a convention of the code, not a biological annotation.
 
 ---
 
