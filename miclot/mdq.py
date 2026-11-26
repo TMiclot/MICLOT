@@ -560,7 +560,7 @@ class TrajectoryClusterVisualizer:
     # ===============================
     # DBSCAN
     # ===============================
-    def run_dbscan_analysis(self, eps_dict, min_samples_pct=0.05, min_pct_dyn=0.05, total_frames_dyn):
+    def run_dbscan_analysis(self, eps_dict, min_samples_pct=0.05, min_pct_dyn=0.05, total_frames_dyn=200):
         for interface in self.df["interface"].unique():
             df_int = self.df[self.df["interface"] == interface]
             frames, dist_matrix = self._build_distance_matrix(df_int)
@@ -576,7 +576,7 @@ class TrajectoryClusterVisualizer:
     # ===============================
     # HIERARCHICAL
     # ===============================
-    def run_hierarchical_analysis(self, method="average", threshold=0.3, min_pct=0.05, total_frames):
+    def run_hierarchical_analysis(self, method="average", threshold=0.3, min_pct=0.05, total_frames=200):
         for interface in self.df["interface"].unique():
             df_int = self.df[self.df["interface"] == interface]
             frames, dist_matrix = self._build_distance_matrix(df_int)
