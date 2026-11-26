@@ -662,32 +662,6 @@ class TrajectoryClusterVisualizer:
             plt.show()
 
     # ===============================
-    # HEATMAP
-    # ===============================
-    def plot_distance_heatmap(self):
-        df = self.df
-        all_frames = sorted(set(df["frame_i"]).union(set(df["frame_j"])))
-        n = len(all_frames)
-        frame_to_idx = {f: i for i, f in enumerate(all_frames)}
-        cmap = mpl.cm.get_cmap("viridis").copy()
-        cmap.set_bad(color="red")
-        for interface in df["interface"].unique():
-            df_int = df[df["interface"] == interface]
-            dist_matrix = np.full((n, n), np.nan)
-            for _, row in df_int.iterrows():
-                i = frame_to_idx[row["frame_i"]]
-                j = frame_to_idx[row["frame_j"]]
-                dist_matrix[i, j] = dist_matrix[j, i] = row["distance"]
-            np.fill_diagonal(dist_matrix, 0)
-            plt.figure(figsize=(6,5))
-            sns.heatmap(dist_matrix, cmap=cmap, vmin=0, vmax=1, square=True, cbar_kws={"label": "Distance"})
-            plt.title(f"Interface {interface} - Heatmap")
-            plt.xlabel("Frames")
-            plt.ylabel("Frames")
-            plt.tight_layout()
-            plt.show()
-
-    # ===============================
     # CLUSTERMAP
     # ===============================
     def plot_distance_clustermap(self):
