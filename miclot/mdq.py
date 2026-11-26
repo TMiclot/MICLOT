@@ -519,7 +519,8 @@ class TrajectoryClusterVisualizer:
             idx = np.where(labels == c)[0]
             if len(idx) / total_frames < min_pct:
                 labels_filtered[idx] = -1
-        return labels_filtered
+        # Renumber the remaining clusters: 0, 1, 2, ... (noise stays -1)
+        return self._relabel_clusters_sequential(labels_filtered)
 
     # ===============================
     # PLOT PROJECTIONS
@@ -709,12 +710,13 @@ class TrajectoryClusterVisualizer:
     # ===============================
     # EXPORT REPRESENTATIVE FRAMES AS PDB
     # ===============================
-    def export_representative_frames_pdb(self, traj_file, top_file, output_dir, cluster_tables):
+    def export_representative_frames_pdb(self, traj_file, top_file, output_dir, cluster_tables, stride=1):
         import mdtraj as md
         import os
         warnings.filterwarnings("ignore")
         os.makedirs(output_dir, exist_ok=True)
-        traj = md.load(traj_file, top=top_file)
+        # Use the same stride as in the analysis, so frame indices match
+        traj = md.load(traj_file, top=top_file, stride=stride)
         for method_name, table in zip(["DBSCAN", "Hierarchical"], cluster_tables):
             for interface, clusters in table.items():
                 for cluster_label, info in clusters.items():
