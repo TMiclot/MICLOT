@@ -9,7 +9,6 @@ import ast
 import warnings
 
 from tqdm import tqdm
-from sklearn_extra.cluster import KMedoids
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS, TSNE
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
