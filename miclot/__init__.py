@@ -30,7 +30,7 @@ from . import cys_bridges
 from . import interactions
 from . import coulomb_lj
 from . import data_analysis
-
+from . import mdq
 
 
 #=====| Module end |=====
