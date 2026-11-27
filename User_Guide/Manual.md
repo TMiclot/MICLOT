@@ -17,6 +17,7 @@ This section provides an in-depth explanation of the theoretical underpinnings b
 - [Cysteine bridges: Cys-Cys](__CysCys_bridges.md)
 - [Non-bonding interactions](__nonbonding_interactions.md)
 - [Free energy of residue pairs & Complex binding energy](__free_energy.md)
+- [MDQ Method](__mdq.md)
 - [Glossary](__glossary.md)
 
 
@@ -36,7 +37,7 @@ For a practical introduction to the software, you can also refer to the [tutoria
 - [Data analysis](__usage_data_analysis.md) :warning: :construction:
 - [Atoms & Amino acids Database](__usage_database.md)
 - [Other tools](__usage_other_tools.md)
-- [Use MDQ method](__mdq.md)
+- [Use MDQ method](__usage_mdq_method.md)
 
 
 ## Tips
