@@ -36,7 +36,7 @@ For a practical introduction to the software, you can also refer to the [tutoria
 - [Data analysis](__usage_data_analysis.md) :warning: :construction:
 - [Atoms & Amino acids Database](__usage_database.md)
 - [Other tools](__usage_other_tools.md)
-
+- [Use MDQ method](__mdq.md)
 
 
 ## Tips
