@@ -9,9 +9,8 @@ MDQ uses a symmetric, DockQ-inspired metric. **No native reference structure is 
 ## Contents
 
 - [Overview](#overview)
-- [Installation](#installation)
 - [Methodology](#methodology)
-  - [1. Fraction of Shared Residues (FSR)](#1-fraction-of-shared-residues-fsr)
+  - [1. Fraction of Shared Contact (FSC)](#1-fraction-of-shared-contact-fsc)
   - [2. Weighted interface RMSD (iRMSD)](#2-weighted-interface-rmsd-irmsd)
   - [3. Weighted ligand RMSD (lRMSD)](#3-weighted-ligand-rmsd-lrmsd)
   - [4. MDQ score](#4-mdq-score)
@@ -39,7 +38,7 @@ The package has two classes.
 
 It loads an MD trajectory and calculates pairwise frame metrics for every pair of chains you define:
 
-- **FSR (Fraction of Shared Residues):** similarity between the residue–residue contacts of two frames.
+- **FSC (Fraction of Shared Contact):** similarity between the residue–residue contacts of two frames.
 - **Weighted iRMSD:** interface backbone RMSD, penalised when few atoms are shared.
 - **Weighted lRMSD:** RMSD of the shorter chain (the ligand) after receptor superposition, also penalised.
 - **MDQ score:** a combined score from FSR, iRMSD and lRMSD (weighted and unweighted versions).
@@ -57,27 +56,12 @@ It reads a pairwise distance table (`distance = 1 - MDQ`) and provides:
 
 The two classes are separate. The first one calculates the metrics. The second one uses a distance table for clustering and plotting.
 
----
-
-## Installation
-
-Install the dependencies in the Python environment you use for the analysis:
-
-```bash
-conda install -c conda-forge python mdtraj numpy pandas tqdm matplotlib seaborn scikit-learn scikit-learn-extra scipy umap-learn jupyter ipykernel
-```
-
-Then place `mdq.py` in your project folder and import the classes:
-
-```python
-from mdq import TrajectoryAnalyzer, TrajectoryClusterVisualizer
-```
 
 ---
 
 ## Methodology
 
-### 1. Fraction of Shared Residues (FSR)
+### 1. Fraction of Shared Contact (FSC)
 
 **Contact definition.** In DockQ, two residues are in contact if the distance between a heavy atom of one residue and a heavy atom of a residue in another chain is 5 Å or less.
 
