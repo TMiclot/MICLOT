@@ -20,7 +20,6 @@ MDQ uses a symmetric, DockQ-inspired metric. **No native reference structure is 
 - [Known issues and limitations](#known-issues-and-limitations)
 - [Troubleshooting](#troubleshooting)
 - [Dependencies](#dependencies)
-- [Reproducibility](#reproducibility)
 
 ---
 
@@ -524,18 +523,3 @@ Look at the distance heatmap and the dendrogram. Check `eps` and `min_samples_pc
 `ast` and `warnings` are in the Python standard library.
 
 ---
-
-## Reproducibility
-
-When you report results from this code, write down:
-
-- the trajectory and topology files (and how they were prepared);
-- the chain definitions and the residue-index convention;
-- the stride and the number of analysed frames;
-- the FSR distance interval (`min_A`, `max_A`);
-- the iRMSD interface cutoff (1.0 nm);
-- the MDQ formula and constants (1.5 Å and 8.5 Å);
-- whether you used weighted or unweighted MDQ;
-- the distance definition (`1 - mdq_weighted`);
-- the clustering algorithm and all its parameters;
-- the software versions and any change made to `mdq.py`.
